@@ -70,7 +70,114 @@ CLI begins after Phase 1 and Phase 2 are stable. Builds against:
 - `brand-schema-spec/schemas/` blank templates as generation targets
 - Platform Brand API endpoints (Phase 3) for publish/status
 
-Commands: `init`, `validate`, `publish`, `studio`, `status`, auth token management.
+---
+
+### 4.1 — `ramoira init`
+
+Generates a `brand.schema.json` locally. No platform account required. No Ramoira API call.
+
+**Flow:**
+1. Terminal Q&A — questions map directly to schema fields (not archetype delta zones)
+2. User provides their own LLM key (`ANTHROPIC_API_KEY` or OpenAI-compatible, read from env or prompted)
+3. CLI calls the LLM directly with answers + schema generation prompt
+4. LLM returns a populated schema JSON
+5. CLI validates output against `brand-schema-spec/SPEC.schema.json`
+6. Writes `brand.schema.json` to current directory
+
+**Q&A fields covered (minimum viable for a valid schema):**
+
+| Question | Schema field |
+| :--- | :--- |
+| What does your brand make or do? | `narrative.semiotic.denotative.categoryDescriptor` |
+| One sentence — what does your brand stand for? | `narrative.myth.mythStatement` |
+| Three words it should always feel like | `identity.summary.threeAdjectives` |
+| How does your brand relate to customers? (show 8 options) | `identity.prism.relationship.mode` |
+| What tones are always on-brand? | `voice.approvedTones` |
+| What tones are always off-brand? | `voice.forbiddenTones` |
+| Five things your brand must never do | `identity.summary.neverDo` |
+| What is your brand's pricing approach? (show 5 options) | `commercial.pricing.style` |
+
+Remaining required fields (voice examples, contentTest, governance.preflight, etc.) are LLM-synthesised from the answers above.
+
+**CLI bundles:**
+- Question set (field-mapped, defined in CLI package)
+- Schema generation prompt template
+- Thin Anthropic + OpenAI-compatible client
+- `SPEC.schema.json` validator (copied from brand-schema-spec at build time)
+
+**What init does NOT do:**
+- Call the Ramoira platform
+- Assign a confidence score
+- Certify the schema
+- Require an account
+
+---
+
+### 4.2 — `ramoira validate`
+
+Validates a local `brand.schema.json` against `SPEC.schema.json`. No platform call.
+
+```
+ramoira validate [file]        # defaults to brand.schema.json in cwd
+ramoira validate --summary     # validate against SPEC.summary.schema.json instead
+```
+
+Reports missing required fields, invalid enum values, and constraint violations. Exit code 1 on failure (CI-friendly).
+
+---
+
+### 4.3 — `ramoira publish`
+
+Publishes a local `brand.schema.json` to the Ramoira platform. Requires an account and API token.
+
+```
+ramoira publish [file]
+```
+
+1. Validates locally first (same as `ramoira validate`)
+2. Authenticates with API token (`RAMOIRA_TOKEN` env or `~/.ramoira/config`)
+3. POSTs schema to platform (`/api/brands/[slug]/publish`)
+4. Platform stores as a new draft version, extracts summary, serves at `ramoira.com/brands/[slug]/schema.summary.json`
+5. CLI prints the public URL
+
+---
+
+### 4.4 — `ramoira studio`
+
+Submits a published schema for Studio certification. Requires a paid Studio account.
+
+```
+ramoira studio
+```
+
+1. Platform runs archetype alignment analysis (embeddings + PCA/UMAP)
+2. Returns `confidence` score (0–1)
+3. If above threshold → `certified: true`, Studio fields unlocked in public summary
+4. CLI prints confidence score and certification status
+
+Studio is the only command that uses the archetype system. The archetypes are Ramoira's certification engine, not a generation tool.
+
+---
+
+### 4.5 — `ramoira status`
+
+Shows the current state of the brand on the platform.
+
+```
+ramoira status
+```
+
+Calls `GET /brands/[slug]/status` → prints `workflowState`, `certified`, `confidence`, `canonicalUrl`.
+
+---
+
+### 4.6 — Auth token management
+
+```
+ramoira login     # opens browser or prompts for token, saves to ~/.ramoira/config
+ramoira logout    # removes saved token
+ramoira whoami    # prints current authenticated brand slug
+```
 
 ---
 
