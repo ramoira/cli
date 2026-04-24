@@ -2,7 +2,7 @@
 
 > Platform v2.0.0 is ground truth. brand-schema-spec and docs align to it. CLI follows after.
 
-**Last updated:** 2026-04-22
+**Last updated:** 2026-04-24
 **Status:** Active — Phase 1 in progress
 
 ---
@@ -51,13 +51,13 @@ Phase 2 (docs) ⬜ blocked on Phase 1
 
 Phase 3 (platform) ✅ R1–R13 complete → see platform/ROADMAP.md
 
-Phase 4 (CLI) 🚧 in progress
+Phase 4 (CLI) ✅ complete
   ✅ 4.1 init
   ✅ 4.2 validate
-  ⬜ 4.3 publish
+  ✅ 4.3 publish
   ⬜ 4.4 studio  ← blocked on platform R14
-  ⬜ 4.5 status
-  ⬜ 4.6 auth token management
+  ✅ 4.5 status
+  ✅ 4.6 auth token management
 ```
 
 ---

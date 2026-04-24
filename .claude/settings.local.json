@@ -9,7 +9,8 @@
       "Bash(node dist/index.js validate tests/fixtures/invalid.schema.json)",
       "Bash(echo \"exit: $?\")",
       "Bash(npm run *)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(node -e ' *)"
     ]
   }
 }
