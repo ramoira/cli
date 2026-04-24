@@ -3,7 +3,11 @@
     "allow": [
       "Bash(xargs grep *)",
       "Bash(npx prisma *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(node dist/index.js validate tests/fixtures/valid.schema.json)",
+      "Bash(node dist/index.js validate tests/fixtures/invalid.schema.json)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }

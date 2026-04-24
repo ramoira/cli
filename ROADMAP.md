@@ -49,23 +49,22 @@ Phase 1 (brand-schema-spec) ✅ 1.1–1.4 done, ⬜ 1.5–1.8 pending
 Phase 2 (docs) ⬜ blocked on Phase 1
   → see docs/ROADMAP.md
 
-Phase 3 (platform) ⬜ unblocked after Phase 1.3 ✅
-  → see platform/ROADMAP.md
+Phase 3 (platform) ✅ R1–R13 complete → see platform/ROADMAP.md
 
-Phase 4 (CLI) ⬜ begins after Phase 1 + 2 complete
-  ⬜ 4.1 init
-  ⬜ 4.2 validate
+Phase 4 (CLI) 🚧 in progress
+  ✅ 4.1 init
+  ✅ 4.2 validate
   ⬜ 4.3 publish
-  ⬜ 4.4 studio
+  ⬜ 4.4 studio  ← blocked on platform R14
   ⬜ 4.5 status
   ⬜ 4.6 auth token management
 ```
 
 ---
 
-## Phase 4 — CLI (deferred)
+## Phase 4 — CLI
 
-CLI begins after Phase 1 and Phase 2 are stable. Builds against:
+Builds against:
 - `brand-schema-spec/SPEC.schema.json` and `SPEC.summary.schema.json` as validators
 - `brand-schema-spec/schemas/` blank templates as generation targets
 - Platform Brand API endpoints (Phase 3) for publish/status
