@@ -49,14 +49,20 @@ ${templateStr}
 Return ONLY the complete JSON object. No explanation. No markdown code blocks.`;
 }
 
-function extractJson(text: string): string {
+export function extractJson(text: string): Record<string, unknown> {
   const trimmed = text.trim();
-  const fenced = trimmed.match(/` + "```" + `(?:json)?\s*([\s\S]*?)` + "```" + `/);
-  if (fenced) return fenced[1].trim();
-  const start = trimmed.indexOf("{");
-  const end = trimmed.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("No JSON object found in model response.");
-  return trimmed.slice(start, end + 1);
+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const raw = fenced ? fenced[1].trim() : (() => {
+    const start = trimmed.indexOf("{");
+    const end = trimmed.lastIndexOf("}");
+    if (start === -1 || end === -1) throw new Error("No JSON object found in model response.");
+    return trimmed.slice(start, end + 1);
+  })();
+  try {
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    throw new Error("Model returned invalid JSON. Try running init again.");
+  }
 }
 
 export async function generateSchema(
@@ -77,13 +83,7 @@ export async function generateSchema(
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 
-  const raw = extractJson(text);
-
-  try {
-    return JSON.parse(raw) as Record<string, unknown>;
-  } catch {
-    throw new Error("Model returned invalid JSON. Try running init again.");
-  }
+  return extractJson(text);
 }
 
 export function resolveApiKey(): string | null {

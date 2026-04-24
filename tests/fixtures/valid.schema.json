@@ -1,99 +1,44 @@
 {
   "meta": {
-    "brandId": "",
-    "brandName": "",
+    "brandId": "little-rituals",
+    "brandName": "Little Rituals",
     "schemaVersion": "2.0.0",
-    "effectiveDate": "",
-    "previousVersion": "",
+    "effectiveDate": "2026-01-01",
     "changelog": []
   },
   "identity": {
     "_component": "identity",
     "_version": "2.0.0",
     "prism": {
-      "physique": {
-        "permitted": [],
-        "forbidden": [],
-        "referenceURL": "",
-        "posture": ""
-      },
-      "personality": {
-        "sincerity": 0,
-        "excitement": 0,
-        "competence": 0,
-        "sophistication": 0,
-        "ruggedness": 0,
-        "characterBrief": ""
-      },
-      "culture": {
-        "coreValues": [],
-        "originNarrative": "",
-        "forbidden": [],
-        "sacredBoundary": ""
-      },
       "relationship": {
-        "mode": "peer",
-        "formality": 0,
+        "mode": "kind_friend",
+        "formality": 4,
+        "warmth": 8,
         "pronoun": "we",
-        "warmth": 0,
         "powerDynamic": "equal"
-      },
-      "reflection": {
-        "depictedArchetype": "",
-        "aspirationalDelta": 0,
-        "forbiddenArchetypes": [],
-        "ageSignal": ""
-      },
-      "selfImage": {
-        "feelingDescriptors": [],
-        "identityStatement": "",
-        "forbidden": []
       }
     },
     "distinctiveAssets": {
-      "visual": {
-        "primaryColor": {
-          "value": "#000000",
-          "severity": "contextual",
-          "rationale": ""
-        },
-        "secondaryColors": [],
-        "forbiddenColors": [],
-        "logoUsage": {
-          "minimumClearSpace": "",
-          "forbiddenBackgrounds": [],
-          "forbiddenModifications": []
-        },
-        "iconography": [],
-        "characterAssets": [],
-        "photographyStyle": {
-          "permitted": [],
-          "forbidden": [],
-          "lightingMood": ""
-        }
-      },
-      "sonic": {
-        "sonicLogoURL": "",
-        "permittedGenres": [],
-        "forbiddenGenres": [],
-        "tempoRange": [0, 0],
-        "instrumentalMood": ""
-      },
       "linguistic": {
-        "ownedPhrases": [],
-        "ownedWords": [],
-        "forbiddenWords": [],
         "typographicVoice": {
-          "sentenceStructure": "",
-          "punctuationStyle": "",
-          "numeralStyle": ""
-        }
+          "sentenceStructure": "Short, declarative. One idea per sentence. Never compound-complex.",
+          "punctuationStyle": "Em-dashes preferred over commas. Never exclamation marks."
+        },
+        "ownedWords": ["ritual", "gentle", "considered"],
+        "forbiddenWords": [
+          { "value": "chemical-free", "severity": "absolute" },
+          { "value": "toxin-free", "severity": "absolute" }
+        ]
       }
     },
     "summary": {
-      "oneLineBrief": "",
-      "threeAdjectives": [],
-      "neverDo": []
+      "oneLineBrief": "Gentle, considered baby care for parents who want specificity without anxiety.",
+      "threeAdjectives": ["gentle", "considered", "specific"],
+      "neverDo": [
+        "Use fear-based language about infant safety",
+        "Use the word 'chemical' in any context",
+        "Position against Ayurvedic tradition"
+      ]
     }
   },
   "narrative": {
@@ -101,45 +46,24 @@
     "_version": "2.0.0",
     "semiotic": {
       "denotative": {
-        "categoryDescriptor": "",
-        "functionalClaims": [],
-        "specifications": [],
-        "forbiddenClaims": []
+        "categoryDescriptor": "Thoughtful baby care for the considered parent",
+        "functionalClaims": ["dermatologist-tested", "fragrance-free formulations"],
+        "forbiddenClaims": ["chemical-free", "toxin-free", "100% safe"]
       },
       "connotative": {
-        "meaningClusters": [],
-        "forbiddenMeanings": [],
-        "emotionalRegister": "",
-        "minimumConnotativeTest": ""
+        "meaningClusters": ["intentional care", "gentle specificity", "calm confidence"],
+        "forbiddenMeanings": ["anxiety", "fear", "clinical distance"],
+        "emotionalRegister": "calm confidence without reassurance-seeking",
+        "minimumConnotativeTest": "Does this feel like something a considered parent would trust without needing to be alarmed first?"
       },
-      "layerHierarchy": "balanced"
+      "layerHierarchy": "connotative_first"
     },
     "myth": {
-      "culturalTension": "",
-      "mythStatement": "",
-      "protagonistRole": "",
-      "antagonist": "",
-      "mythTest": "",
-      "constraints": []
-    },
-    "mythEvolution": {
-      "principle": "",
-      "modernTensions": [],
-      "immutableCore": ""
-    },
-    "pillars": [],
-    "editorial": {
-      "openingPrinciple": "",
-      "structuralApproach": "",
-      "forbiddenStructures": [],
-      "referencePool": [],
-      "forbiddenReferences": [],
-      "timeScaleLanguage": ""
-    },
-    "contentTest": {
-      "mythTest": "",
-      "connotativeTest": "",
-      "toneTest": ""
+      "culturalTension": "Indian urban parents increasingly reject both generic Ayurveda and clinical Western baby care. They want specificity without anxiety.",
+      "mythStatement": "Baby care doesn't need to be anxious to be attentive.",
+      "protagonistRole": "The considered parent who chooses intentionally",
+      "antagonist": "The category norm of fear-based safety marketing",
+      "mythTest": "Does this content feel considered rather than reactive?"
     }
   },
   "voice": {
@@ -147,125 +71,95 @@
     "_version": "2.0.0",
     "base": {
       "sentenceLength": "varied",
-      "vocabularyLevel": 0,
+      "vocabularyLevel": 6,
       "humourPermitted": false,
       "humourStyle": "none",
-      "permittedDevices": [],
-      "forbiddenDevices": [],
-      "structuralRules": []
+      "structuralRules": [
+        "State what the product does before saying what it avoids",
+        "Specificity over reassurance — name the ingredient and its function",
+        "Never open with a safety claim"
+      ]
     },
-    "forbiddenTones": [],
-    "approvedTones": [],
-    "examples": [],
-    "contextVariants": [],
-    "rails": {
-      "global": [],
-      "alternatives": {
-        "whenPricingForbidden": [],
-        "whenUrgencyForbidden": [],
-        "whenComparativeForbidden": [],
-        "whenTrendLanguageForbidden": [],
-        "whenAccessibilityForbidden": [],
-        "whenPromotionForbidden": []
+    "approvedTones": ["warm and informed", "specific and honest", "quietly confident"],
+    "forbiddenTones": ["clinical", "fear-inducing", "urgency-driven", "effusively warm"],
+    "examples": [
+      {
+        "context": "Product description",
+        "text": "Each ingredient is chosen for a reason. This one is gentle on new skin.",
+        "verdict": "approved",
+        "reason": "Specific without being anxious. Explains the why without invoking fear."
+      },
+      {
+        "context": "Social",
+        "text": "Morning light. A small ritual. That's enough.",
+        "verdict": "approved",
+        "reason": "Evokes the brand's connotative register — intentional, calm, specific."
+      },
+      {
+        "context": "Product description",
+        "text": "Paediatrician-tested and 100% chemical-free — because your baby deserves the safest.",
+        "verdict": "rejected",
+        "reason": "Fear-based framing. Uses forbidden term 'chemical-free'. Implies risk where none is stated."
+      },
+      {
+        "context": "Email",
+        "text": "Don't take chances with your baby's skin. Our formula is the safe choice.",
+        "verdict": "rejected",
+        "reason": "Opens with fear. Positions safety as differentiation, which is forbidden framing."
       }
-    }
+    ]
   },
   "commercial": {
     "_component": "commercial",
     "_version": "2.0.0",
     "pricing": {
-      "style": "simple",
+      "style": "transparent",
       "priceDisplayPermitted": true,
-      "displayFormat": "",
-      "surfaceOverrides": [],
-      "urgencyLanguagePermitted": true,
-      "scarcityLanguagePermitted": true,
-      "discountPermitted": true,
-      "maxDiscountPercent": 0,
-      "permittedLanguage": [],
-      "forbiddenLanguage": []
+      "discountPermitted": false,
+      "urgencyLanguagePermitted": false,
+      "scarcityLanguagePermitted": false
     },
     "claims": {
-      "approved": [],
-      "forbidden": [],
-      "comparative": {
-        "competitorMentionPermitted": false,
-        "comparativeClaimsPermitted": false,
-        "permittedCompetitors": [],
-        "forbiddenFramings": []
-      },
-      "superlatives": {
-        "permitted": false,
-        "approved": [],
-        "forbidden": []
-      }
+      "forbidden": [
+        { "value": "chemical-free", "severity": "absolute" },
+        { "value": "the safest choice", "severity": "absolute" }
+      ]
     },
-    "offers": {
-      "permittedTypes": [],
-      "forbiddenTypes": [],
-      "communicationRules": {
-        "urgencyPermitted": false,
-        "scarcityPermitted": false,
-        "valueFraming": ""
-      }
-    },
-    "socialProof": {
-      "starRatingsPermitted": false,
-      "reviewCountsPermitted": false,
-      "customerTestimonialsPermitted": false,
-      "celebrityEndorsementStyle": "",
-      "permittedAuthoritySignals": [],
-      "forbiddenSocialProof": []
-    },
-    "surfaceRules": [],
-    "globalForbiddenTerms": []
+    "globalForbiddenTerms": [
+      { "value": "chemical", "severity": "absolute", "rationale": "Implies the brand's ingredients are noteworthy for what they lack, not what they are" },
+      { "value": "toxin", "severity": "absolute" }
+    ]
   },
   "governance": {
     "_component": "governance",
     "_version": "2.0.0",
     "severity": {
       "absolute": {
-        "constraints": [],
+        "constraints": [
+          "Never use fear-based language about infant safety",
+          "Never use the word 'chemical' in any context",
+          "Never position against Ayurvedic tradition"
+        ],
         "violationResponse": "block_output"
       },
       "strong": {
-        "constraints": [],
-        "overrideProcess": "",
+        "constraints": [
+          "Avoid urgency or scarcity language in any surface",
+          "Do not open content with a safety claim"
+        ],
         "violationResponse": "flag_for_review"
       },
       "contextual": {
-        "constraints": [],
-        "judgmentBounds": "",
+        "constraints": [
+          "Avoid clinical terminology where a natural equivalent exists"
+        ],
         "violationResponse": "log_for_audit"
       }
     },
-    "conflictResolution": {
-      "componentPriority": ["governance", "narrative", "identity", "voice", "commercial"],
-      "knownConflicts": [],
-      "defaultResolution": "escalate_to_human"
-    },
-    "surfaceRules": [],
-    "overrideProtocol": {
-      "authorisedRoles": [],
-      "requiredFields": [],
-      "maxDurationDays": 0,
-      "auditLogEndpoint": ""
-    },
-    "compliance": {
-      "violationWebhook": "",
-      "routing": {
-        "absolute": "",
-        "strong": "",
-        "contextual": ""
-      },
-      "humanReviewTopics": [],
-      "zeroToleranceTerms": [],
-      "geographicOverrides": []
-    },
     "preflight": {
-      "question1": "",
-      "question2": "",
-      "question3": ""
+      "question1": "Does this content feel considered rather than reactive?",
+      "question2": "Would a calm, informed parent find this reassuring without feeling alarmed?",
+      "question3": "Does this avoid fear-based framing entirely?"
     }
   }
 }

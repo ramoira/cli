@@ -1,0 +1,36 @@
+# Brand schema — LLM instructions
+
+This project contains a Ramoira brand schema at `brand.schema.json`.
+
+## How to use this schema
+
+Before generating any content for this brand, load `brand.schema.json`.
+The schema is the authoritative source for:
+- Brand voice and tone (approved/forbidden tones, structural rules, examples)
+- Narrative positioning and meaning system
+- Governance constraints and preflight questions
+- Commercial rules (what can and cannot be said about pricing, claims, competitors)
+
+## Priority fields for generation
+
+1. `identity.summary` — one-line brief, three adjectives, never-do list
+2. `voice.approvedTones` and `voice.forbiddenTones`
+3. `voice.base.structuralRules` — sentence-level constraints
+4. `voice.examples` — approved and rejected examples with reasons
+5. `governance.severity.absolute.constraints` — hard stops
+
+## Preflight check
+
+Before finalising any generated content, verify against the three questions in
+`governance.preflight`. If any answer is no, revise before proceeding.
+
+## Do not
+
+- Default to category-level voice. This schema overrides category norms.
+- Synthesise brand voice from the brand name or category alone.
+- Skip governance constraints for any surface or intent.
+
+## Schema format
+
+Ramoira brand schema v2.0.0
+Spec: https://github.com/ramoira/brand-schema-spec

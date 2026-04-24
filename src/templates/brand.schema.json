@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "brandId": "your-brand-id",
+    "brandName": "Your Brand Name",
+    "schemaVersion": "2.0.0",
+    "effectiveDate": "2026-01-01",
+    "changelog": []
+  },
+  "identity": {
+    "_component": "identity",
+    "_version": "2.0.0",
+    "prism": {
+      "relationship": {
+        "mode": "peer",
+        "formality": 5,
+        "warmth": 6,
+        "pronoun": "we",
+        "powerDynamic": "equal"
+      }
+    },
+    "distinctiveAssets": {
+      "linguistic": {
+        "typographicVoice": {
+          "sentenceStructure": "",
+          "punctuationStyle": ""
+        },
+        "ownedWords": [],
+        "forbiddenWords": []
+      }
+    },
+    "summary": {
+      "oneLineBrief": "One sentence that captures what this brand does and who it does it for.",
+      "threeAdjectives": ["adjective-one", "adjective-two", "adjective-three"],
+      "neverDo": [
+        "First thing this brand never does"
+      ]
+    }
+  },
+  "narrative": {
+    "_component": "narrative",
+    "_version": "2.0.0",
+    "semiotic": {
+      "denotative": {
+        "categoryDescriptor": "What this brand makes or does, plainly stated.",
+        "functionalClaims": [],
+        "forbiddenClaims": []
+      },
+      "connotative": {
+        "meaningClusters": ["primary meaning territory"],
+        "forbiddenMeanings": [],
+        "emotionalRegister": "How this brand makes people feel.",
+        "minimumConnotativeTest": "A one-sentence test: does this content evoke the right feeling?"
+      },
+      "layerHierarchy": "balanced"
+    },
+    "myth": {
+      "culturalTension": "The cultural problem or tension this brand exists to resolve.",
+      "mythStatement": "The belief or stance that defines this brand's worldview.",
+      "mythTest": "A question to ask of any content: does it carry the myth?"
+    }
+  },
+  "voice": {
+    "_component": "voice",
+    "_version": "2.0.0",
+    "base": {
+      "sentenceLength": "varied",
+      "vocabularyLevel": 6,
+      "humourPermitted": false,
+      "humourStyle": "none",
+      "structuralRules": [
+        "First structural rule for this voice."
+      ]
+    },
+    "approvedTones": ["tone-one", "tone-two"],
+    "forbiddenTones": ["forbidden-tone-one"],
+    "examples": [
+      {
+        "context": "Product description",
+        "text": "An example of on-brand writing for this brand.",
+        "verdict": "approved",
+        "reason": "Why this is on-brand."
+      },
+      {
+        "context": "Product description",
+        "text": "An example of off-brand writing this brand would never use.",
+        "verdict": "rejected",
+        "reason": "Why this fails the brand voice test."
+      }
+    ]
+  },
+  "commercial": {
+    "_component": "commercial",
+    "_version": "2.0.0",
+    "pricing": {
+      "style": "transparent",
+      "priceDisplayPermitted": true,
+      "discountPermitted": false
+    },
+    "claims": {
+      "forbidden": []
+    }
+  },
+  "governance": {
+    "_component": "governance",
+    "_version": "2.0.0",
+    "severity": {
+      "absolute": {
+        "constraints": [
+          "The one thing this brand absolutely never does under any circumstance."
+        ],
+        "violationResponse": "block_output"
+      },
+      "strong": {
+        "constraints": [],
+        "violationResponse": "flag_for_review"
+      },
+      "contextual": {
+        "constraints": []
+      }
+    },
+    "preflight": {
+      "question1": "A brand-specific question to ask before publishing any content.",
+      "question2": "A second preflight check question.",
+      "question3": "A third preflight check question."
+    }
+  }
+}

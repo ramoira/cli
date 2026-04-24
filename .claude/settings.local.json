@@ -7,7 +7,9 @@
       "Bash(npm install *)",
       "Bash(node dist/index.js validate tests/fixtures/valid.schema.json)",
       "Bash(node dist/index.js validate tests/fixtures/invalid.schema.json)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(npm run *)",
+      "Bash(npx vitest *)"
     ]
   }
 }

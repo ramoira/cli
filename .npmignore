@@ -1,0 +1,13 @@
+src/
+tests/
+docs/
+*.md
+!readme.md
+files.md
+SCHEMA-AUDIT.md
+tsconfig.json
+tsup.config.ts
+.env
+.env.local
+tmp/
+*.tsbuildinfo

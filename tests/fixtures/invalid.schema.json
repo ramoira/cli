@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "brandId": "test-brand"
+  },
+  "identity": {
+    "summary": {
+      "oneLineBrief": "",
+      "threeAdjectives": ["only-one"],
+      "neverDo": []
+    }
+  },
+  "narrative": {},
+  "voice": {
+    "base": {
+      "sentenceLength": "short",
+      "vocabularyLevel": 5,
+      "humourPermitted": false,
+      "humourStyle": "none"
+    },
+    "approvedTones": [],
+    "forbiddenTones": ["clinical"],
+    "examples": [
+      {
+        "text": "Only one example",
+        "verdict": "approved",
+        "reason": "Only one example provided — schema requires minItems 2"
+      }
+    ]
+  },
+  "commercial": {},
+  "governance": {}
+}

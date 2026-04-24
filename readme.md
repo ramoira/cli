@@ -1,36 +1,82 @@
 # Ramoira CLI
 
-Brand schema infrastructure for the agent web.
+Brand schema generation and publishing for the agent web.
 
-## Install
-
+```
 npm install -g ramoira
+```
+
+## What it does
+
+`ramoira init` asks you ten questions and generates a `brand.schema.json` in your project — a structured, machine-readable definition of your brand identity. Your own LLM key does the generation. Nothing leaves your machine.
+
+Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf, v0, Lovable) read it automatically. No re-prompting every session. Consistent voice across tools, models, and collaborators.
 
 ## Commands
 
-ramoira init      Generate a brand schema locally
-ramoira validate  Validate schema against the Ramoira spec
-ramoira publish   Publish schema to ramoira.com (free account required)
-ramoira status    Show current schema state
+```
+ramoira init        Generate brand.schema.json locally (no account required)
+ramoira validate    Validate schema against the Ramoira spec
+ramoira publish     Publish summary to ramoira.com (free account required)
+ramoira status      Show current publication state
+ramoira login       Save API token for publish and status commands
+```
 
-## What is a brand schema?
+## Quick start
 
-A structured, versioned, agent-readable definition of
-your brand identity. Lives in your project. Consumed by
-AI tools automatically. No re-prompting every session.
+```sh
+# Tier 1 — local only, no account
+npx ramoira init
+npx ramoira validate
 
-## How agents consume it
+# Tier 2 — publish to ramoira.com (get a token at ramoira.com/tokens)
+export RAMOIRA_TOKEN=your_token
+npx ramoira publish
 
-Any MCP client reads ramoira.config.json in your project root
-and fetches the schema automatically. Cursor, Claude Code,
-Windsurf, and others support this natively.
+# Check publication state
+npx ramoira status
+```
 
-## Spec
+## How agents consume your schema
 
-The schema format is defined in:
-github.com/ramoira/schema-spec
+Any agent or tool with access to your project directory reads `brand.schema.json` directly. For remote agents and deployed pipelines, the published summary schema at `ramoira.com/brands/[slug]/schema.summary.json` is publicly accessible and crawlable.
+
+## LLM key
+
+`ramoira init` calls your own LLM to generate the schema. It reads `ANTHROPIC_API_KEY` from your environment, or prompts you for one if not set. The key is used once for generation and never stored.
+
+```sh
+export ANTHROPIC_API_KEY=sk-ant-...
+ramoira init
+```
+
+OpenAI-compatible providers: set `OPENAI_API_KEY` and `OPENAI_BASE_URL`.
+
+## Schema format
+
+The schema format is an open standard. Full specification, JSON validators, and worked examples:
+
+**[github.com/ramoira/brand-schema-spec](https://github.com/ramoira/brand-schema-spec)**
+
+## Documentation
+
+Integration guides, field reference, and agent workflow docs:
+
+**[github.com/ramoira/docs](https://github.com/ramoira/docs)**
+
+## Tiers
+
+| | Tier 1 — Local | Tier 2 — Published | Tier 3 — Studio |
+|---|---|---|---|
+| `ramoira init` | ✓ | ✓ | ✓ |
+| `ramoira validate` | ✓ | ✓ | ✓ |
+| `ramoira publish` | — | ✓ | ✓ |
+| `ramoira studio` | — | — | ✓ |
+| Account required | No | Yes (free) | Yes (paid) |
+| Schema stored by Ramoira | Nothing | Summary only | Full (private) |
+| Public URL | — | ✓ draft | ✓ certified |
+| LLM flywheel | — | Slow | Fast |
 
 ## License
 
-MIT — the CLI and schema format are open source.
-Brand schemas you generate are yours entirely.
+MIT — the CLI and schema format are open source. Brand schemas you generate are yours entirely.
