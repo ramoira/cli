@@ -14,31 +14,67 @@ export interface IntakeAnswers {
   pricingStyle: string;
 }
 
-const RELATIONSHIP_MODES = [
-  { value: "peer",                    name: "peer — equal, side-by-side" },
-  { value: "kind_friend",             name: "kind friend — warm and supportive" },
-  { value: "coach",                   name: "coach — guiding, motivating" },
-  { value: "mentor",                  name: "mentor — wise, experienced" },
-  { value: "servant_to_exceptional",  name: "servant to the exceptional — deferential, exclusive" },
-  { value: "fellow_activist",         name: "fellow activist — mission-driven, outspoken" },
-  { value: "entertainer",             name: "entertainer — playful, engaging" },
-  { value: "challenger",              name: "challenger — provocative, disruptive" },
+const ARCHETYPES = [
+  {
+    value: "peer",
+    name: "We're like you. We just happen to know a bit more about this one thing.",
+  },
+  {
+    value: "optimist",
+    name: "Things can be better. Here is a small thing that helps.",
+  },
+  { value: "coach", name: "We believe in what you can do before you do." },
+  { value: "expert", name: "We know more. Here is the proof." },
+  {
+    value: "monument",
+    name: "Built to outlast everything. Excellence as philosophy, not strategy.",
+  },
+  {
+    value: "activist",
+    name: "Business as a force for change. Profit is the fuel, not the point.",
+  },
+  {
+    value: "provocateur",
+    name: "Limits are the starting point. Mediocrity is the only enemy.",
+  },
+  {
+    value: "challenger",
+    name: "The category is broken. We are what replaces it.",
+  },
 ];
 
 const PRICING_STYLES = [
-  { value: "simple",      name: "simple — straightforward pricing" },
-  { value: "transparent", name: "transparent — open about all costs" },
-  { value: "anchored",    name: "anchored — reference price shown first" },
-  { value: "value_led",   name: "value led — lead with benefit, not price" },
-  { value: "opaque",      name: "opaque — price not shown (luxury / bespoke)" },
+  { value: "simple", name: "We state the price clearly and move on" },
+  {
+    value: "transparent",
+    name: "We show all costs upfront — no surprises, ever",
+  },
+  {
+    value: "anchored",
+    name: "We reference what others charge to show our value",
+  },
+  {
+    value: "value_led",
+    name: "We lead with what it does — price comes second",
+  },
+  {
+    value: "opaque",
+    name: "We don't discuss price publicly — enquire to find out",
+  },
 ];
 
 function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function parseList(raw: string, min: number, label: string): string[] {
-  const items = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  const items = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (items.length < min) {
     throw new Error(`${label} requires at least ${min} item(s).`);
   }
@@ -47,7 +83,11 @@ function parseList(raw: string, min: number, label: string): string[] {
 
 export async function runIntake(): Promise<IntakeAnswers> {
   console.log(chalk.bold("\nRamoira — brand schema init\n"));
-  console.log(chalk.gray("Answer a few questions. Your LLM will generate the full schema.\n"));
+  console.log(
+    chalk.gray(
+      "Answer a few questions. Your LLM will generate the full schema.\n",
+    ),
+  );
 
   const brandName = await input({ message: "Brand name:" });
 
@@ -69,30 +109,34 @@ export async function runIntake(): Promise<IntakeAnswers> {
   const adjectivesRaw = await input({
     message: "Three words it should always feel like (comma-separated):",
   });
-  const threeAdjectives = parseList(adjectivesRaw, 3, "Three adjectives").slice(0, 3);
+  const threeAdjectives = parseList(adjectivesRaw, 3, "Three adjectives").slice(
+    0,
+    3,
+  );
 
-  const relationshipMode = await select({
-    message: "How does your brand relate to customers?",
-    choices: RELATIONSHIP_MODES,
-  });
+  const relationshipMode = (await select({
+    message: "How does your brand show up for people?",
+    choices: ARCHETYPES.map(({ name }) => ({ value: name, name })),
+  })) as string;
 
   const approvedRaw = await input({
-    message: "On-brand tones — always right (comma-separated):",
+    message:
+      "Words that should always describe how this brand sounds (comma-separated):",
   });
   const approvedTones = parseList(approvedRaw, 1, "Approved tones");
 
   const forbiddenRaw = await input({
-    message: "Off-brand tones — always wrong (comma-separated):",
+    message: "Words this brand should never sound like (comma-separated):",
   });
   const forbiddenTones = parseList(forbiddenRaw, 1, "Forbidden tones");
 
   const neverDoRaw = await input({
-    message: "Five things this brand must never do (comma-separated):",
+    message: "Few things this brand must never do or say (comma-separated):",
   });
-  const neverDo = parseList(neverDoRaw, 5, "Never-do list");
+  const neverDo = parseList(neverDoRaw, 1, "Never-do list");
 
   const pricingStyle = await select({
-    message: "Pricing approach:",
+    message: "How does your brand talk about money?",
     choices: PRICING_STYLES,
   });
 

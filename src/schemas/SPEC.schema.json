@@ -71,14 +71,14 @@
     "RelationshipMode": {
       "type": "string",
       "enum": [
-        "peer",
-        "kind_friend",
-        "coach",
-        "mentor",
-        "servant_to_exceptional",
-        "fellow_activist",
-        "entertainer",
-        "challenger"
+        "We're like you. We just happen to know a bit more about this one thing.",
+        "Things can be better. Here is a small thing that helps.",
+        "We believe in what you can do before you do.",
+        "We know more. Here is the proof.",
+        "Built to outlast everything. Excellence as philosophy, not strategy.",
+        "Business as a force for change. Profit is the fuel, not the point.",
+        "Limits are the starting point. Mediocrity is the only enemy.",
+        "The category is broken. We are what replaces it."
       ]
     },
 
@@ -209,7 +209,7 @@
               "type": "object",
               "required": ["mode"],
               "properties": {
-                "mode": { "$ref": "#/$defs/RelationshipMode" },
+                "mode": { "type": "string", "minLength": 1 },
                 "formality": { "$ref": "#/$defs/Score" },
                 "warmth": { "$ref": "#/$defs/Score" },
                 "pronoun": {

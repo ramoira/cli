@@ -5,14 +5,45 @@ import template from "../schemas/brand.template.json";
 function buildPrompt(intake: IntakeAnswers): string {
   const templateStr = JSON.stringify(template, null, 2);
 
-  return `You are generating a Ramoira brand schema JSON document.
+  return `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
 
-A Ramoira brand schema is a structured, machine-readable brand identity document with five components: identity, narrative, voice, commercial, and governance. Each component has "_component" and "_version": "2.0.0" fields.
+Every field in this schema is an instruction an AI will execute, not a description for a human to read. Write all values as specific, actionable directives. Vague or generic values make the schema useless.
 
-## Brand intake answers
+## What each section does
+
+**identity** — defines who the brand is: its character, visual and linguistic assets, and how it relates to people.
+**narrative** — defines what the brand means: its cultural myth, semiotic layers, and content structure.
+**voice** — defines how the brand speaks: tone, rhythm, examples of right and wrong copy, and per-surface rules.
+**commercial** — defines how the brand behaves commercially: pricing language, claims, offers, and social proof rules.
+**governance** — defines what an AI must never do, what requires human review, and preflight checks before any content is generated.
+
+## Key field concepts
+
+**Rails** — conditional instructions: \`{ "context": "when X", "instruction": "do Y", "example": "...", "antiExample": "..." }\`. An AI reads these and follows them situationally.
+**governance.severity** — three tiers: \`absolute\` (AI blocks the output entirely), \`strong\` (AI flags for human review), \`contextual\` (AI uses judgment and logs).
+**narrative.myth** — not marketing copy. The cultural tension this brand resolves, its protagonist role, and what it stands against. The \`mythTest\` is a yes/no question an AI asks to check if content fits the myth.
+**narrative.contentTest** — three self-check questions the AI asks before approving any output: does this fit the myth? does it carry the right connotations? does it sound like us?
+**governance.preflight** — three yes/no questions an AI runs before generating any content for this brand. Specific and binary.
+
+## Valid enum values
+
+Use only these values for the fields listed:
+
+- \`voice.base.sentenceLength\`: "short" | "varied" | "long" | "fragments_permitted"
+- \`voice.base.humourStyle\`: "dry" | "self_deprecating" | "absurdist" | "warm" | "irreverent" | "none"
+- \`voice.examples[].verdict\`: "approved" | "rejected"
+- \`voice.contextVariants[].surface\` and \`commercial.surfaceRules[].surface\`: "search_result_page" | "paid_landing_page" | "product_detail_page" | "comparison_page" | "editorial" | "brand_narrative" | "social_organic" | "social_paid" | "email_acquisition" | "email_retention" | "display_ad" | "video_script" | "audio_script" | "press_release" | "customer_service" | "packaging_copy" | "out_of_home"
+- \`narrative.semiotic.layerHierarchy\`: "connotative_first" | "balanced" | "denotative_first"
+- \`identity.prism.relationship.pronoun\`: "we" | "I" | "brand_name_only"
+- \`identity.prism.relationship.powerDynamic\`: "brand_leads" | "equal" | "customer_leads"
+- \`governance.severity.absolute.violationResponse\`: "block_output" | "flag_and_block"
+- \`governance.severity.strong.violationResponse\`: "flag_for_review" | "block_output"
+- \`governance.severity.contextual.violationResponse\`: "log_for_audit"
+- All score fields (sincerity, excitement, competence, sophistication, ruggedness, formality, warmth, vocabularyLevel): numbers 0–10
+
+## Brand context
 
 - Brand name: ${intake.brandName}
-- Brand ID: ${intake.brandId}
 - What this brand makes or does: ${intake.categoryDescriptor}
 - What this brand stands for: ${intake.mythStatement}
 - Three words it should always feel like: ${intake.threeAdjectives.join(", ")}
@@ -20,33 +51,64 @@ A Ramoira brand schema is a structured, machine-readable brand identity document
 - Always on-brand tones: ${intake.approvedTones.join(", ")}
 - Always off-brand tones: ${intake.forbiddenTones.join(", ")}
 - Things the brand must never do: ${intake.neverDo.join("; ")}
-- Pricing approach: ${intake.pricingStyle}
+- How the brand talks about money: ${intake.pricingStyle}
 
-## Schema structure to fill
+## Template
 
-Use this blank template as the exact structure. Fill in ALL fields with meaningful, specific values. Do not leave string fields empty.
+Ignore the \`meta\` block — it is set automatically. Fill every other field. Do not leave string fields empty or arrays empty where content is meaningful.
 
 ${templateStr}
 
-## Requirements
+## Quality checks
 
-- meta.brandId must be "${intake.brandId}"
-- meta.brandName must be "${intake.brandName}"
-- meta.schemaVersion must be "2.0.0"
-- meta.effectiveDate must be "${new Date().toISOString().split("T")[0]}"
-- identity.summary.threeAdjectives must be exactly: ${JSON.stringify(intake.threeAdjectives)}
-- identity.summary.neverDo must include at least 5 items: ${JSON.stringify(intake.neverDo)}
-- identity.prism.relationship.mode must be "${intake.relationshipMode}"
-- voice.approvedTones must include: ${JSON.stringify(intake.approvedTones)}
-- voice.forbiddenTones must include: ${JSON.stringify(intake.forbiddenTones)}
-- commercial.pricing.style must be "${intake.pricingStyle}"
-- voice.examples must have at least 2 approved and 2 rejected examples, each with context, text, verdict, and reason fields
-- narrative.contentTest.mythTest, connotativeTest, and toneTest must each be a specific testable question
-- governance.preflight.question1, question2, question3 must each be a specific brand governance question
-- narrative.semiotic.denotative.categoryDescriptor must reflect: "${intake.categoryDescriptor}"
-- narrative.myth.mythStatement must reflect: "${intake.mythStatement}"
+- voice.examples: write at least 2 approved and 2 rejected examples with real copy, not placeholders
+- narrative.contentTest: each test must be a specific yes/no question, not a generic instruction
+- governance.preflight: three binary checks specific to this brand, not generic brand hygiene
+- governance.severity.absolute.constraints: at least one — derived directly from the never-do list
+- narrative.myth: culturalTension should name a real cultural conflict this brand takes a side on
 
 Return ONLY the complete JSON object. No explanation. No markdown code blocks.`;
+}
+
+function injectKnownValues(
+  schema: Record<string, unknown>,
+  intake: IntakeAnswers,
+): Record<string, unknown> {
+  const today = new Date().toISOString().split("T")[0];
+
+  schema.meta = {
+    ...((schema.meta as Record<string, unknown>) ?? {}),
+    brandId: intake.brandId,
+    brandName: intake.brandName,
+    schemaVersion: "2.0.0",
+    effectiveDate: today,
+  };
+
+  const identity = (schema.identity ?? {}) as Record<string, unknown>;
+  const summary = (identity.summary ?? {}) as Record<string, unknown>;
+  summary.threeAdjectives = intake.threeAdjectives;
+  summary.neverDo = intake.neverDo;
+  identity.summary = summary;
+
+  const prism = (identity.prism ?? {}) as Record<string, unknown>;
+  const relationship = (prism.relationship ?? {}) as Record<string, unknown>;
+  relationship.mode = intake.relationshipMode;
+  prism.relationship = relationship;
+  identity.prism = prism;
+  schema.identity = identity;
+
+  const voice = (schema.voice ?? {}) as Record<string, unknown>;
+  voice.approvedTones = intake.approvedTones;
+  voice.forbiddenTones = intake.forbiddenTones;
+  schema.voice = voice;
+
+  const commercial = (schema.commercial ?? {}) as Record<string, unknown>;
+  const pricing = (commercial.pricing ?? {}) as Record<string, unknown>;
+  pricing.style = intake.pricingStyle;
+  commercial.pricing = pricing;
+  schema.commercial = commercial;
+
+  return schema;
 }
 
 export function extractJson(text: string): Record<string, unknown> {
@@ -83,7 +145,8 @@ export async function generateSchema(
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 
-  return extractJson(text);
+  const schema = extractJson(text);
+  return injectKnownValues(schema, intake);
 }
 
 export function resolveApiKey(): string | null {
