@@ -77,6 +77,66 @@ Integration guides, field reference, and agent workflow docs:
 | Public URL | — | ✓ draft | ✓ certified |
 | LLM flywheel | — | Slow | Fast |
 
+## Testing & local development
+
+**Run the test suite:**
+
+```bash
+npm test
+```
+
+23 unit tests covering schema validation, JSON extraction, file I/O, and publish logic.
+
+**Build the CLI:**
+
+```bash
+npm run build        # compiles to dist/index.js
+```
+
+**Run commands without a global install:**
+
+```bash
+# tsx — no build needed, fastest for dev iteration
+node --import tsx/esm src/index.ts init
+
+# built dist
+node dist/index.js init
+node dist/index.js --help
+```
+
+**Test the full init flow end-to-end:**
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+node dist/index.js init
+node dist/index.js validate
+```
+
+**Test validate against a bad file:**
+
+```bash
+echo '{"meta":{}}' > bad.json
+node dist/index.js validate bad.json
+# exits 1 with a list of errors
+```
+
+**Test auth commands (no API required):**
+
+```bash
+node dist/index.js whoami    # not logged in
+node dist/index.js login     # paste any token to test storage
+node dist/index.js whoami    # shows token is set
+node dist/index.js logout
+```
+
+**Point publish/status at a local backend:**
+
+```bash
+export RAMOIRA_API_URL=http://localhost:3000
+node dist/index.js publish
+node dist/index.js status my-brand
+```
+
 ## License
 
 MIT — the CLI and schema format are open source. Brand schemas you generate are yours entirely.
