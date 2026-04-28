@@ -1,74 +1,43 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { IntakeAnswers } from "./intake.js";
-import template from "../schemas/brand.template.json";
+import { TOOL_DEFINITIONS, executeTool } from "./generator-tools.js";
 
-function buildPrompt(intake: IntakeAnswers): string {
-  const templateStr = JSON.stringify(template, null, 2);
+// ── Prompts ───────────────────────────────────────────────────────────────────
 
-  return `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
+const SYSTEM_PROMPT = `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
 
 Every field in this schema is an instruction an AI will execute, not a description for a human to read. Write all values as specific, actionable directives. Vague or generic values make the schema useless.
 
-## What each section does
+Use the provided tools to look up layer specifications, valid enum values, and examples before writing each section. Do not guess at field shapes or enum values — look them up.
 
-**identity** — defines who the brand is: its character, visual and linguistic assets, and how it relates to people.
-**narrative** — defines what the brand means: its cultural myth, semiotic layers, and content structure.
-**voice** — defines how the brand speaks: tone, rhythm, examples of right and wrong copy, and per-surface rules.
-**commercial** — defines how the brand behaves commercially: pricing language, claims, offers, and social proof rules.
-**governance** — defines what an AI must never do, what requires human review, and preflight checks before any content is generated.
+## Quality requirements
 
-## Key field concepts
+- voice.examples: at least 2 approved and 2 rejected, with real copy (not placeholders), and specific reasons
+- narrative.contentTest: each test must be a specific yes/no question, not a generic instruction
+- narrative.myth.culturalTension: name a real cultural conflict this brand takes a side on — not a category description
+- governance.preflight: three binary yes/no checks specific to this brand, not generic brand hygiene
+- governance.severity.absolute.constraints: at least one, derived directly from the never-do list
+- All score fields (sincerity, excitement, competence, sophistication, ruggedness, formality, warmth, vocabularyLevel, aspirationalDelta): numbers 0–10
 
-**Rails** — conditional instructions: \`{ "context": "when X", "instruction": "do Y", "example": "...", "antiExample": "..." }\`. An AI reads these and follows them situationally.
-**governance.severity** — three tiers: \`absolute\` (AI blocks the output entirely), \`strong\` (AI flags for human review), \`contextual\` (AI uses judgment and logs).
-**narrative.myth** — not marketing copy. The cultural tension this brand resolves, its protagonist role, and what it stands against. The \`mythTest\` is a yes/no question an AI asks to check if content fits the myth.
-**narrative.contentTest** — three self-check questions the AI asks before approving any output: does this fit the myth? does it carry the right connotations? does it sound like us?
-**governance.preflight** — three yes/no questions an AI runs before generating any content for this brand. Specific and binary.
+When you have gathered the information you need via tools, output the complete, filled JSON schema. Return ONLY the JSON object. No explanation. No markdown code blocks.`;
 
-## Valid enum values
-
-Use only these values for the fields listed:
-
-- \`voice.base.sentenceLength\`: "short" | "varied" | "long" | "fragments_permitted"
-- \`voice.base.humourStyle\`: "dry" | "self_deprecating" | "absurdist" | "warm" | "irreverent" | "none"
-- \`voice.examples[].verdict\`: "approved" | "rejected"
-- \`voice.contextVariants[].surface\` and \`commercial.surfaceRules[].surface\`: "search_result_page" | "paid_landing_page" | "product_detail_page" | "comparison_page" | "editorial" | "brand_narrative" | "social_organic" | "social_paid" | "email_acquisition" | "email_retention" | "display_ad" | "video_script" | "audio_script" | "press_release" | "customer_service" | "packaging_copy" | "out_of_home"
-- \`narrative.semiotic.layerHierarchy\`: "connotative_first" | "balanced" | "denotative_first"
-- \`identity.prism.relationship.pronoun\`: "we" | "I" | "brand_name_only"
-- \`identity.prism.relationship.powerDynamic\`: "brand_leads" | "equal" | "customer_leads"
-- \`governance.severity.absolute.violationResponse\`: "block_output" | "flag_and_block"
-- \`governance.severity.strong.violationResponse\`: "flag_for_review" | "block_output"
-- \`governance.severity.contextual.violationResponse\`: "log_for_audit"
-- All score fields (sincerity, excitement, competence, sophistication, ruggedness, formality, warmth, vocabularyLevel): numbers 0–10
-
-## Brand context
+function buildUserMessage(intake: IntakeAnswers): string {
+  return `Generate a complete Ramoira brand schema for the following brand:
 
 - Brand name: ${intake.brandName}
-- What this brand makes or does: ${intake.categoryDescriptor}
-- What this brand stands for: ${intake.mythStatement}
-- Three words it should always feel like: ${intake.threeAdjectives.join(", ")}
-- How the brand relates to customers: ${intake.relationshipMode}
+- What they make or do: ${intake.categoryDescriptor}
+- What they stand for (myth): ${intake.mythStatement}
+- Three adjectives it should always feel like: ${intake.threeAdjectives.join(", ")}
+- Relationship mode (archetype): ${intake.relationshipMode}
 - Always on-brand tones: ${intake.approvedTones.join(", ")}
 - Always off-brand tones: ${intake.forbiddenTones.join(", ")}
 - Things the brand must never do: ${intake.neverDo.join("; ")}
 - How the brand talks about money: ${intake.pricingStyle}
 
-## Template
-
-Ignore the \`meta\` block — it is set automatically. Fill every other field. Do not leave string fields empty or arrays empty where content is meaningful.
-
-${templateStr}
-
-## Quality checks
-
-- voice.examples: write at least 2 approved and 2 rejected examples with real copy, not placeholders
-- narrative.contentTest: each test must be a specific yes/no question, not a generic instruction
-- governance.preflight: three binary checks specific to this brand, not generic brand hygiene
-- governance.severity.absolute.constraints: at least one — derived directly from the never-do list
-- narrative.myth: culturalTension should name a real cultural conflict this brand takes a side on
-
-Return ONLY the complete JSON object. No explanation. No markdown code blocks.`;
+Use the tools to look up the layer specs, valid enum values, and examples. Then output the complete schema JSON.`;
 }
+
+// ── Known-value injection (values we already have from intake) ────────────────
 
 function injectKnownValues(
   schema: Record<string, unknown>,
@@ -111,15 +80,20 @@ function injectKnownValues(
   return schema;
 }
 
+// ── JSON extraction ───────────────────────────────────────────────────────────
+
 export function extractJson(text: string): Record<string, unknown> {
   const trimmed = text.trim();
   const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const raw = fenced ? fenced[1].trim() : (() => {
-    const start = trimmed.indexOf("{");
-    const end = trimmed.lastIndexOf("}");
-    if (start === -1 || end === -1) throw new Error("No JSON object found in model response.");
-    return trimmed.slice(start, end + 1);
-  })();
+  const raw = fenced
+    ? fenced[1].trim()
+    : (() => {
+        const start = trimmed.indexOf("{");
+        const end = trimmed.lastIndexOf("}");
+        if (start === -1 || end === -1)
+          throw new Error("No JSON object found in model response.");
+        return trimmed.slice(start, end + 1);
+      })();
   try {
     return JSON.parse(raw) as Record<string, unknown>;
   } catch {
@@ -127,25 +101,78 @@ export function extractJson(text: string): Record<string, unknown> {
   }
 }
 
+// ── Agentic generation loop ───────────────────────────────────────────────────
+
 export async function generateSchema(
   intake: IntakeAnswers,
   apiKey: string,
 ): Promise<Record<string, unknown>> {
   const client = new Anthropic({ apiKey });
-  const prompt = buildPrompt(intake);
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8000,
-    messages: [{ role: "user", content: prompt }],
-  });
+  const messages: Anthropic.Messages.MessageParam[] = [
+    { role: "user", content: buildUserMessage(intake) },
+  ];
 
-  const text = response.content
-    .filter((b) => b.type === "text")
-    .map((b) => (b as { type: "text"; text: string }).text)
-    .join("");
+  let finalText = "";
+  const MAX_ITERATIONS = 12;
 
-  const schema = extractJson(text);
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 20000,
+      thinking: { type: "enabled", budget_tokens: 10000 },
+      system: SYSTEM_PROMPT,
+      tools: TOOL_DEFINITIONS,
+      messages,
+    });
+
+    // Always preserve the full assistant turn (including thinking blocks)
+    messages.push({ role: "assistant", content: response.content });
+
+    if (response.stop_reason === "end_turn") {
+      finalText = response.content
+        .filter((b): b is Anthropic.Messages.TextBlock => b.type === "text")
+        .map((b) => b.text)
+        .join("");
+      break;
+    }
+
+    if (response.stop_reason === "tool_use") {
+      const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
+
+      for (const block of response.content) {
+        if (block.type === "tool_use") {
+          const result = executeTool(
+            block.name,
+            block.input as Record<string, string>,
+          );
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: result,
+          });
+        }
+      }
+
+      messages.push({ role: "user", content: toolResults });
+      continue;
+    }
+
+    // Unexpected stop reason — surface the text if any and stop
+    finalText = response.content
+      .filter((b): b is Anthropic.Messages.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join("");
+    break;
+  }
+
+  if (!finalText) {
+    throw new Error(
+      "Model did not produce a final schema after tool use. Try running init again.",
+    );
+  }
+
+  const schema = extractJson(finalText);
   return injectKnownValues(schema, intake);
 }
 
