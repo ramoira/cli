@@ -46,12 +46,17 @@ npx ramoira status
 
 If you are a brand manager running this on your own laptop (Windows or macOS) to generate a brand schema:
 
-1. **Open your terminal:**
+1. **Install Node.js (Required):**
+   - The CLI requires Node.js to run.
+   - **Windows:** Download the "LTS" (Long Term Support) installer from [nodejs.org](https://nodejs.org/) and run it. Follow the standard prompts.
+   - **macOS:** Download the "LTS" macOS installer from [nodejs.org](https://nodejs.org/) and run it.
+   - *Note: After installing, you must restart your terminal or computer.*
+2. **Open your terminal:**
    - **macOS:** Press `Cmd + Space`, type `Terminal`, and hit Enter.
    - **Windows:** Press `Win + R`, type `powershell`, and hit Enter.
-2. **Get an Anthropic API key:**
+3. **Get an Anthropic API key:**
    - Go to [console.anthropic.com](https://console.anthropic.com) and create an API key. You will need some credits to run the AI model.
-3. **Set the key and run the tool:**
+4. **Set the key and run the tool:**
    - **macOS:**
      ```sh
      export ANTHROPIC_API_KEY=sk-ant-your-key-here
@@ -67,7 +72,7 @@ If you are a brand manager running this on your own laptop (Windows or macOS) to
      set ANTHROPIC_API_KEY=sk-ant-your-key-here
      npx ramoira init
      ```
-4. **Answer the questions:** The CLI will ask you 10 questions about your brand. Once finished, it will save a `brand.schema.json` file in your current folder.
+5. **Answer the questions:** The CLI will ask you 10 questions about your brand. Once finished, it will save a `brand.schema.json` file in your current folder.
 
 ## How agents consume your schema
 
