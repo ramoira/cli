@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { IntakeAnswers } from "./intake.js";
 import { TOOL_DEFINITIONS, executeTool } from "./generator-tools.js";
+import { validateSchema } from "./validator.js";
 
 // ── Prompts ───────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,21 @@ Use the provided tools to look up layer specifications, valid enum values, and e
 - governance.preflight: three binary yes/no checks specific to this brand, not generic brand hygiene
 - governance.severity.absolute.constraints: at least one, derived directly from the never-do list
 - All score fields (sincerity, excitement, competence, sophistication, ruggedness, formality, warmth, vocabularyLevel, aspirationalDelta): numbers 0–10
+
+## Constrained<string> fields — critical shape requirement
+
+The following fields must be arrays of objects with shape { value: string, severity: "absolute"|"strong"|"contextual", rationale: string }.
+NEVER output plain strings for these fields:
+- identity.distinctiveAssets.linguistic.ownedPhrases
+- identity.distinctiveAssets.linguistic.forbiddenWords
+- commercial.pricing.forbiddenLanguage
+- commercial.globalForbiddenTerms
+- commercial.offers.forbiddenTypes
+
+## Other required nested field shapes
+
+- governance.conflictResolution.knownConflicts[]: must include { scenario, winner, rationale }
+- commercial.pricing.surfaceOverrides[]: must include { surface, style }
 
 When you have gathered the information you need via tools, output the complete, filled JSON schema. Return ONLY the JSON object. No explanation. No markdown code blocks.`;
 
@@ -37,7 +53,7 @@ function buildUserMessage(intake: IntakeAnswers): string {
 Use the tools to look up the layer specs, valid enum values, and examples. Then output the complete schema JSON.`;
 }
 
-// ── Known-value injection (values we already have from intake) ────────────────
+// ── Known-value injection ─────────────────────────────────────────────────────
 
 function injectKnownValues(
   schema: Record<string, unknown>,
@@ -80,6 +96,109 @@ function injectKnownValues(
   return schema;
 }
 
+// ── Structural repair ─────────────────────────────────────────────────────────
+// Fixes predictable shape errors the model makes on Constrained<string> fields
+// and other nested objects with required properties.
+
+type DeepObj = Record<string, unknown>;
+
+function getPath(root: DeepObj, path: string[]): unknown {
+  let node: unknown = root;
+  for (const key of path) {
+    if (node === null || typeof node !== "object") return undefined;
+    node = (node as DeepObj)[key];
+  }
+  return node;
+}
+
+function setPath(root: DeepObj, path: string[], value: unknown): void {
+  let node: DeepObj = root;
+  for (const key of path.slice(0, -1)) {
+    if (typeof node[key] !== "object" || node[key] === null) return;
+    node = node[key] as DeepObj;
+  }
+  node[path[path.length - 1]] = value;
+}
+
+function repairConstrainedArray(root: DeepObj, path: string[]): void {
+  const arr = getPath(root, path);
+  if (!Array.isArray(arr)) return;
+  setPath(
+    root,
+    path,
+    arr.map((item) => {
+      if (typeof item === "string") {
+        return { value: item, severity: "contextual", rationale: "" };
+      }
+      if (item !== null && typeof item === "object") {
+        const o = item as DeepObj;
+        if (!("severity" in o)) o.severity = "contextual";
+        if (!("rationale" in o)) o.rationale = "";
+        if (!("value" in o) && "constraint" in o) o.value = o.constraint;
+      }
+      return item;
+    }),
+  );
+}
+
+function repairSurfaceOverrides(root: DeepObj): void {
+  const arr = getPath(root, ["commercial", "pricing", "surfaceOverrides"]);
+  if (!Array.isArray(arr)) return;
+  const baseStyle =
+    (getPath(root, ["commercial", "pricing", "style"]) as string) ?? "simple";
+  setPath(
+    root,
+    ["commercial", "pricing", "surfaceOverrides"],
+    arr.map((item) => {
+      if (item !== null && typeof item === "object") {
+        const o = item as DeepObj;
+        if (!("style" in o)) o.style = baseStyle;
+      }
+      return item;
+    }),
+  );
+}
+
+function repairKnownConflicts(root: DeepObj): void {
+  const arr = getPath(root, [
+    "governance",
+    "conflictResolution",
+    "knownConflicts",
+  ]);
+  if (!Array.isArray(arr)) return;
+  setPath(
+    root,
+    ["governance", "conflictResolution", "knownConflicts"],
+    arr.map((item) => {
+      if (item !== null && typeof item === "object") {
+        const o = item as DeepObj;
+        if (!("scenario" in o)) {
+          o.scenario =
+            typeof o.description === "string"
+              ? o.description
+              : typeof o.conflict === "string"
+                ? o.conflict
+                : "conflict between components";
+        }
+        if (!("winner" in o)) o.winner = "governance";
+        if (!("rationale" in o)) o.rationale = "";
+      }
+      return item;
+    }),
+  );
+}
+
+export function repairSchema(schema: Record<string, unknown>): Record<string, unknown> {
+  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "ownedPhrases"]);
+  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "forbiddenWords"]);
+  repairConstrainedArray(schema, ["commercial", "pricing", "forbiddenLanguage"]);
+  repairConstrainedArray(schema, ["commercial", "globalForbiddenTerms"]);
+  repairConstrainedArray(schema, ["commercial", "offers", "forbiddenTypes"]);
+  repairSurfaceOverrides(schema);
+  repairKnownConflicts(schema);
+  return schema;
+}
+
 // ── JSON extraction ───────────────────────────────────────────────────────────
 
 export function extractJson(text: string): Record<string, unknown> {
@@ -103,18 +222,12 @@ export function extractJson(text: string): Record<string, unknown> {
 
 // ── Agentic generation loop ───────────────────────────────────────────────────
 
-export async function generateSchema(
-  intake: IntakeAnswers,
-  apiKey: string,
-): Promise<Record<string, unknown>> {
-  const client = new Anthropic({ apiKey });
-
-  const messages: Anthropic.Messages.MessageParam[] = [
-    { role: "user", content: buildUserMessage(intake) },
-  ];
-
-  let finalText = "";
+async function runGenerationLoop(
+  client: Anthropic,
+  messages: Anthropic.Messages.MessageParam[],
+): Promise<string> {
   const MAX_ITERATIONS = 12;
+  let finalText = "";
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const response = await client.messages.create({
@@ -126,7 +239,6 @@ export async function generateSchema(
       messages,
     });
 
-    // Always preserve the full assistant turn (including thinking blocks)
     messages.push({ role: "assistant", content: response.content });
 
     if (response.stop_reason === "end_turn") {
@@ -139,26 +251,16 @@ export async function generateSchema(
 
     if (response.stop_reason === "tool_use") {
       const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
-
       for (const block of response.content) {
         if (block.type === "tool_use") {
-          const result = executeTool(
-            block.name,
-            block.input as Record<string, string>,
-          );
-          toolResults.push({
-            type: "tool_result",
-            tool_use_id: block.id,
-            content: result,
-          });
+          const result = executeTool(block.name, block.input as Record<string, string>);
+          toolResults.push({ type: "tool_result", tool_use_id: block.id, content: result });
         }
       }
-
       messages.push({ role: "user", content: toolResults });
       continue;
     }
 
-    // Unexpected stop reason — surface the text if any and stop
     finalText = response.content
       .filter((b): b is Anthropic.Messages.TextBlock => b.type === "text")
       .map((b) => b.text)
@@ -167,13 +269,80 @@ export async function generateSchema(
   }
 
   if (!finalText) {
-    throw new Error(
-      "Model did not produce a final schema after tool use. Try running init again.",
-    );
+    throw new Error("Model did not produce a final schema. Try running init again.");
   }
 
-  const schema = extractJson(finalText);
-  return injectKnownValues(schema, intake);
+  return finalText;
+}
+
+// ── Repair + retry pass ───────────────────────────────────────────────────────
+
+async function repairWithRetry(
+  client: Anthropic,
+  schema: Record<string, unknown>,
+  errors: string[],
+): Promise<Record<string, unknown>> {
+  const errorList = errors.slice(0, 15).map((e) => `  - ${e}`).join("\n");
+
+  const messages: Anthropic.Messages.MessageParam[] = [
+    {
+      role: "user",
+      content: `The schema you generated has validation errors. Fix only the fields listed below and return the complete corrected JSON object. Do not change any other fields.
+
+Errors:
+${errorList}
+
+Current schema:
+${JSON.stringify(schema, null, 2)}
+
+Return ONLY the corrected JSON object. No explanation. No markdown.`,
+    },
+  ];
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-6",
+    max_tokens: 20000,
+    thinking: { type: "enabled", budget_tokens: 5000 },
+    system: SYSTEM_PROMPT,
+    messages,
+  });
+
+  const text = response.content
+    .filter((b): b is Anthropic.Messages.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("");
+
+  return extractJson(text);
+}
+
+// ── Public entry ──────────────────────────────────────────────────────────────
+
+export async function generateSchema(
+  intake: IntakeAnswers,
+  apiKey: string,
+): Promise<Record<string, unknown>> {
+  const client = new Anthropic({ apiKey });
+
+  // 1. Generate
+  const messages: Anthropic.Messages.MessageParam[] = [
+    { role: "user", content: buildUserMessage(intake) },
+  ];
+  const finalText = await runGenerationLoop(client, messages);
+  let schema = extractJson(finalText);
+  schema = injectKnownValues(schema, intake);
+
+  // 2. Structural repair (fixes predictable Constrained<string> and shape errors)
+  schema = repairSchema(schema);
+
+  // 3. Validate — if still broken, one retry with errors fed back to Claude
+  const firstCheck = validateSchema(schema);
+  if (!firstCheck.valid) {
+    schema = await repairWithRetry(client, schema, firstCheck.errors);
+    schema = injectKnownValues(schema, intake); // re-inject in case retry overwrote meta
+    schema = repairSchema(schema);             // re-repair in case retry introduced new shape issues
+  }
+
+  return schema;
 }
 
 export function resolveApiKey(): string | null {

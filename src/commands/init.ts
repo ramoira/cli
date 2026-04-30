@@ -55,14 +55,15 @@ export async function initCommand(options: InitOptions): Promise<void> {
     process.exit(1);
   }
 
-  // Validate
+  // Validate (repair + retry already ran inside generateSchema)
   const result = validateSchema(schema);
   if (!result.valid) {
-    console.log(chalk.yellow("\nSchema generated but has validation issues:"));
+    console.log(chalk.yellow("\nSchema has residual validation issues after auto-repair:"));
     result.errors.slice(0, 10).forEach((e) => console.log(chalk.yellow(`  · ${e}`)));
     if (result.errors.length > 10) {
       console.log(chalk.yellow(`  … and ${result.errors.length - 10} more`));
     }
+    console.log(chalk.gray("  Run ramoira validate after editing to re-check."));
     const save = await confirm({
       message: "Save anyway?",
       default: true,
