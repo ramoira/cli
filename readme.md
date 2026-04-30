@@ -42,6 +42,33 @@ npx ramoira book
 npx ramoira status
 ```
 
+## Guide for Brand Managers
+
+If you are a brand manager running this on your own laptop (Windows or macOS) to generate a brand schema:
+
+1. **Open your terminal:**
+   - **macOS:** Press `Cmd + Space`, type `Terminal`, and hit Enter.
+   - **Windows:** Press `Win + R`, type `powershell`, and hit Enter.
+2. **Get an Anthropic API key:**
+   - Go to [console.anthropic.com](https://console.anthropic.com) and create an API key. You will need some credits to run the AI model.
+3. **Set the key and run the tool:**
+   - **macOS:**
+     ```sh
+     export ANTHROPIC_API_KEY=sk-ant-your-key-here
+     npx ramoira init
+     ```
+   - **Windows (PowerShell):**
+     ```powershell
+     $env:ANTHROPIC_API_KEY="sk-ant-your-key-here"
+     npx ramoira init
+     ```
+   - **Windows (Command Prompt):**
+     ```cmd
+     set ANTHROPIC_API_KEY=sk-ant-your-key-here
+     npx ramoira init
+     ```
+4. **Answer the questions:** The CLI will ask you 10 questions about your brand. Once finished, it will save a `brand.schema.json` file in your current folder.
+
 ## How agents consume your schema
 
 Any agent or tool with access to your project directory reads `brand.schema.json` directly. For remote agents and deployed pipelines, the published summary schema at `ramoira.com/brands/[slug]/schema.summary.json` is publicly accessible and crawlable.
