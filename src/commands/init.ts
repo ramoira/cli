@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
 import { input } from "@inquirer/prompts";
+import { resolve } from "path";
 import { runIntake } from "../lib/intake.js";
 import { generateSchema, resolveApiKey } from "../lib/generator.js";
 import { validateSchema } from "../lib/validator.js";
@@ -81,8 +82,9 @@ export async function initCommand(options: InitOptions): Promise<void> {
   }
 
   // Write file
+  const absPath = resolve(outputPath);
   writeJsonFile(outputPath, schema);
-  console.log(chalk.bold(`\n✓ Saved to ${outputPath}`));
+  console.log(chalk.bold(`\n✓ Saved to ${absPath}`));
   console.log(chalk.gray("\nNext steps:"));
   console.log(chalk.gray("  ramoira validate        — re-validate at any time"));
   console.log(chalk.gray("  ramoira publish         — publish to ramoira.com (requires account)"));

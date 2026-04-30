@@ -237,6 +237,7 @@ async function translateWithLlm(
 export async function generateBrandBook(
   schema: Record<string, unknown>,
   apiKey: string,
+  schemaPath?: string,
 ): Promise<string> {
   const extract = extractSchema(schema);
   const archetype = resolveArchetype(extract.relationshipMode);
@@ -275,5 +276,5 @@ export async function generateBrandBook(
     scenarios: translation.scenarios,
   };
 
-  return renderBrandBook(content, theme);
+  return renderBrandBook(content, theme, schemaPath);
 }

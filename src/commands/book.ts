@@ -44,7 +44,7 @@ export async function bookCommand(
 
   const spinner = ora("Generating brand book…").start();
   try {
-    const html = await generateBrandBook(schemaObj, apiKey);
+    const html = await generateBrandBook(schemaObj, apiKey, filePath);
     writeFileSync(outPath, html, "utf-8");
     spinner.succeed("Brand book generated.");
     console.log(chalk.bold(`\n✓ ${outPath}`));
