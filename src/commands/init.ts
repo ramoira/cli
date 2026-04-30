@@ -43,12 +43,16 @@ export async function initCommand(options: InitOptions): Promise<void> {
   const intake = await runIntake();
 
   // Generate schema via LLM
-  const spinner = ora("Generating brand schema…").start();
+  const spinner = ora("Initializing schema generation…").start();
 
   let schema: Record<string, unknown>;
   try {
-    schema = await generateSchema(intake, apiKey);
-    spinner.succeed("Schema generated.");
+    schema = await generateSchema(intake, apiKey, {
+      onStatus: (message: string) => {
+        spinner.text = message;
+      },
+    });
+    spinner.succeed("Schema generated successfully.");
   } catch (err) {
     spinner.fail("Generation failed.");
     console.error(chalk.red((err as Error).message));

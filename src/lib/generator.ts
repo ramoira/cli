@@ -3,6 +3,10 @@ import type { IntakeAnswers } from "./intake.js";
 import { TOOL_DEFINITIONS, executeTool } from "./generator-tools.js";
 import { validateSchema } from "./validator.js";
 
+export interface GeneratorReporter {
+  onStatus: (message: string) => void;
+}
+
 // ── Prompts ───────────────────────────────────────────────────────────────────
 
 const SYSTEM_PROMPT = `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
@@ -225,12 +229,13 @@ export function extractJson(text: string): Record<string, unknown> {
 async function runGenerationLoop(
   client: Anthropic,
   messages: Anthropic.Messages.MessageParam[],
+  reporter?: GeneratorReporter,
 ): Promise<string> {
   const MAX_ITERATIONS = 12;
   let finalText = "";
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
-    const response = await client.messages.create({
+    const stream = client.messages.stream({
       model: "claude-sonnet-4-6",
       max_tokens: 20000,
       thinking: { type: "enabled", budget_tokens: 10000 },
@@ -238,6 +243,22 @@ async function runGenerationLoop(
       tools: TOOL_DEFINITIONS,
       messages,
     });
+
+    stream.on("streamEvent", (event) => {
+      if (event.type === "content_block_start") {
+        if (event.content_block.type === "thinking") {
+          reporter?.onStatus("Thinking deeply about brand nuances...");
+        } else if (event.content_block.type === "tool_use") {
+          reporter?.onStatus(`Calling tool: ${event.content_block.name}...`);
+        }
+      } else if (event.type === "content_block_delta") {
+        if (event.delta.type === "text_delta" && event.index === 1) {
+          reporter?.onStatus("Drafting schema JSON...");
+        }
+      }
+    });
+
+    const response = await stream.finalMessage();
 
     messages.push({ role: "assistant", content: response.content });
 
@@ -281,7 +302,9 @@ async function repairWithRetry(
   client: Anthropic,
   schema: Record<string, unknown>,
   errors: string[],
+  reporter?: GeneratorReporter,
 ): Promise<Record<string, unknown>> {
+  reporter?.onStatus("Validation failed, asking model to self-heal...");
   const errorList = errors.slice(0, 15).map((e) => `  - ${e}`).join("\n");
 
   const messages: Anthropic.Messages.MessageParam[] = [
@@ -299,13 +322,23 @@ Return ONLY the corrected JSON object. No explanation. No markdown.`,
     },
   ];
 
-  const response = await client.messages.create({
+  const stream = client.messages.stream({
     model: "claude-sonnet-4-6",
     max_tokens: 20000,
     thinking: { type: "enabled", budget_tokens: 5000 },
     system: SYSTEM_PROMPT,
     messages,
   });
+
+  stream.on("streamEvent", (event) => {
+    if (event.type === "content_block_start" && event.content_block.type === "thinking") {
+      reporter?.onStatus("Thinking about how to fix validation errors...");
+    } else if (event.type === "content_block_delta" && event.delta.type === "text_delta" && event.index === 1) {
+      reporter?.onStatus("Drafting repaired schema JSON...");
+    }
+  });
+
+  const response = await stream.finalMessage();
 
   const text = response.content
     .filter((b): b is Anthropic.Messages.TextBlock => b.type === "text")
@@ -320,24 +353,28 @@ Return ONLY the corrected JSON object. No explanation. No markdown.`,
 export async function generateSchema(
   intake: IntakeAnswers,
   apiKey: string,
+  reporter?: GeneratorReporter,
 ): Promise<Record<string, unknown>> {
   const client = new Anthropic({ apiKey });
 
   // 1. Generate
+  reporter?.onStatus("Initializing schema generation...");
   const messages: Anthropic.Messages.MessageParam[] = [
     { role: "user", content: buildUserMessage(intake) },
   ];
-  const finalText = await runGenerationLoop(client, messages);
+  const finalText = await runGenerationLoop(client, messages, reporter);
   let schema = extractJson(finalText);
   schema = injectKnownValues(schema, intake);
 
   // 2. Structural repair (fixes predictable Constrained<string> and shape errors)
+  reporter?.onStatus("Applying structural repairs...");
   schema = repairSchema(schema);
 
   // 3. Validate — if still broken, one retry with errors fed back to Claude
+  reporter?.onStatus("Validating schema...");
   const firstCheck = validateSchema(schema);
   if (!firstCheck.valid) {
-    schema = await repairWithRetry(client, schema, firstCheck.errors);
+    schema = await repairWithRetry(client, schema, firstCheck.errors, reporter);
     schema = injectKnownValues(schema, intake); // re-inject in case retry overwrote meta
     schema = repairSchema(schema);             // re-repair in case retry introduced new shape issues
   }
