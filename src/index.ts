@@ -4,6 +4,7 @@ import { validateCommand } from "./commands/validate.js";
 import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
+import { bookCommand } from "./commands/book.js";
 
 const program = new Command();
 
@@ -48,5 +49,11 @@ program
   .command("whoami")
   .description("Show the currently authenticated account")
   .action(whoamiCommand);
+
+program
+  .command("book [file]")
+  .description("Generate a brand book HTML from a brand schema")
+  .option("-o, --out <path>", "Output file path (default: <brandId>-brand-book.html)")
+  .action(bookCommand);
 
 program.parse();

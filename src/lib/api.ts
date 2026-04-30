@@ -40,6 +40,31 @@ export async function publishSchema(
   return res.json() as Promise<PublishResult>;
 }
 
+export async function generateBook(
+  slug: string,
+  schema: Record<string, unknown>,
+): Promise<string> {
+  const token = getToken();
+  if (!token) throw new Error("Not authenticated. Run: ramoira login");
+
+  const base = getApiBase();
+  const res = await fetch(`${base}/api/brands/${slug}/book`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ schema }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as Record<string, unknown>;
+    throw new Error((body.error as string) ?? `Brand book generation failed (${res.status})`);
+  }
+
+  return res.text();
+}
+
 export async function fetchStatus(slug: string): Promise<StatusResult> {
   const base = getApiBase();
   const res = await fetch(`${base}/api/brands/${slug}/status`);
