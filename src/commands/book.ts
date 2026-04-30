@@ -49,6 +49,8 @@ export async function bookCommand(
     spinner.succeed("Brand book generated.");
     console.log(chalk.bold(`\n✓ ${outPath}`));
     console.log(chalk.gray("  Open in any browser. Print to PDF for sharing."));
+    console.log(chalk.blueBright("\n⭐ Love Ramoira? Star the open-source project on GitHub:"));
+    console.log(chalk.blueBright("   https://github.com/ramoira/cli\n"));
   } catch (err) {
     spinner.fail("Brand book generation failed.");
     console.error(chalk.red((err as Error).message));
