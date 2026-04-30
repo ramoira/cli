@@ -124,7 +124,11 @@ function setPath(root: DeepObj, path: string[], value: unknown): void {
   node[path[path.length - 1]] = value;
 }
 
-function repairConstrainedArray(root: DeepObj, path: string[]): void {
+function repairConstrainedArray(
+  root: DeepObj,
+  path: string[],
+  defaultSeverity: "absolute" | "strong" | "contextual" = "contextual",
+): void {
   const arr = getPath(root, path);
   if (!Array.isArray(arr)) return;
   setPath(
@@ -132,11 +136,11 @@ function repairConstrainedArray(root: DeepObj, path: string[]): void {
     path,
     arr.map((item) => {
       if (typeof item === "string") {
-        return { value: item, severity: "contextual", rationale: "" };
+        return { value: item, severity: defaultSeverity, rationale: "" };
       }
       if (item !== null && typeof item === "object") {
         const o = item as DeepObj;
-        if (!("severity" in o)) o.severity = "contextual";
+        if (!("severity" in o)) o.severity = defaultSeverity;
         if (!("rationale" in o)) o.rationale = "";
         if (!("value" in o) && "constraint" in o) o.value = o.constraint;
       }
