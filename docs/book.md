@@ -2,7 +2,7 @@
 
 Generate a brand book HTML from a local brand schema.
 
-```
+```txt
 ramoira book [file]
 
 Arguments:
@@ -15,15 +15,14 @@ Options:
 ## What it does
 
 1. Reads your local `brand.schema.json`
-2. Sends it to the Ramoira API, which translates the schema into human-readable copy
+2. Uses your Anthropic API key to translate the schema into human-readable copy
 3. Writes a self-contained HTML file you can open in any browser and print to PDF
 
 The document is a designed brand book — a deliverable a brand owner or team can read and react to without understanding the schema format. Each brand gets a visual design that matches its character without disclosing how it was selected.
 
 ## Requirements
 
-- A Ramoira account and API token (get one at [ramoira.com/tokens](https://ramoira.com/tokens))
-- `RAMOIRA_TOKEN` in your environment, or run `ramoira login` first
+- `ANTHROPIC_API_KEY` in your environment (same key used for `ramoira init`)
 - A generated `brand.schema.json` — run `ramoira init` first if you don't have one
 
 ## Usage
@@ -39,7 +38,7 @@ ramoira book my-schema.json --out brand-book.html
 
 ## Output
 
-```
+```txt
 ✓ little-rituals-brand-book.html
   Open in any browser. Print to PDF for sharing.
 ```
@@ -47,7 +46,7 @@ ramoira book my-schema.json --out brand-book.html
 ## What's in the brand book
 
 | Section | Source |
-|---|---|
+| --- | --- |
 | The story | `narrative.myth` — translated into a human narrative |
 | Who it's for | `identity.prism.reflection` + `selfImage` — a character portrait |
 | How it sounds | `voice.examples` — approved/rejected copy pairs |

@@ -2,8 +2,8 @@ import chalk from "chalk";
 import ora from "ora";
 import { writeFileSync } from "fs";
 import { readJsonFile } from "../lib/files.js";
-import { generateBook } from "../lib/api.js";
-import { getToken } from "../lib/config.js";
+import { generateBrandBook } from "../lib/book-generator.js";
+import { resolveApiKey } from "../lib/generator.js";
 
 interface BookOptions {
   out?: string;
@@ -14,13 +14,6 @@ export async function bookCommand(
   options: BookOptions,
 ): Promise<void> {
   const filePath = file ?? "brand.schema.json";
-
-  if (!getToken()) {
-    console.error(
-      chalk.red("Not authenticated. Set RAMOIRA_TOKEN or run: ramoira login"),
-    );
-    process.exit(1);
-  }
 
   // Read schema
   let schema: unknown;
@@ -36,7 +29,14 @@ export async function bookCommand(
   const slug = meta?.brandId as string | undefined;
 
   if (!slug) {
-    console.error(chalk.red("Schema must have a meta.brandId field."));
+    console.error(chalk.red("Schema must have a meta.brandId field. Run ramoira init first."));
+    process.exit(1);
+  }
+
+  const apiKey = resolveApiKey();
+  if (!apiKey) {
+    console.error(chalk.red("ANTHROPIC_API_KEY is not set."));
+    console.error(chalk.gray("  export ANTHROPIC_API_KEY=sk-ant-..."));
     process.exit(1);
   }
 
@@ -44,7 +44,7 @@ export async function bookCommand(
 
   const spinner = ora("Generating brand book…").start();
   try {
-    const html = await generateBook(slug, schemaObj);
+    const html = await generateBrandBook(schemaObj, apiKey);
     writeFileSync(outPath, html, "utf-8");
     spinner.succeed("Brand book generated.");
     console.log(chalk.bold(`\n✓ ${outPath}`));
