@@ -1,4 +1,4 @@
-import type { ArchetypeTheme } from "./archetypes.js";
+import type { ArchetypeTheme } from "./book-archetypes.js";
 
 // ── Content slots ─────────────────────────────────────────────────────────────
 // Produced by the LLM generator and injected into the HTML template.
