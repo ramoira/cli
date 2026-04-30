@@ -18,6 +18,7 @@ Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf,
 ramoira init        Generate brand.schema.json locally (no account required)
 ramoira validate    Validate schema against the Ramoira spec
 ramoira publish     Publish summary to ramoira.com (free account required)
+ramoira book        Generate a brand book HTML from your schema
 ramoira status      Show current publication state
 ramoira login       Save API token for publish and status commands
 ```
@@ -32,6 +33,10 @@ npx ramoira validate
 # Tier 2 — publish to ramoira.com (get a token at ramoira.com/tokens)
 export RAMOIRA_TOKEN=your_token
 npx ramoira publish
+
+# Generate a brand book HTML (requires token)
+npx ramoira book
+# → writes <brandId>-brand-book.html. Open in browser, print to PDF.
 
 # Check publication state
 npx ramoira status
@@ -71,6 +76,7 @@ Integration guides, field reference, and agent workflow docs:
 | `ramoira init` | ✓ | ✓ | ✓ |
 | `ramoira validate` | ✓ | ✓ | ✓ |
 | `ramoira publish` | — | ✓ | ✓ |
+| `ramoira book` | — | ✓ | ✓ |
 | `ramoira studio` | — | — | ✓ |
 | Account required | No | Yes (free) | Yes (paid) |
 | Schema stored by Ramoira | Nothing | Summary only | Full (private) |
