@@ -4,7 +4,7 @@
   "description": "Brand schema generation and publishing for the agent web",
   "type": "module",
   "bin": {
-    "ramoira": "./dist/index.js"
+    "ramoira": "dist/index.js"
   },
   "scripts": {
     "build": "tsup",
