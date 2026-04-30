@@ -196,14 +196,28 @@ function repairKnownConflicts(root: DeepObj): void {
   );
 }
 
+function repairPermittedCompetitors(root: DeepObj): void {
+  const comparative = getPath(root, ["commercial", "claims", "comparative"]);
+  if (comparative === null || typeof comparative !== "object") return;
+  const c = comparative as DeepObj;
+  const mentionPermitted = c.competitorMentionPermitted === true;
+  const list = c.permittedCompetitors;
+  if (mentionPermitted && Array.isArray(list) && list.length === 0) {
+    // Empty list + permitted=true is contradictory — remove the key so the
+    // intent reads as "any competitor may be mentioned" rather than "none".
+    delete c.permittedCompetitors;
+  }
+}
+
 export function repairSchema(schema: Record<string, unknown>): Record<string, unknown> {
-  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "ownedPhrases"]);
-  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "forbiddenWords"]);
+  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "ownedPhrases"], "strong");
+  repairConstrainedArray(schema, ["identity", "distinctiveAssets", "linguistic", "forbiddenWords"], "strong");
   repairConstrainedArray(schema, ["commercial", "pricing", "forbiddenLanguage"]);
   repairConstrainedArray(schema, ["commercial", "globalForbiddenTerms"]);
   repairConstrainedArray(schema, ["commercial", "offers", "forbiddenTypes"]);
   repairSurfaceOverrides(schema);
   repairKnownConflicts(schema);
+  repairPermittedCompetitors(schema);
   return schema;
 }
 
