@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("ramoira")
   .description("Brand schema generation and publishing for the agent web")
-  .version("0.1.0");
+  .version("0.2.0");
 
 program
   .command("init")
