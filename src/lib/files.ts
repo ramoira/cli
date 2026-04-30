@@ -1,5 +1,8 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { resolve } from "path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { resolve, dirname } from "path";
+
+export const RAMOIRA_DIR = "ramoira";
+export const DEFAULT_SCHEMA_PATH = `${RAMOIRA_DIR}/brand.schema.json`;
 
 export function readJsonFile(filePath: string): unknown {
   const abs = resolve(filePath);
@@ -25,6 +28,7 @@ function escapeNonAscii(json: string): string {
 
 export function writeJsonFile(filePath: string, data: unknown): void {
   const abs = resolve(filePath);
+  mkdirSync(dirname(abs), { recursive: true });
   const json = escapeNonAscii(JSON.stringify(data, null, 2));
   writeFileSync(abs, json + "\n", "utf8");
 }

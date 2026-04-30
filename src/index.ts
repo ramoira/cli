@@ -5,6 +5,7 @@ import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
+import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
 const program = new Command();
 
@@ -16,7 +17,7 @@ program
 program
   .command("init")
   .description("Generate a brand.schema.json in the current directory")
-  .option("-o, --output <path>", "Output file path", "brand.schema.json")
+  .option("-o, --output <path>", "Output file path", DEFAULT_SCHEMA_PATH)
   .action(initCommand);
 
 program

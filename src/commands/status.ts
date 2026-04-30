@@ -2,7 +2,7 @@ import chalk from "chalk";
 import ora from "ora";
 import { fetchStatus } from "../lib/api.js";
 import { readConfig } from "../lib/config.js";
-import { readJsonFile, fileExists } from "../lib/files.js";
+import { readJsonFile, fileExists, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 
 interface StatusOptions {
   //
@@ -19,9 +19,9 @@ export async function statusCommand(
     resolvedSlug = readConfig().brandSlug;
   }
 
-  if (!resolvedSlug && fileExists("brand.schema.json")) {
+  if (!resolvedSlug && fileExists(DEFAULT_SCHEMA_PATH)) {
     try {
-      const schema = readJsonFile("brand.schema.json") as Record<string, unknown>;
+      const schema = readJsonFile(DEFAULT_SCHEMA_PATH) as Record<string, unknown>;
       const meta = schema.meta as Record<string, unknown> | undefined;
       resolvedSlug = meta?.brandId as string | undefined;
     } catch {

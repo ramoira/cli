@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { validateSchema } from "../lib/validator.js";
-import { readJsonFile } from "../lib/files.js";
+import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 
 interface ValidateOptions {
   summary?: boolean;
@@ -10,7 +10,7 @@ export async function validateCommand(
   file: string | undefined,
   options: ValidateOptions,
 ): Promise<void> {
-  const filePath = file ?? "brand.schema.json";
+  const filePath = file ?? DEFAULT_SCHEMA_PATH;
 
   let schema: unknown;
   try {

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
 import { validateSchema } from "../lib/validator.js";
-import { readJsonFile } from "../lib/files.js";
+import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 import { publishSchema } from "../lib/api.js";
 import { getToken } from "../lib/config.js";
 
@@ -13,7 +13,7 @@ export async function publishCommand(
   file: string | undefined,
   _options: PublishOptions,
 ): Promise<void> {
-  const filePath = file ?? "brand.schema.json";
+  const filePath = file ?? DEFAULT_SCHEMA_PATH;
 
   // Check auth first
   if (!getToken()) {

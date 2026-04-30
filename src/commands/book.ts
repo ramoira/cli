@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
-import { writeFileSync } from "fs";
-import { readJsonFile } from "../lib/files.js";
+import { writeFileSync, mkdirSync } from "fs";
+import { readJsonFile, DEFAULT_SCHEMA_PATH, RAMOIRA_DIR } from "../lib/files.js";
 import { generateBrandBook } from "../lib/book-generator.js";
 import { resolveApiKey } from "../lib/generator.js";
 
@@ -13,7 +13,7 @@ export async function bookCommand(
   file: string | undefined,
   options: BookOptions,
 ): Promise<void> {
-  const filePath = file ?? "brand.schema.json";
+  const filePath = file ?? DEFAULT_SCHEMA_PATH;
 
   // Read schema
   let schema: unknown;
@@ -40,11 +40,12 @@ export async function bookCommand(
     process.exit(1);
   }
 
-  const outPath = options.out ?? `${slug}-brand-book.html`;
+  const outPath = options.out ?? `${RAMOIRA_DIR}/${slug}-brand-book.html`;
 
   const spinner = ora("Generating brand book…").start();
   try {
     const html = await generateBrandBook(schemaObj, apiKey, filePath);
+    mkdirSync(RAMOIRA_DIR, { recursive: true });
     writeFileSync(outPath, html, "utf-8");
     spinner.succeed("Brand book generated.");
     console.log(chalk.bold(`\n✓ ${outPath}`));
