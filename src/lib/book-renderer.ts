@@ -675,6 +675,53 @@ body {
 /* ── DIVIDER ── */
 hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
 
+/* ── RESOURCES ── */
+.resources {
+  padding: 48px 80px 56px;
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
+}
+
+@media print { .resources { display: none; } }
+
+.resources-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 28px;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 600px) { .resources-grid { grid-template-columns: 1fr; } }
+
+.resources-group-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  margin-bottom: 12px;
+}
+
+.resources-link {
+  display: block;
+  font-size: 13px;
+  color: var(--accent-deep);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.resources-link:last-child { border-bottom: none; }
+.resources-link:hover { color: var(--accent); }
+
 /* ── WATERMARK ── */
 .watermark {
   text-align: center;
@@ -829,6 +876,29 @@ hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
 <div class="closing">
   <div class="closing-label">${escHtml(content.brandName)}</div>
   <div class="closing-text">${escHtml(labels.closingStatement)}</div>
+</div>
+
+<!-- RESOURCES -->
+<div class="resources">
+  <div class="resources-title">Further reading</div>
+  <div class="resources-grid">
+    <div>
+      <div class="resources-group-title">Understand</div>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/concepts/what-is-a-brand-schema.md" target="_blank">What is a brand schema</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/concepts/how-agents-consume-schemas.md" target="_blank">How agents consume schemas</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/guides/brand-aware-copy.md" target="_blank">Generating brand-aware copy</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/guides/content-pipeline.md" target="_blank">Setting up a content pipeline</a>
+      <a class="resources-link" href="https://github.com/ramoira/brand-schema-spec" target="_blank">Brand schema spec (v2.0.0)</a>
+    </div>
+    <div>
+      <div class="resources-group-title">Integrate</div>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/integrations/cursor.md" target="_blank">Cursor</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/integrations/claude-code.md" target="_blank">Claude Code</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/integrations/windsurf.md" target="_blank">Windsurf</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/integrations/lovable.md" target="_blank">Lovable</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/integrations/v0.md" target="_blank">v0</a>
+    </div>
+  </div>
 </div>
 
 <!-- WATERMARK -->
