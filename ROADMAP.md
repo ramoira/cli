@@ -3,7 +3,7 @@
 > Platform v2.0.0 is ground truth. brand-schema-spec and docs align to it. CLI follows after.
 
 **Last updated:** 2026-04-24
-**Status:** Active — Phase 4 complete (4.4 studio blocked on platform R14)
+**Status:** Active — Phase 4 open-source features complete (4.4 Studio pending Ramoira Cloud release)
 
 ---
 
@@ -36,7 +36,7 @@ Full field-level detail: [brand-schema-spec/ROADMAP.md](../brand-schema-spec/ROA
 | `platform` | Ground truth schema types, archetype library, generation runtime | [platform/ROADMAP.md](../platform/ROADMAP.md) | Complete through Phase 5 |
 | `brand-schema-spec` | Open standard — SPEC.md, JSON validators, blank templates, examples | [brand-schema-spec/ROADMAP.md](../brand-schema-spec/ROADMAP.md) | Phase 1 complete (1.1–1.7 done) |
 | `docs` | User-facing guides, field reference, integration docs | [docs/ROADMAP.md](../docs/ROADMAP.md) | Phase 2 complete (2.1–2.6 done) |
-| `cli` | `init`, `publish`, `studio`, `validate`, `status` | This file | Phase 4 complete (4.4 studio blocked on platform R14) |
+| `cli` | `init`, `publish`, `studio`, `validate`, `status` | This file | Phase 4 open-source complete (4.4 studio pending Ramoira Cloud) |
 
 ---
 
@@ -55,7 +55,7 @@ Phase 4 (CLI) ✅ complete
   ✅ 4.1 init
   ✅ 4.2 validate
   ✅ 4.3 publish
-  ⬜ 4.4 studio  ← blocked on platform R14
+  ⬜ 4.4 studio  ← coming soon via Ramoira Cloud (Enterprise)
   ✅ 4.5 status
   ✅ 4.6 auth token management
 ```
@@ -145,6 +145,8 @@ ramoira publish [file]
 
 Submits a published schema for Studio certification. Requires a paid Studio account.
 
+*Note: Studio certification is a Ramoira Cloud (Enterprise) feature. This command will be available in a future release once the Cloud API is open.*
+
 ```
 ramoira studio
 ```
@@ -201,4 +203,4 @@ ramoira whoami    # prints current authenticated brand slug
 | `platform` | Ground truth. v2.0.0 complete through Phase 5. Missing: `certified`, `confidence`, `canonical_url`, `owner_verified` in DB; Brand API routes not built. |
 | `brand-schema-spec` | Complete. SPEC.md, validators, blank templates, Little Rituals, minimal, and Rolex examples all updated to v2.0.0. llms.txt in each example. |
 | `docs` | Complete. schema-fields.md, tiers.md, what-is-a-brand-schema.md, api.md, publishing.md, and all 5 integration docs rewritten for v2.0.0. |
-| `cli` | Phase 4 complete. init, validate, publish, status, login, logout, whoami all implemented. studio (4.4) blocked on platform R14 (Studio certification endpoint). |
+| `cli` | Phase 4 open-source complete. init, validate, publish, status, login, logout, whoami all implemented. studio (4.4) pending Ramoira Cloud release. |
