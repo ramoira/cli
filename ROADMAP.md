@@ -58,6 +58,12 @@ Phase 4 (CLI) ✅ complete
   ⬜ 4.4 studio  ← coming soon via Ramoira Cloud (Enterprise)
   ✅ 4.5 status
   ✅ 4.6 auth token management
+
+Phase 5 (Schema Governance & Validation) ⬜ planned
+  ⬜ 5.1 Schema versioning
+  ⬜ 5.2 Output examples as schema tests
+  ⬜ 5.3 CI and pre-commit integration
+  ⬜ 5.4 Governance: ownership and change audit
 ```
 
 ---
@@ -179,6 +185,87 @@ ramoira login     # opens browser or prompts for token, saves to ~/.ramoira/conf
 ramoira logout    # removes saved token
 ramoira whoami    # prints current authenticated brand slug
 ```
+
+---
+
+## Phase 5 — Schema Governance & Validation
+
+> Sourced from early community feedback: the schema/contract approach only holds long-term if versioning, examples, and change validation are first-class.
+
+---
+
+### 5.1 — Schema versioning
+
+Every publish creates an immutable version record. Campaigns and generated assets can reference a pinned schema version (`brand.schema.json@v3`) so drift is traceable — not silent.
+
+**CLI surface:**
+```
+ramoira publish              # creates v4, sets as latest
+ramoira publish --pin        # publish and pin current ref to vN in local config
+ramoira status --history     # list all published versions with timestamps
+```
+
+**What this enables:**
+- Post-mortem: "this campaign used schema v3, here's what changed in v4"
+- Rollback if a schema edit degrades output quality
+- Multi-team environments where schema owner ≠ content producer
+
+---
+
+### 5.2 — Output examples as schema tests
+
+A schema is a contract. Contracts need tests. Each schema rule (especially `neverDo`, `forbiddenTones`, `structuralRules`) should carry at least one passing and one failing output example.
+
+**Schema addition:**
+```json
+"identity.summary.neverDo": [
+  {
+    "rule": "Never use urgency language",
+    "passingExample": "Take your time — we'll be here.",
+    "failingExample": "Limited time only. Act now."
+  }
+]
+```
+
+**CLI surface:**
+```
+ramoira test [file]          # runs LLM-evaluated assertions against passing/failing examples
+ramoira test --rule neverDo  # test a specific rule cluster
+```
+
+Exit code 1 on failures — CI-compatible. This turns the schema from a style doc into something closer to a test suite for generated content.
+
+---
+
+### 5.3 — CI and pre-commit integration
+
+`ramoira validate` already exits 1 on failure. The missing piece is first-class hook config so teams don't have to wire it up themselves.
+
+**Deliverables:**
+- `.pre-commit-hooks.yaml` config for pre-commit framework
+- GitHub Actions workflow snippet in docs (`validate` on PR, `test` on merge to main)
+- `ramoira validate --ci` flag: machine-readable output (JSON), no color, explicit exit codes
+
+**Why:** A schema that lives in the repo but has no CI gate will drift. One quiet edit to `neverDo` silently breaks every downstream agent that reads it.
+
+---
+
+### 5.4 — Governance: ownership and change audit
+
+Who owns schema updates? How do reviewers approve changes? These are not product concerns — they're the reason schemas drift in the first place.
+
+**Additions to `brand.schema.json`:**
+- `governance.owners` — list of identifiers (email, GitHub handle) who can approve changes
+- `governance.changePolicy` — `"any-owner"` | `"all-owners"` | `"external-review"`
+- `governance.changelog` — array of version records with author, timestamp, and summary of what changed
+
+**CLI surface:**
+```
+ramoira diff [v2] [v3]       # human-readable diff between two published schema versions
+ramoira governance check     # validates that current schema matches governance policy
+```
+
+**Open question:** Does governance enforcement live in the CLI (honour system) or the platform (enforced on publish)?
 
 ---
 
