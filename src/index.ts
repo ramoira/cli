@@ -5,6 +5,7 @@ import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
+import { createTokenCommand } from "./commands/create-token.js";
 import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
 const program = new Command();
@@ -38,7 +39,8 @@ program
 
 program
   .command("login")
-  .description("Save API token for publish and status commands")
+  .description("Authenticate via GitHub (or use --manual to paste a token)")
+  .option("--manual", "Skip browser flow and paste a token directly")
   .action(loginCommand);
 
 program
@@ -50,6 +52,11 @@ program
   .command("whoami")
   .description("Show the currently authenticated account")
   .action(whoamiCommand);
+
+program
+  .command("create-token [label]")
+  .description("Create a named API token for CI/CD use")
+  .action(createTokenCommand);
 
 program
   .command("book [file]")
