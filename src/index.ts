@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { createRequire } from "module";
 import { initCommand } from "./commands/init.js";
 import { validateCommand } from "./commands/validate.js";
 import { publishCommand } from "./commands/publish.js";
@@ -8,12 +9,15 @@ import { bookCommand } from "./commands/book.js";
 import { createTokenCommand } from "./commands/create-token.js";
 import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
+
 const program = new Command();
 
 program
   .name("ramoira")
   .description("Brand schema generation and publishing for the agent web")
-  .version("0.2.0");
+  .version(version);
 
 program
   .command("init")
