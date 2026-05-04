@@ -5,7 +5,8 @@ import { resolve } from "path";
 import { runIntake } from "../lib/intake.js";
 import { generateSchema, resolveApiKey } from "../lib/generator.js";
 import { validateSchema } from "../lib/validator.js";
-import { writeJsonFile, fileExists } from "../lib/files.js";
+import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib/files.js";
+import { generateAgentsMd } from "../lib/agents-md.js";
 import { confirm } from "@inquirer/prompts";
 
 interface InitOptions {
@@ -81,10 +82,19 @@ export async function initCommand(options: InitOptions): Promise<void> {
     console.log(chalk.green("✓ Schema validates against Ramoira spec."));
   }
 
-  // Write file
+  // Write schema
   const absPath = resolve(outputPath);
   writeJsonFile(outputPath, schema);
   console.log(chalk.bold(`\n✓ Saved to ${absPath}`));
+
+  // Write agents.md
+  try {
+    const md = generateAgentsMd(schema);
+    writeTextFile(AGENTS_MD_PATH, md);
+    console.log(chalk.gray(`✓ agents.md written to ${resolve(AGENTS_MD_PATH)}`));
+  } catch {
+    // Non-fatal — schema may be incomplete
+  }
 
   // Aha moment — surface myth + one voice example so the user sees real output immediately
   printPreview(schema);

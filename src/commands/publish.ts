@@ -1,7 +1,8 @@
 import chalk from "chalk";
 import ora from "ora";
 import { validateSchema } from "../lib/validator.js";
-import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
+import { readJsonFile, writeTextFile, DEFAULT_SCHEMA_PATH, AGENTS_MD_PATH } from "../lib/files.js";
+import { generateAgentsMd } from "../lib/agents-md.js";
 import { publishSchema } from "../lib/api.js";
 import { getToken } from "../lib/config.js";
 
@@ -61,6 +62,15 @@ export async function publishCommand(
     console.log(chalk.gray(`  State:   ${res.workflowState}`));
     if (!res.certified) {
       console.log(chalk.gray("\n  Certification is available for Studio tier accounts."));
+    }
+
+    // Refresh agents.md with canonical URL
+    try {
+      const md = generateAgentsMd(schemaObj, res.canonicalUrl);
+      writeTextFile(AGENTS_MD_PATH, md);
+      console.log(chalk.gray(`\n✓ agents.md updated with canonical URL`));
+    } catch {
+      // Non-fatal
     }
   } catch (err) {
     spinner.fail("Publish failed.");

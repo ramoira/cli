@@ -1,6 +1,8 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 
+export const AGENTS_MD_PATH = `ramoira/agents.md`;
+
 export const RAMOIRA_DIR = "ramoira";
 export const DEFAULT_SCHEMA_PATH = `${RAMOIRA_DIR}/brand.schema.json`;
 
@@ -31,6 +33,12 @@ export function writeJsonFile(filePath: string, data: unknown): void {
   mkdirSync(dirname(abs), { recursive: true });
   const json = escapeNonAscii(JSON.stringify(data, null, 2));
   writeFileSync(abs, json + "\n", "utf8");
+}
+
+export function writeTextFile(filePath: string, content: string): void {
+  const abs = resolve(filePath);
+  mkdirSync(dirname(abs), { recursive: true });
+  writeFileSync(abs, content, "utf8");
 }
 
 export function fileExists(filePath: string): boolean {
