@@ -96,13 +96,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
     // Non-fatal — schema may be incomplete
   }
 
-  // Aha moment — surface myth + one voice example so the user sees real output immediately
   printPreview(schema);
-
-  console.log(chalk.gray("\nNext steps:"));
-  console.log(chalk.gray("  ramoira validate        — re-validate at any time"));
-  console.log(chalk.gray("  ramoira book            — generate the full visual brand book"));
-  console.log(chalk.gray("  ramoira publish         — publish to ramoira.com (requires account)"));
 }
 
 function printPreview(schema: Record<string, unknown>): void {
@@ -111,46 +105,110 @@ function printPreview(schema: Record<string, unknown>): void {
   const voice = schema.voice as Record<string, unknown> | undefined;
 
   const summary = identity?.summary as Record<string, unknown> | undefined;
+  const prism = identity?.prism as Record<string, unknown> | undefined;
+  const personality = prism?.personality as Record<string, unknown> | undefined;
+  const linguistic = (identity?.distinctiveAssets as Record<string, unknown> | undefined)?.linguistic as Record<string, unknown> | undefined;
+
   const brandName = (schema.meta as Record<string, unknown> | undefined)?.brandName as string | undefined;
   const adjectives = summary?.threeAdjectives as string[] | undefined;
   const myth = (narrative?.myth as Record<string, unknown> | undefined)?.mythStatement as string | undefined;
+  const culturalTension = (narrative?.myth as Record<string, unknown> | undefined)?.culturalTension as string | undefined;
   const examples = voice?.examples as Array<Record<string, unknown>> | undefined;
   const approved = examples?.find((e) => e.verdict === "approved");
+  const rejected = examples?.find((e) => e.verdict === "rejected");
+  const ownedPhrases = linguistic?.ownedPhrases as Array<Record<string, unknown>> | undefined;
+  const forbiddenWords = linguistic?.forbiddenWords as Array<Record<string, unknown>> | undefined;
 
-  if (!myth && !approved) return;
-
-  const width = 56;
+  const width = 58;
   const rule = chalk.gray("  " + "╌".repeat(width));
 
   console.log();
   console.log(rule);
+  console.log();
 
+  // Brand name + adjectives
   if (brandName) {
-    const adjectiveLine = adjectives?.length
-      ? chalk.gray("  · ") + chalk.dim(adjectives.join("  ·  "))
-      : "";
-    console.log("  " + chalk.bold(brandName) + (adjectiveLine ? "  " + adjectiveLine : ""));
+    const adj = adjectives?.length ? chalk.gray("  ·  ") + chalk.dim(adjectives.join("  ·  ")) : "";
+    console.log("  " + chalk.bold(brandName) + adj);
   }
 
+  // Myth
   if (myth) {
     console.log();
-    const wrapped = wrapText(myth, width - 2);
-    wrapped.forEach((line) => console.log("  " + chalk.italic(chalk.white(line))));
+    wrapText(myth, width - 2).forEach((line) => console.log("  " + chalk.italic(chalk.white(line))));
   }
 
-  if (approved) {
+  // Cultural tension
+  if (culturalTension) {
     console.log();
-    const surface = ((approved.context as string) ?? "").replace(/_/g, " ");
-    if (surface) console.log("  " + chalk.gray(`↳ ${surface}`));
-    const preview = ((approved.text as string) ?? "").slice(0, 160);
-    const wrapped = wrapText(preview + (preview.length < (approved.text as string).length ? "…" : ""), width - 2);
-    wrapped.forEach((line) => console.log("  " + chalk.dim(line)));
+    console.log("  " + chalk.gray("The conflict your brand takes a side on:"));
+    wrapText(culturalTension, width - 4).forEach((line) => console.log("    " + chalk.dim(line)));
+  }
+
+  // Personality scores
+  if (personality) {
+    const scores: [string, string][] = [
+      ["Sincerity",      "sincerity"],
+      ["Excitement",     "excitement"],
+      ["Competence",     "competence"],
+      ["Sophistication", "sophistication"],
+      ["Ruggedness",     "ruggedness"],
+    ];
+    const hasAny = scores.some(([, k]) => typeof personality[k] === "number");
+    if (hasAny) {
+      console.log();
+      console.log("  " + chalk.gray("Personality"));
+      scores.forEach(([label, key]) => {
+        const val = personality[key];
+        if (typeof val !== "number") return;
+        const filled = Math.round(val);
+        const bar = chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(10 - filled));
+        console.log(`  ${label.padEnd(14)} ${bar}  ${val}`);
+      });
+    }
+  }
+
+  // Voice examples
+  if (approved || rejected) {
+    console.log();
+    console.log("  " + chalk.gray("Voice"));
+    if (approved) {
+      const ctx = ((approved.context as string) ?? "").replace(/_/g, " ");
+      const text = ((approved.text as string) ?? "").slice(0, 120);
+      console.log("  " + chalk.green("✓") + " " + chalk.dim(text) + (ctx ? chalk.gray(`  — ${ctx}`) : ""));
+    }
+    if (rejected) {
+      const reason = ((rejected.reason as string) ?? "").slice(0, 80);
+      const text = ((rejected.text as string) ?? "").slice(0, 120);
+      console.log("  " + chalk.red("✗") + " " + chalk.dim(text) + (reason ? chalk.gray(`  — ${reason}`) : ""));
+    }
+  }
+
+  // Owned phrases + forbidden words
+  const phrases = ownedPhrases?.slice(0, 3).map((p) => `"${p.value}"`).join("  ·  ");
+  const forbidden = forbiddenWords?.slice(0, 3).map((p) => `"${p.value}"`).join("  ·  ");
+  if (phrases || forbidden) {
+    console.log();
+    if (phrases) console.log("  " + chalk.gray("Own:       ") + chalk.dim(phrases));
+    if (forbidden) console.log("  " + chalk.gray("Never say: ") + chalk.dim(forbidden));
   }
 
   console.log();
   console.log(rule);
   console.log();
-  console.log("  " + chalk.cyan("Run  ramoira book  to generate the full visual brand book."));
+
+  // Review prompts
+  console.log("  " + chalk.yellow("⚠  Review before publishing:"));
+  console.log(chalk.gray("     claims        — functionalClaims and approvedClaims are agent-generated"));
+  console.log(chalk.gray("     visual        — colors and photography style need your actual assets"));
+  console.log(chalk.gray("     commercial    — discount rules and pricing language"));
+  console.log();
+
+  // Next steps
+  console.log(chalk.gray("  ramoira enrich   — add voice variants, pillars, full governance (~60s)"));
+  console.log(chalk.gray("  ramoira book     — generate the full visual brand book"));
+  console.log(chalk.gray("  ramoira publish  — publish to ramoira.com (requires account)"));
+  console.log();
 }
 
 function wrapText(text: string, maxWidth: number): string[] {

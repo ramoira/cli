@@ -9,7 +9,7 @@ export interface GeneratorReporter {
 
 // ── Prompts ───────────────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
+const SYSTEM_PROMPT_BASE = `You are generating a Ramoira brand schema — a machine-readable brand operating system consumed by AI agents to produce on-brand content.
 
 Every field in this schema is an instruction an AI will execute, not a description for a human to read. Write all values as specific, actionable directives. Vague or generic values make the schema useless.
 
@@ -18,7 +18,6 @@ Use the provided tools to look up layer specifications, valid enum values, and e
 ## Quality requirements
 
 - voice.examples: at least 2 approved and 2 rejected, with real copy (not placeholders), and specific reasons
-- narrative.contentTest: each test must be a specific yes/no question, not a generic instruction
 - narrative.myth.culturalTension: name a real cultural conflict this brand takes a side on — not a category description
 - governance.preflight: three binary yes/no checks specific to this brand, not generic brand hygiene
 - governance.severity.absolute.constraints: at least one, derived directly from the never-do list
@@ -40,6 +39,32 @@ NEVER output plain strings for these fields:
 - commercial.pricing.surfaceOverrides[]: must include { surface, style }
 
 When you have gathered the information you need via tools, output the complete, filled JSON schema. Return ONLY the JSON object. No explanation. No markdown code blocks.`;
+
+const FAST_MODE_ADDENDUM = `
+## Scope — fast mode
+
+Generate ONLY the required fields. Do NOT include these optional sections in the output (omit them entirely):
+- identity.distinctiveAssets.sonic
+- identity.distinctiveAssets.visual
+- narrative.pillars
+- narrative.editorial
+- narrative.contentTest
+- narrative.mythEvolution
+- voice.contextVariants
+- voice.rails
+- commercial.socialProof
+- commercial.offers
+- commercial.surfaceRules
+- commercial.globalForbiddenTerms
+- governance.conflictResolution
+- governance.compliance
+- governance.overrideProtocol
+- governance.surfaceRules
+
+Focus on depth and precision for the fields you do generate. Make every included field excellent.`;
+
+const SYSTEM_PROMPT = SYSTEM_PROMPT_BASE;
+const SYSTEM_PROMPT_FAST = SYSTEM_PROMPT_BASE + FAST_MODE_ADDENDUM;
 
 function buildUserMessage(intake: IntakeAnswers): string {
   return `Generate a complete Ramoira brand schema for the following brand:
@@ -248,6 +273,7 @@ async function runGenerationLoop(
   client: Anthropic,
   messages: Anthropic.Messages.MessageParam[],
   reporter?: GeneratorReporter,
+  systemPrompt: string = SYSTEM_PROMPT,
 ): Promise<string> {
   const MAX_ITERATIONS = 12;
   let finalText = "";
@@ -257,7 +283,7 @@ async function runGenerationLoop(
       model: "claude-sonnet-4-6",
       max_tokens: 20000,
       thinking: { type: "enabled", budget_tokens: 10000 },
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       tools: TOOL_DEFINITIONS,
       messages,
     });
@@ -321,6 +347,7 @@ async function repairWithRetry(
   schema: Record<string, unknown>,
   errors: string[],
   reporter?: GeneratorReporter,
+  systemPrompt: string = SYSTEM_PROMPT,
 ): Promise<Record<string, unknown>> {
   reporter?.onStatus("Validation failed, asking model to self-heal...");
   const errorList = errors.slice(0, 15).map((e) => `  - ${e}`).join("\n");
@@ -344,7 +371,7 @@ Return ONLY the corrected JSON object. No explanation. No markdown.`,
     model: "claude-sonnet-4-6",
     max_tokens: 20000,
     thinking: { type: "enabled", budget_tokens: 5000 },
-    system: SYSTEM_PROMPT,
+    system: systemPrompt,
     messages,
   });
 
@@ -372,15 +399,17 @@ export async function generateSchema(
   intake: IntakeAnswers,
   apiKey: string,
   reporter?: GeneratorReporter,
+  fast = true,
 ): Promise<Record<string, unknown>> {
   const client = new Anthropic({ apiKey });
+  const systemPrompt = fast ? SYSTEM_PROMPT_FAST : SYSTEM_PROMPT;
 
   // 1. Generate
   reporter?.onStatus("Initializing schema generation...");
   const messages: Anthropic.Messages.MessageParam[] = [
     { role: "user", content: buildUserMessage(intake) },
   ];
-  const finalText = await runGenerationLoop(client, messages, reporter);
+  const finalText = await runGenerationLoop(client, messages, reporter, systemPrompt);
   let schema = extractJson(finalText);
   schema = injectKnownValues(schema, intake);
 
@@ -392,9 +421,85 @@ export async function generateSchema(
   reporter?.onStatus("Validating schema...");
   const firstCheck = validateSchema(schema);
   if (!firstCheck.valid) {
-    schema = await repairWithRetry(client, schema, firstCheck.errors, reporter);
+    schema = await repairWithRetry(client, schema, firstCheck.errors, reporter, systemPrompt);
     schema = injectKnownValues(schema, intake); // re-inject in case retry overwrote meta
     schema = repairSchema(schema);             // re-repair in case retry introduced new shape issues
+  }
+
+  return schema;
+}
+
+// ── Enrich entry ──────────────────────────────────────────────────────────────
+
+const ENRICH_SECTIONS = [
+  "identity.distinctiveAssets.sonic",
+  "identity.distinctiveAssets.visual",
+  "narrative.pillars",
+  "narrative.editorial",
+  "narrative.contentTest",
+  "narrative.mythEvolution",
+  "voice.contextVariants",
+  "voice.rails",
+  "commercial.socialProof",
+  "commercial.offers",
+  "commercial.surfaceRules",
+  "commercial.globalForbiddenTerms",
+  "governance.conflictResolution",
+  "governance.compliance",
+  "governance.overrideProtocol",
+  "governance.surfaceRules",
+];
+
+export async function enrichSchema(
+  existing: Record<string, unknown>,
+  apiKey: string,
+  reporter?: GeneratorReporter,
+  brandContext?: string,
+): Promise<Record<string, unknown>> {
+  const client = new Anthropic({ apiKey });
+
+  reporter?.onStatus("Enriching schema with optional sections...");
+
+  const contextBlock = brandContext
+    ? `\n## Brand context from external sources\n\nUse the following real brand content to inform the sections you generate. Extract actual colors, claims, offer types, social proof signals, and compliance cues where present. Do not invent details that contradict this content.\n\n${brandContext}\n`
+    : "";
+
+  const messages: Anthropic.Messages.MessageParam[] = [
+    {
+      role: "user",
+      content: `You are enriching an existing Ramoira brand schema with missing optional sections.
+
+The schema was generated in fast mode and is missing these sections:
+${ENRICH_SECTIONS.map((s) => `  - ${s}`).join("\n")}
+
+Rules:
+- Generate ONLY the missing sections listed above
+- Do NOT change any existing fields in the schema
+- Use the existing schema values (voice, myth, tones, adjectives, pricing style, etc.) to stay consistent
+- Where brand context is provided below, use real data from it — actual colors, claims, offer types, social proof — instead of guessing
+- Apply the same quality standards: real copy in examples, specific yes/no tests
+${contextBlock}
+Use the tools to look up field specs and valid enum values before writing each section.
+
+Return the COMPLETE schema JSON with all existing fields preserved and the new sections added. No explanation. No markdown.
+
+Existing schema:
+${JSON.stringify(existing, null, 2)}`,
+    },
+  ];
+
+  reporter?.onStatus("Initializing enrichment...");
+  const finalText = await runGenerationLoop(client, messages, reporter, SYSTEM_PROMPT);
+  let schema = extractJson(finalText);
+
+  reporter?.onStatus("Applying structural repairs...");
+  schema = repairSchema(schema);
+
+  reporter?.onStatus("Validating enriched schema...");
+  const check = validateSchema(schema);
+  if (!check.valid) {
+    schema = await repairWithRetry(client, schema, check.errors, reporter, SYSTEM_PROMPT);
+    schema = repairSchema(schema);
   }
 
   return schema;

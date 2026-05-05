@@ -1,0 +1,1364 @@
+{
+  "meta": {
+    "brandId": "sos-1",
+    "brandName": "sos",
+    "schemaVersion": "2.0.0",
+    "effectiveDate": "2026-05-05",
+    "previousVersion": "",
+    "changelog": [
+      "Initial schema generation",
+      "Enrichment pass: added missing optional sections for identity.distinctiveAssets.sonic, identity.distinctiveAssets.visual, narrative.pillars, narrative.editorial, narrative.contentTest, narrative.mythEvolution, voice.contextVariants, voice.rails, commercial.socialProof, commercial.offers, commercial.surfaceRules, commercial.globalForbiddenTerms, governance.conflictResolution, governance.compliance, governance.overrideProtocol, governance.surfaceRules"
+    ]
+  },
+  "identity": {
+    "_component": "identity",
+    "_version": "2.0.0",
+    "prism": {
+      "physique": {
+        "permitted": [
+          "clean dashboard interfaces with clear data hierarchy",
+          "workflow diagrams showing steps consolidated into fewer steps",
+          "neutral, structured typography on light backgrounds",
+          "icons that communicate task completion and process flow"
+        ],
+        "forbidden": [
+          "cluttered UI screenshots that imply complexity",
+          "stock photography of hospitality interiors unrelated to operations",
+          "bold hero imagery with dramatic lighting",
+          "consumer-facing hotel guest photography"
+        ],
+        "referenceURL": "",
+        "posture": "Clean, structured, and purposeful. Every visual element earns its place by communicating clarity or progress. Never decorative."
+      },
+      "personality": {
+        "sincerity": 8,
+        "excitement": 3,
+        "competence": 8,
+        "sophistication": 7,
+        "ruggedness": 2,
+        "characterBrief": "sos presents as a calm, capable colleague who has already done the work of understanding your operational pain \u2014 and built a small, well-considered thing to address it. Not a guru. Not a disruptor. A pragmatist who believes that less friction is genuinely good for everyone. Speaks in complete, measured sentences. Never oversells. Never performs enthusiasm it does not feel."
+      },
+      "culture": {
+        "coreValues": [
+          "operational clarity over complexity",
+          "honesty about what the product does and does not do",
+          "respect for the operator's intelligence and experience",
+          "transparency in process and pricing"
+        ],
+        "originNarrative": "sos was built because hotel operations teams were managing critical workflows across too many disconnected tools \u2014 spreadsheets, radios, messaging apps, and paper logs all running in parallel. The founders believed consolidation was not a nice-to-have but a basic precondition for a team running efficiently. sos exists to close that gap.",
+        "forbidden": [
+          "claiming to be the definitive experts in hotel operations",
+          "positioning as a thought-leadership platform",
+          "presenting the brand as a movement or mission-driven company"
+        ],
+        "sacredBoundary": "sos never positions itself as knowing the hotel business better than the operators who use it. The product is a tool. The operator is the expert."
+      },
+      "relationship": {
+        "mode": "Things can be better. Here is a small thing that helps.",
+        "formality": 4,
+        "pronoun": "we",
+        "warmth": 6,
+        "powerDynamic": "customer_leads"
+      },
+      "reflection": {
+        "depictedArchetype": "A hotel operations manager or GM who is experienced, pragmatic, and tired of duct-taped workflows. They are not looking for transformation \u2014 they are looking for one fewer thing to chase down.",
+        "aspirationalDelta": 2,
+        "forbiddenArchetypes": [
+          "the visionary hotelier building the future of hospitality",
+          "the tech-forward early adopter excited by new tools",
+          "the hospitality newcomer learning the business"
+        ],
+        "ageSignal": "30\u201355. Operational tenure over novelty-seeking. Has seen enough vendor promises to be skeptical."
+      },
+      "selfImage": {
+        "feelingDescriptors": [
+          "in control of their day",
+          "less reactive and more deliberate",
+          "confident that nothing is falling through the cracks",
+          "like their team is working from the same page"
+        ],
+        "identityStatement": "sos is the operational layer that holds hotel workflows together \u2014 quietly, without friction, without fanfare.",
+        "forbidden": [
+          "feeling like they have been sold to",
+          "feeling like the product is smarter than them",
+          "feeling like they need to change how they think about operations to use the tool"
+        ]
+      }
+    },
+    "distinctiveAssets": {
+      "visual": {
+        "primaryColor": {
+          "value": "#1A1A2E",
+          "severity": "strong",
+          "rationale": "Deep navy anchors the organised, sophisticated tone without the coldness of pure black. Signals reliability and structure."
+        },
+        "secondaryColors": [
+          "#F5F5F0",
+          "#3A86FF",
+          "#E8E8E0"
+        ],
+        "forbiddenColors": [
+          "#FF0000",
+          "#FF6B00",
+          "#FFD600"
+        ],
+        "logoUsage": {
+          "minimumClearSpace": "Equal to the cap-height of the wordmark on all sides",
+          "forbiddenBackgrounds": [
+            "busy photographic backgrounds",
+            "gradients that reduce contrast below WCAG AA",
+            "colours within 20% brightness of the primary brand navy"
+          ],
+          "forbiddenModifications": [
+            "adding drop shadows",
+            "stretching or compressing the wordmark",
+            "adding a tagline to the logo lockup without brand approval",
+            "rendering the wordmark in more than one colour"
+          ]
+        },
+        "iconography": [
+          "single-weight line icons only",
+          "rounded terminals on strokes",
+          "icons must represent actions or states, never decoration",
+          "no filled icons mixed with outline icons in the same interface context"
+        ],
+        "characterAssets": [],
+        "photographyStyle": {
+          "permitted": [
+            "tight shots of hotel staff working at a desk or tablet \u2014 focused, not posed",
+            "overhead flat-lay of organised operational materials: checklists, devices, printed schedules",
+            "empty-but-ready hotel back-of-house spaces: tidy, functional, lit neutrally"
+          ],
+          "forbidden": [
+            "guest-facing luxury hotel imagery \u2014 pools, lobbies, guests enjoying amenities",
+            "smiling team photos staged for the camera",
+            "dramatic or cinematic lighting",
+            "before/after chaos imagery"
+          ],
+          "lightingMood": "Flat, even, functional. Daylight or neutral artificial light. No drama, no shadows for mood."
+        }
+      },
+      "sonic": {
+        "sonicLogoURL": "",
+        "permittedGenres": [
+          "minimal electronic",
+          "ambient instrumental"
+        ],
+        "forbiddenGenres": [
+          "upbeat pop",
+          "rock",
+          "jazz with high energy",
+          "orchestral swells"
+        ],
+        "tempoRange": [
+          70,
+          95
+        ],
+        "instrumentalMood": "Measured, calm, focused. The sound of a system running as it should."
+      },
+      "linguistic": {
+        "ownedPhrases": [
+          {
+            "value": "one place for operations",
+            "severity": "strong",
+            "rationale": "Directly expresses the core consolidation value proposition without claiming superiority."
+          },
+          {
+            "value": "less to chase, more to run",
+            "severity": "contextual",
+            "rationale": "Captures the practical outcome of using sos \u2014 reduced friction for the operator \u2014 in plain language."
+          }
+        ],
+        "ownedWords": [
+          "consolidated",
+          "streamlined",
+          "workflow",
+          "operational"
+        ],
+        "forbiddenWords": [
+          {
+            "value": "expert",
+            "severity": "absolute",
+            "rationale": "sos must never claim expertise in hotel operations. The operator is the expert. Using this word positions sos as knowing the business better than its customers."
+          },
+          {
+            "value": "revolutionary",
+            "severity": "absolute",
+            "rationale": "sos makes no transformational or disruptive claims. The brand solves a practical problem. Revolution-framing is off-brand and over-confident."
+          },
+          {
+            "value": "crushing it",
+            "severity": "absolute",
+            "rationale": "Aggressive, informal language that conflicts with the sophisticated, organised tone and reads as performative enthusiasm."
+          },
+          {
+            "value": "industry-leading",
+            "severity": "strong",
+            "rationale": "Superlative claim that cannot be substantiated and implies arrogance. Conflicts with the brand's humility and customer-led power dynamic."
+          },
+          {
+            "value": "disrupt",
+            "severity": "strong",
+            "rationale": "Challenger framing that is inconsistent with sos's optimist archetype. sos helps, it does not disrupt."
+          },
+          {
+            "value": "game-changer",
+            "severity": "strong",
+            "rationale": "Hyperbolic and overconfident. sos describes incremental, practical improvement \u2014 not paradigm shifts."
+          }
+        ],
+        "typographicVoice": {
+          "sentenceStructure": "Short to medium sentences. Active voice. State the outcome first, then the mechanism. Avoid subordinate clauses stacked more than one deep.",
+          "punctuationStyle": "Full stops. Em dashes for a single parenthetical per sentence. No exclamation marks. No ellipses for effect. Colons permitted for lists.",
+          "numeralStyle": "Always numerals for quantified operational claims (e.g. '3 workflows', '12 departments'). Words for non-quantified references. No inflated statistics without a source."
+        }
+      }
+    },
+    "summary": {
+      "oneLineBrief": "sos: B2B SaaS that consolidates hotel operations workflows into one place so teams can stop chasing and start running.",
+      "threeAdjectives": [
+        "organized",
+        "transparent",
+        "sophisticated"
+      ],
+      "neverDo": [
+        "never sound arrogant",
+        "neverdownplay competition",
+        "never mention we are experts in hotel operations"
+      ]
+    }
+  },
+  "narrative": {
+    "_component": "narrative",
+    "_version": "2.0.0",
+    "semiotic": {
+      "denotative": {
+        "categoryDescriptor": "B2B SaaS platform for hotel operations workflow management and consolidation",
+        "functionalClaims": [
+          "Consolidates hotel operations workflows into a single platform",
+          "Replaces fragmented tool stacks \u2014 messaging apps, spreadsheets, paper logs \u2014 with one interface",
+          "Enables cross-department task assignment, tracking, and completion visibility",
+          "Reduces operational handoff errors caused by information living in multiple places",
+          "Accessible via web and mobile for on-property and remote operations teams"
+        ],
+        "specifications": [
+          "Cloud-based SaaS \u2014 no on-premise installation required",
+          "Role-based access for different team levels",
+          "Integrates with common hotel property management systems"
+        ],
+        "forbiddenClaims": [
+          "sos experts in hotel operations or the hotel industry",
+          "sos is the best hotel operations software \u2014 no unsubstantiated superlatives",
+          "sos will transform your hotel \u2014 transformation claims are not within brand",
+          "Any claim that implies competitor products are inferior"
+        ]
+      },
+      "connotative": {
+        "meaningClusters": [
+          "operational calm \u2014 the feeling that nothing is falling through the cracks",
+          "team alignment \u2014 everyone working from the same information at the same time",
+          "practical progress \u2014 small, measurable improvements that compound over time",
+          "transparency without surveillance \u2014 visibility that helps teams, not polices them"
+        ],
+        "forbiddenMeanings": [
+          "technological superiority \u2014 sos is a tool, not a competitive identity",
+          "disruption of the hospitality industry \u2014 sos operates within the industry's logic, not against it",
+          "complexity mastery \u2014 sos reduces complexity, it does not celebrate navigating it"
+        ],
+        "emotionalRegister": "The quiet satisfaction of a shift that ended without a single dropped ball. Not excitement. Not pride. Just the absence of unnecessary friction.",
+        "minimumConnotativeTest": "Does this content make an operations manager feel more in control, or does it make them feel like they are being pitched to by someone who has never run a shift?"
+      },
+      "layerHierarchy": "denotative_first"
+    },
+    "myth": {
+      "culturalTension": "Hotel operations teams are expected to perform increasingly complex cross-department coordination using the same fragmented toolset they had a decade ago, while the rest of the business has consolidated onto modern platforms. The tension is between the expectation of operational excellence and the refusal to fund or prioritise the infrastructure that makes it possible.",
+      "mythStatement": "Consolidating your operation's workflows is not a luxury upgrade \u2014 it is the basic precondition for running a hotel without unnecessary chaos.",
+      "protagonistRole": "The steady hand that removes obstacles \u2014 not by heroics but by quietly making the environment better.",
+      "antagonist": "Fragmentation: the accumulated weight of disconnected tools, unofficial workarounds, and information siloed across apps, notepads, and verbal handoffs that make every shift harder than it needs to be.",
+      "mythTest": "Does this content name or remove a real source of operational friction \u2014 or is it just describing features?",
+      "constraints": [
+        {
+          "constraint": "Do not frame sos as the hero of the story. The operator runs the hotel. sos clears the path.",
+          "severity": "absolute",
+          "rationale": "Positioning sos as the hero implies it knows the business better than the operator, which violates the brand's sacred boundary and triggers the arrogance prohibition.",
+          "example": "Rejected: 'sos transforms how hotels operate.' Approved: 'sos puts your workflows in one place so your team can do what they already know how to do.'"
+        },
+        {
+          "constraint": "Do not mention competitor products by name or imply they are inferior.",
+          "severity": "absolute",
+          "rationale": "Downplaying competition is explicitly forbidden by the brand brief. It also conflicts with the transparency value \u2014 speaking honestly about what sos does is more credible than speaking critically about what others do not.",
+          "example": "Rejected: 'Unlike [Competitor], sos actually consolidates everything.' Approved: 'One platform. All your workflows. No switching.'"
+        },
+        {
+          "constraint": "Avoid claiming operational expertise or deep industry knowledge.",
+          "severity": "absolute",
+          "rationale": "The brand must never say or imply that sos understands hotel operations better than its customers. The customers are the experts.",
+          "example": "Rejected: 'Built by hotel operations experts.' Approved: 'Built for hotel operations teams.'"
+        },
+        {
+          "constraint": "Quantify benefits only when the claim is supportable. Do not inflate.",
+          "severity": "strong",
+          "rationale": "Transparency is a core value. Fabricated or inflated statistics undermine trust with an audience that is operationally minded and skeptical of vendor overreach.",
+          "example": "Rejected: 'Save up to 40% of your time.' Approved: 'Fewer tools to check. Fewer messages to track down.'"
+        }
+      ]
+    },
+    "mythEvolution": {
+      "principle": "As the hospitality industry adopts more technology, the myth evolves not to keep pace with trends but to reassert the same core truth: more tools is not the same as more organisation. sos absorbs new tensions by showing how consolidation remains the answer regardless of what new software enters the stack.",
+      "modernTensions": [
+        {
+          "tension": "AI and automation are flooding hotels with new software promises, increasing complexity rather than reducing it.",
+          "mythResolution": "More automation tools without a unified operational layer creates a new version of the same old problem. sos is the place where it all connects.",
+          "permittedFraming": [
+            "sos as the connective layer that makes new tools usable together",
+            "consolidation as the precondition for effective automation"
+          ],
+          "forbiddenFraming": [
+            "sos as an AI company",
+            "sos as the most advanced platform in the market",
+            "sos as replacing human judgment in operations"
+          ],
+          "rails": [
+            {
+              "context": "When AI or automation is the topic",
+              "instruction": "Frame sos as the operational layer that gives your team visibility \u2014 not as an AI product.",
+              "example": "Your team makes the calls. sos makes sure they have the information to make them.",
+              "antiExample": "AI-powered operations management that transforms your hotel."
+            }
+          ]
+        },
+        {
+          "tension": "Post-pandemic staffing shortages mean teams are smaller and the cost of operational errors is higher than ever.",
+          "mythResolution": "Smaller teams need less friction, not more heroics. Consolidation helps a lean team perform like a full one.",
+          "permittedFraming": [
+            "sos as a force multiplier for lean operations teams",
+            "reducing handoff errors when fewer people are covering more ground"
+          ],
+          "forbiddenFraming": [
+            "sos as a replacement for headcount",
+            "sos as solving the staffing crisis"
+          ],
+          "rails": [
+            {
+              "context": "When addressing operational efficiency in the context of smaller teams",
+              "instruction": "Focus on reducing friction and error, not on replacing people.",
+              "example": "When your team is covering more ground, the last thing they need is to check four different apps to find out what happened at turndown.",
+              "antiExample": "Do more with less. sos helps you run a full operation with a fraction of the team."
+            }
+          ]
+        }
+      ],
+      "immutableCore": "Fragmented workflows cost hotels time, money, and team trust. Consolidation is always the answer. That never changes regardless of what new technology enters the picture."
+    },
+    "pillars": [
+      {
+        "name": "Consolidation",
+        "description": "The core product truth: one place for all operational workflows. Used wherever the product's fundamental value needs to be communicated.",
+        "coreClaim": "All your hotel's operations workflows, in one place.",
+        "approvedArcs": [
+          "Before: information scattered across five tools. After: one view of everything.",
+          "Your team spends less time looking and more time doing.",
+          "Stop managing the tools. Start managing the operation."
+        ],
+        "forbiddenInversions": [
+          "Suggesting complexity is something to embrace or master",
+          "Implying the old way was fine",
+          "Using consolidation as a platform to critique competitor tools"
+        ],
+        "surfaces": [
+          "product_detail_page",
+          "paid_landing_page",
+          "email_acquisition",
+          "comparison_page"
+        ],
+        "rails": [
+          {
+            "context": "When describing consolidation on a paid surface",
+            "instruction": "Lead with the operational outcome (clarity, fewer errors, team alignment), then name the mechanism (one platform).",
+            "example": "Your housekeeping, maintenance, and front desk workflows. One place. No missed handoffs.",
+            "antiExample": "The most powerful hotel operations consolidation platform on the market."
+          }
+        ]
+      },
+      {
+        "name": "Transparency",
+        "description": "Visibility into what is happening across the operation, in real time. Used to communicate the awareness and control sos provides.",
+        "coreClaim": "Know what is happening across your operation without chasing it down.",
+        "approvedArcs": [
+          "A task logged is a task tracked \u2014 no more verbal handoffs that disappear.",
+          "Your whole team, visible from one screen.",
+          "Nothing falls through the cracks because nothing is hidden."
+        ],
+        "forbiddenInversions": [
+          "Framing visibility as surveillance of staff",
+          "Implying the product creates accountability through pressure rather than clarity"
+        ],
+        "surfaces": [
+          "product_detail_page",
+          "email_retention",
+          "brand_narrative",
+          "editorial"
+        ],
+        "rails": [
+          {
+            "context": "When communicating real-time visibility features",
+            "instruction": "Frame visibility as serving the team's coordination, not as a management control mechanism.",
+            "example": "When a task changes status, everyone who needs to know, knows.",
+            "antiExample": "Monitor your team's performance in real time and hold them accountable."
+          }
+        ]
+      },
+      {
+        "name": "Operational Calm",
+        "description": "The emotional outcome of using sos \u2014 the absence of reactive scrambling. Used in brand narrative and retention contexts.",
+        "coreClaim": "A shift that ends without a single dropped ball.",
+        "approvedArcs": [
+          "Less chasing. More running.",
+          "The operations manager who used to end every shift with a list of things to follow up on. Now they end it with a closed list.",
+          "Calm is not the absence of work. It is the absence of unnecessary chaos."
+        ],
+        "forbiddenInversions": [
+          "Promising a stress-free workplace \u2014 sos cannot control staffing, guests, or external pressures",
+          "Using calm as a lifestyle or wellness framing"
+        ],
+        "surfaces": [
+          "brand_narrative",
+          "editorial",
+          "social_organic",
+          "email_retention"
+        ],
+        "rails": [
+          {
+            "context": "When using emotional language in brand content",
+            "instruction": "Ground the emotion in a specific operational outcome. Do not float on feeling alone.",
+            "example": "Everything your team needs to track, in one place. Less noise at the end of the shift.",
+            "antiExample": "Find your operational zen with sos."
+          }
+        ]
+      }
+    ],
+    "editorial": {
+      "openingPrinciple": "Open with the operational reality, not the product. Name the friction before offering the fix. Never open with a claim about sos.",
+      "structuralApproach": "Problem stated plainly \u2192 mechanism described simply \u2192 outcome named without inflation. Three beats. No preamble. No recap.",
+      "forbiddenStructures": [
+        "The rhetorical question opener: 'What if your operations ran smoothly?'",
+        "The industry stat opener that positions sos as the authority: 'Did you know 74% of hoteliers...'",
+        "The listicle that treats features as benefits without operational grounding",
+        "The customer quote used to imply competitive superiority over named tools"
+      ],
+      "referencePool": [
+        "Hotel operations management literature \u2014 not hospitality lifestyle media",
+        "B2B SaaS product communication that respects the buyer's intelligence",
+        "Operational efficiency case studies from adjacent industries: logistics, healthcare administration"
+      ],
+      "forbiddenReferences": [
+        "Hospitality award shows or trend reports \u2014 too far from operations reality",
+        "Celebrity chefs or high-profile GMs \u2014 wrong archetype for the audience",
+        "Consumer-facing hospitality publications"
+      ],
+      "timeScaleLanguage": "Describe operational improvement in shift-level and week-level increments. Avoid quarter or year framing \u2014 it reads as vendor-speak. The operator thinks in shifts, not roadmaps."
+    },
+    "contentTest": {
+      "mythTest": "Does this content identify or remove a specific, real source of operational friction in a hotel \u2014 or is it just describing a feature or making a general claim about efficiency?",
+      "connotativeTest": "Does this content make an experienced operations manager feel more in control and respected \u2014 or does it make them feel like they are being pitched to by someone who has never run a shift?",
+      "toneTest": "Could this content be read aloud to a skeptical GM without them rolling their eyes at a single word?"
+    }
+  },
+  "voice": {
+    "_component": "voice",
+    "_version": "2.0.0",
+    "base": {
+      "sentenceLength": "varied",
+      "vocabularyLevel": 6,
+      "humourPermitted": false,
+      "humourStyle": "none",
+      "permittedDevices": [
+        "plain-language analogy grounded in operational reality",
+        "before/after structural contrast without hyperbole",
+        "concrete specificity \u2014 name the actual workflow, not 'operations' in the abstract",
+        "understatement \u2014 let the operational outcome speak without amplification"
+      ],
+      "forbiddenDevices": [
+        "rhetorical questions designed to manufacture urgency",
+        "exclamation marks in any context",
+        "superlatives without evidence",
+        "alliteration used for style rather than clarity",
+        "emoji in written copy",
+        "ellipsis for dramatic effect",
+        "stacked adjectives \u2014 pick one"
+      ],
+      "structuralRules": [
+        "State the operational outcome before the mechanism: what changes for the user before how the product works.",
+        "Use 'we' to refer to sos \u2014 never 'sos' in third person in first-person copy contexts.",
+        "Do not open any piece of content with a claim about sos. Open with the user's reality.",
+        "Every paragraph must earn its place by advancing the operational argument, not padding with brand sentiment.",
+        "Active voice. Subject acts. Product enables. Not: 'Efficiency is achieved through sos.'"
+      ]
+    },
+    "forbiddenTones": [
+      "overly excited",
+      "over-confident",
+      "aggressive"
+    ],
+    "approvedTones": [
+      "conversational"
+    ],
+    "examples": [
+      {
+        "context": "product_detail_page",
+        "text": "Hotel operations run across a lot of moving parts \u2014 housekeeping, maintenance, front desk, food and beverage. When those teams are working from different tools, things get missed. sos puts all of it in one place, so your team is always working from the same picture.",
+        "verdict": "approved",
+        "reason": "Opens with operational reality, not a product claim. Explains mechanism plainly without superlatives. 'Same picture' is a concrete, low-key metaphor. No exclamation marks, no urgency, no arrogance."
+      },
+      {
+        "context": "email_acquisition",
+        "text": "Most operations teams are not losing track of tasks because they are disorganised. They are losing track because the information is spread across too many places. sos is one place for it. That is all it needs to be.",
+        "verdict": "approved",
+        "reason": "Respects the reader's intelligence \u2014 explicitly absolves the operator of blame before offering a fix. Final sentence is intentionally understated, which is on-brand. No competitive reference, no hype."
+      },
+      {
+        "context": "email_retention",
+        "text": "Your maintenance team logged 34 tasks last week. All of them were closed before the shift ended. That is what one place for your workflows looks like.",
+        "verdict": "approved",
+        "reason": "Opens with the customer's own operational data, not a product claim. Uses a specific, concrete number to ground the outcome. Ends with the brand phrase deployed naturally, without fanfare. No superlatives, no urgency."
+      },
+      {
+        "context": "brand_narrative",
+        "text": "Hotel operations teams have always been good at their jobs. The tools just made it harder than it needed to be. sos is one place for all of it \u2014 not because we know your operation better than you do, but because you should not have to check five apps to find out what happened at last night's turndown.",
+        "verdict": "approved",
+        "reason": "Explicitly credits the operator's competence before introducing the product. Directly invokes the sacred boundary ('not because we know your operation better than you do'). Grounds the abstract benefit in a specific, recognisable scenario. Understated close."
+      },
+      {
+        "context": "paid_landing_page",
+        "text": "\ud83d\ude80 sos is REVOLUTIONISING hotel operations! Industry-leading workflow automation that our team of hospitality experts built specifically to crush your competition. Get started TODAY \u2014 limited spots available!",
+        "verdict": "rejected",
+        "reason": "Violates four absolute constraints simultaneously: claims expertise in hotel operations ('hospitality experts'), uses forbidden word 'revolutionising', uses urgency language ('limited spots'), and uses aggressive competitive framing ('crush your competition'). Exclamation marks and emoji compound the tone failure."
+      },
+      {
+        "context": "social_organic",
+        "text": "Unlike [Competitor], sos actually consolidates everything your team needs \u2014 not just the easy stuff. We've been in hotel operations for 15 years, so we know exactly what you're dealing with.",
+        "verdict": "rejected",
+        "reason": "Downplays a competitor by name, which is explicitly forbidden. Claims 15 years of hotel operations expertise \u2014 a direct violation of the brand constraint against positioning sos as an industry expert. Comparative framing and over-confidence in a single sentence."
+      },
+      {
+        "context": "display_ad",
+        "text": "The #1 hotel ops platform trusted by 10,000+ properties worldwide. Don't get left behind \u2014 upgrade your workflows today!",
+        "verdict": "rejected",
+        "reason": "Uses an unsubstantiated market-position superlative ('#1'), presents a statistic without a verifiable source ('10,000+ properties'), and uses urgency and loss-framing ('don't get left behind') that directly contradicts the brand's calm, no-pressure commercial posture."
+      },
+      {
+        "context": "video_script",
+        "text": "What if your next shift just\u2026 worked? What if you never had to chase down a task again? sos \u2014 the future of hotel operations.",
+        "verdict": "rejected",
+        "reason": "Opens with two consecutive rhetorical questions, which is a forbidden structural device. 'The future of hotel operations' is transformation-framing that violates the brand's prohibition on claiming to disrupt or reshape the industry. Ellipsis used for effect \u2014 also forbidden."
+      }
+    ],
+    "contextVariants": [
+      {
+        "surface": "customer_service",
+        "formalityDelta": -1,
+        "warmthDelta": 2,
+        "sentenceLength": "short",
+        "openingInstruction": "Acknowledge the operational context immediately. Do not open with pleasantries.",
+        "closingInstruction": "Close with a concrete next step, not a general offer to help.",
+        "rails": [
+          {
+            "context": "When a customer reports a workflow gap or missing feature",
+            "instruction": "Do not promise a fix. Acknowledge the operational pain specifically, describe what sos currently does, and offer to log the feedback.",
+            "example": "That is a real gap for teams managing that workflow. Here is what you can do today in sos, and we have logged your feedback for the product team.",
+            "antiExample": "Great feedback! Our experts are always working to improve the platform for you."
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use 'no problem' as a response \u2014 it implies the customer's issue was an inconvenience",
+          "Do not use 'absolutely' as a filler affirmation"
+        ],
+        "fallbackInstruction": "If uncertain about a product capability, say so directly and route to the correct resource. Do not guess."
+      },
+      {
+        "surface": "email_retention",
+        "formalityDelta": -1,
+        "warmthDelta": 1,
+        "sentenceLength": "varied",
+        "openingInstruction": "Open with something the customer has done or achieved in sos \u2014 not a product update.",
+        "closingInstruction": "Close with an operational prompt: one thing they can do next that makes the tool more useful to them.",
+        "rails": [
+          {
+            "context": "When communicating a new feature",
+            "instruction": "Lead with the operational problem the feature addresses, not the feature name or technical description.",
+            "example": "If your team has been logging maintenance requests in two places, you no longer need to. Here is how.",
+            "antiExample": "Introducing: Advanced Multi-Department Task Routing. Our engineers have been hard at work to bring you this industry-first capability."
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use 'exciting news' or 'we are thrilled to announce'",
+          "Do not use renewal urgency language"
+        ],
+        "fallbackInstruction": "If there is no operationally grounded reason to contact the customer, do not send the message."
+      },
+      {
+        "surface": "brand_narrative",
+        "formalityDelta": 0,
+        "warmthDelta": 1,
+        "sentenceLength": "varied",
+        "openingInstruction": "Open with an observation about how hotel operations currently work \u2014 grounded, not dramatic.",
+        "closingInstruction": "End with the myth statement in plain language. Do not end on a call to action.",
+        "rails": [
+          {
+            "context": "When writing about sos's reason for existing",
+            "instruction": "Frame the founding insight as an observation, not a discovery. sos noticed something obvious that was being ignored. It built a simple fix.",
+            "example": "Hotel operations teams are not disorganised. They are working with tools that were never designed to work together. sos is one place for all of it.",
+            "antiExample": "We saw a broken industry and decided to fix it."
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use founding-story hyperbole: 'we set out to change everything'",
+          "Do not name competitors or previous tools the customer may have used"
+        ],
+        "fallbackInstruction": "If the content cannot be grounded in a real operational scenario, do not publish it."
+      },
+      {
+        "surface": "social_organic",
+        "formalityDelta": -1,
+        "warmthDelta": 1,
+        "sentenceLength": "short",
+        "openingInstruction": "Open with an observation about a recognisable operational moment \u2014 not a product claim or a question.",
+        "closingInstruction": "Close with the operational implication, not a call to action or a link prompt.",
+        "rails": [
+          {
+            "context": "When posting about a product capability",
+            "instruction": "Name the operational problem first, then describe what sos does about it in one sentence. Do not use promotional framing.",
+            "example": "When your front desk and housekeeping are working from different lists, rooms get missed. sos keeps both teams on the same one.",
+            "antiExample": "Check out our new feature. Link in bio. \ud83d\ude4c"
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use emoji",
+          "Do not use 'link in bio' as a closing device \u2014 if a link is needed, state the destination plainly",
+          "Do not post product announcements without an operational context sentence"
+        ],
+        "fallbackInstruction": "If the post cannot be grounded in a specific operational scenario relevant to hotel operations, hold it for revision."
+      },
+      {
+        "surface": "paid_landing_page",
+        "formalityDelta": 0,
+        "warmthDelta": 0,
+        "sentenceLength": "short",
+        "openingInstruction": "Open the headline with the operational outcome or problem \u2014 not the product name or a market position claim.",
+        "closingInstruction": "Single CTA: demo request or free trial. No secondary offers, no urgency modifiers.",
+        "rails": [
+          {
+            "context": "When writing body copy after the headline",
+            "instruction": "Follow the three-beat structure: name the friction, describe the mechanism, state the outcome. No preamble.",
+            "example": "Operations teams manage tasks across departments. When those tasks live in different tools, handoffs break down. sos puts them in one place.",
+            "antiExample": "In today's fast-paced hospitality environment, operational excellence has never been more important. That is why leading hotels choose sos."
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use trust badges or claim counts without verified sources",
+          "Do not stack multiple CTAs on a single page"
+        ],
+        "fallbackInstruction": "If no compliant headline can be written within the brief, escalate to brand review before publishing."
+      },
+      {
+        "surface": "search_result_page",
+        "formalityDelta": 0,
+        "warmthDelta": 0,
+        "sentenceLength": "short",
+        "openingInstruction": "Open the meta description with the primary functional claim \u2014 what sos does \u2014 not a market position or a brand tagline.",
+        "closingInstruction": "End with a plain CTA that names what the user will do: 'Request a demo' or 'Start a free trial'. No urgency modifiers.",
+        "rails": [
+          {
+            "context": "When writing ad copy or meta descriptions for search surfaces",
+            "instruction": "Use the character limit to state one functional claim and one outcome. Do not use both lines for claims \u2014 use one for the problem and one for the fix.",
+            "example": "Hotel operations workflows in one place. No more switching between tools to track what your team is doing. Request a demo.",
+            "antiExample": "The #1 rated hotel ops software. Industry-leading workflow tools. Try free today \u2014 limited offer!"
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use DKI (dynamic keyword insertion) in a way that produces superlatives or competitive comparisons",
+          "Do not use exclamation marks in any search ad copy"
+        ],
+        "fallbackInstruction": "If the character limit forces removal of the operational context, remove the CTA before removing the functional claim."
+      },
+      {
+        "surface": "email_acquisition",
+        "formalityDelta": 0,
+        "warmthDelta": 1,
+        "sentenceLength": "varied",
+        "openingInstruction": "Open by naming a specific operational friction point the recipient likely recognises \u2014 not by introducing sos.",
+        "closingInstruction": "Close with a single, low-pressure CTA framed as an evaluation step: 'See how sos works for your operation.'",
+        "rails": [
+          {
+            "context": "When writing the subject line",
+            "instruction": "Frame the subject line as an operational observation or statement \u2014 not a question, not a claim about sos, not a promotional hook.",
+            "example": "When your maintenance log and your front desk are working from different lists",
+            "antiExample": "Discover the hotel ops platform everyone is talking about \ud83d\ude80"
+          }
+        ],
+        "additionalForbidden": [
+          "Do not use urgency or deadline language in subject lines or body copy",
+          "Do not open with 'I wanted to reach out' or similar filler preamble"
+        ],
+        "fallbackInstruction": "If no operationally specific friction point can be identified for the recipient segment, do not send the email."
+      }
+    ],
+    "rails": {
+      "global": [
+        {
+          "context": "Any time the content is about to make a claim about sos's standing in the market",
+          "instruction": "Replace the claim with a specific operational outcome sos enables. Let the outcome make the argument.",
+          "example": "Your team logs it once. Everyone who needs to know, knows.",
+          "antiExample": "sos is the leading hotel operations platform."
+        },
+        {
+          "context": "Any time the word 'expert' or 'expertise' is about to appear in copy",
+          "instruction": "Reframe to describe what sos was built for, not who built it. The operator is the expert.",
+          "example": "Built for hotel operations teams.",
+          "antiExample": "Built by hotel operations experts."
+        },
+        {
+          "context": "Any time the content mentions a competitor product or category",
+          "instruction": "Remove the reference entirely. Redirect to what sos does, not what others do not.",
+          "example": "One platform for all your workflows.",
+          "antiExample": "Unlike spreadsheets and messaging apps, sos actually works."
+        },
+        {
+          "context": "Any time content opens with a sentence about sos rather than the operator's situation",
+          "instruction": "Rewrite the opening to name a specific operational friction point the reader is likely experiencing. Introduce sos only after the problem is established.",
+          "example": "When a task is logged in one tool and tracked in another, the handoff breaks. sos keeps both in the same place.",
+          "antiExample": "sos is a hotel operations platform designed to consolidate your workflows."
+        },
+        {
+          "context": "Any time the content is about to use an exclamation mark",
+          "instruction": "Remove the exclamation mark. If the sentence requires it to convey importance, rewrite the sentence to carry the weight through specificity rather than punctuation.",
+          "example": "Your team closed every maintenance task before checkout. That is what one shared list makes possible.",
+          "antiExample": "Your team is crushing it with sos!"
+        }
+      ],
+      "alternatives": {
+        "whenPricingForbidden": [
+          {
+            "context": "When pricing cannot be displayed on a surface",
+            "instruction": "Focus on the operational value \u2014 what the team gets \u2014 not the cost or savings. Let the demo request do the conversion work.",
+            "example": "See how sos works for your operation.",
+            "antiExample": "Starting from just $X per month."
+          }
+        ],
+        "whenUrgencyForbidden": [
+          {
+            "context": "When urgency tactics are not permitted",
+            "instruction": "Replace urgency with specificity. Name a real operational cost of the current state \u2014 not a deadline.",
+            "example": "Every shift your team spends checking four different tools is a shift spent managing information instead of operations.",
+            "antiExample": "Don't wait \u2014 get started before next season."
+          }
+        ],
+        "whenComparativeForbidden": [
+          {
+            "context": "When comparative claims cannot be made",
+            "instruction": "Describe sos's specific capability in concrete terms. Do not reference a category norm to contrast against.",
+            "example": "One login. All your workflows. Updated in real time.",
+            "antiExample": "More consolidated than any other hotel operations tool."
+          }
+        ],
+        "whenTrendLanguageForbidden": [
+          {
+            "context": "When trend or zeitgeist language cannot be used",
+            "instruction": "Return to the operational fundamentals. The value of consolidation does not expire with a trend cycle.",
+            "example": "Fewer tools. Clearer handoffs. That is all it takes.",
+            "antiExample": "The future-forward hotel operations platform for the modern hospitality landscape."
+          }
+        ],
+        "whenAccessibilityForbidden": [
+          {
+            "context": "When language about ease of access cannot be used",
+            "instruction": "Describe the implementation process in operational terms \u2014 what the team does on day one, not how easy or painless it is.",
+            "example": "Your team is up and running in sos within a single shift.",
+            "antiExample": "So easy to set up, anyone can do it."
+          }
+        ],
+        "whenPromotionForbidden": [
+          {
+            "context": "When promotional framing is not permitted",
+            "instruction": "Lead entirely with operational value. Let the product's utility speak without commercial wrapping.",
+            "example": "sos gives your operations team one place to log, track, and close tasks across every department.",
+            "antiExample": "Try sos free for 30 days and see the difference."
+          }
+        ]
+      }
+    }
+  },
+  "commercial": {
+    "_component": "commercial",
+    "_version": "2.0.0",
+    "pricing": {
+      "style": "simple",
+      "priceDisplayPermitted": true,
+      "displayFormat": "Monthly per-property or per-seat pricing displayed as a single, flat number. No anchoring with inflated 'original' prices. No tiered pricing tables with features obscured behind paywalls in communication.",
+      "surfaceOverrides": [
+        {
+          "surface": "brand_narrative",
+          "style": "opaque"
+        },
+        {
+          "surface": "editorial",
+          "style": "opaque"
+        },
+        {
+          "surface": "social_organic",
+          "style": "opaque"
+        }
+      ],
+      "urgencyLanguagePermitted": false,
+      "scarcityLanguagePermitted": false,
+      "discountPermitted": true,
+      "maxDiscountPercent": 20,
+      "permittedLanguage": [
+        "flat monthly pricing",
+        "per property",
+        "no setup fee",
+        "cancel any time",
+        "transparent pricing"
+      ],
+      "forbiddenLanguage": [
+        {
+          "value": "limited time offer",
+          "severity": "absolute",
+          "rationale": "Urgency language directly contradicts the transparent, no-pressure commercial posture sos must maintain with a B2B audience that mistrusts vendor tactics."
+        },
+        {
+          "value": "act now",
+          "severity": "absolute",
+          "rationale": "Aggressive urgency framing that conflicts with the calm, customer-led power dynamic."
+        },
+        {
+          "value": "only X spots left",
+          "severity": "absolute",
+          "rationale": "False scarcity is a transparency violation and contradicts the brand's core value of honesty."
+        },
+        {
+          "value": "ROI guarantee",
+          "severity": "strong",
+          "rationale": "An unsubstantiated financial guarantee that implies sos can control outcomes it cannot \u2014 and reads as the kind of overconfident vendor claim the brand explicitly avoids."
+        },
+        {
+          "value": "save up to X%",
+          "severity": "strong",
+          "rationale": "Anchored discount language that implies a list price inflated for the purpose of showing a discount. Conflicts with simple, transparent pricing posture."
+        }
+      ]
+    },
+    "claims": {
+      "approved": [
+        {
+          "claim": "One platform for all your hotel's operations workflows",
+          "evidenceRequired": false,
+          "geographicScope": [
+            "global"
+          ],
+          "surfaces": "all"
+        },
+        {
+          "claim": "Replaces disconnected tools with a single, shared operational view",
+          "evidenceRequired": false,
+          "geographicScope": [
+            "global"
+          ],
+          "surfaces": "all"
+        },
+        {
+          "claim": "Real-time task visibility across departments",
+          "evidenceRequired": false,
+          "geographicScope": [
+            "global"
+          ],
+          "surfaces": "all"
+        },
+        {
+          "claim": "Fewer missed handoffs between teams",
+          "evidenceRequired": true,
+          "evidenceType": "customer case study or usage data",
+          "geographicScope": [
+            "global"
+          ],
+          "surfaces": [
+            "product_detail_page",
+            "comparison_page",
+            "email_retention"
+          ]
+        }
+      ],
+      "forbidden": [
+        {
+          "value": "Built by hotel operations experts",
+          "severity": "absolute",
+          "rationale": "Directly violates the brand constraint against claiming expertise in hotel operations."
+        },
+        {
+          "value": "The most powerful hotel operations platform",
+          "severity": "absolute",
+          "rationale": "Unsubstantiated superlative that reads as arrogance \u2014 a core forbidden tone."
+        },
+        {
+          "value": "Guaranteed to reduce costs",
+          "severity": "strong",
+          "rationale": "sos cannot guarantee financial outcomes. This claim is overconfident and unsupportable."
+        }
+      ],
+      "comparative": {
+        "competitorMentionPermitted": false,
+        "comparativeClaimsPermitted": false,
+        "permittedCompetitors": [],
+        "forbiddenFramings": [
+          "Unlike [Competitor], sos...",
+          "Where other tools fail, sos...",
+          "Most hotel software just [negative description]. sos is different.",
+          "Still using spreadsheets? There is a better way."
+        ]
+      },
+      "superlatives": {
+        "permitted": false,
+        "approved": [],
+        "forbidden": [
+          "most powerful",
+          "best-in-class",
+          "industry-leading",
+          "number one",
+          "most comprehensive",
+          "unmatched"
+        ]
+      }
+    },
+    "offers": {
+      "permittedTypes": [
+        "free_trial",
+        "demo_request",
+        "pilot_programme_for_single_property"
+      ],
+      "forbiddenTypes": [
+        {
+          "value": "flash_sale",
+          "severity": "absolute",
+          "rationale": "Flash sales use urgency and scarcity, both of which are explicitly forbidden in the sos commercial posture. They also conflict with simple, transparent pricing."
+        },
+        {
+          "value": "bundle_discount_with_inflated_anchor",
+          "severity": "absolute",
+          "rationale": "Anchored discounting implies the original price was inflated, which is a transparency violation and conflicts with the brand's simple pricing posture."
+        },
+        {
+          "value": "referral_bonus_with_urgency_deadline",
+          "severity": "strong",
+          "rationale": "Referral programmes are permitted in principle but cannot use urgency or deadline framing to pressure participants."
+        }
+      ],
+      "communicationRules": {
+        "urgencyPermitted": false,
+        "scarcityPermitted": false,
+        "valueFraming": "Frame all offers in terms of what the operator gets to evaluate or experience \u2014 not what they stand to lose by not acting. The demo or trial should be framed as a practical step toward making an informed decision, not a limited opportunity."
+      }
+    },
+    "socialProof": {
+      "starRatingsPermitted": true,
+      "reviewCountsPermitted": true,
+      "customerTestimonialsPermitted": true,
+      "celebrityEndorsementStyle": "not applicable \u2014 sos does not use celebrity endorsement",
+      "permittedAuthoritySignals": [
+        "named customer testimonials from operations managers or GMs with property type and size noted",
+        "verified third-party review platform ratings (G2, Capterra)",
+        "case studies with specific, verifiable operational outcomes"
+      ],
+      "forbiddenSocialProof": [
+        "Anonymous testimonials without role or property type",
+        "Testimonials that claim sos is the best or made us the most efficient hotel in the city",
+        "Logos of hotels used without explicit permission",
+        "Review counts inflated by incentivised reviews"
+      ]
+    },
+    "surfaceRules": [
+      {
+        "surface": "comparison_page",
+        "pricing": {
+          "priceDisplayPermitted": true,
+          "urgencyLanguagePermitted": false
+        },
+        "fallback": "escalate_to_human",
+        "alternativeApproach": "Present sos's capabilities as a factual list. Do not name or imply competitor limitations. Let the facts stand without editorial framing.",
+        "rails": [
+          {
+            "context": "When listing capabilities against a feature comparison grid",
+            "instruction": "Only list what sos does. Leave competitor columns blank rather than marking them as deficient if data is unverified.",
+            "example": "sos: real-time cross-department task visibility \u2014 yes.",
+            "antiExample": "sos: real-time visibility \u2014 yes. [Competitor]: no."
+          }
+        ]
+      },
+      {
+        "surface": "paid_landing_page",
+        "pricing": {
+          "priceDisplayPermitted": true,
+          "urgencyLanguagePermitted": false,
+          "scarcityLanguagePermitted": false
+        },
+        "fallback": "escalate_to_human",
+        "alternativeApproach": "Lead with a specific operational outcome in the headline. Use a single, clear call to action \u2014 demo request or free trial. No promotional stacking.",
+        "rails": [
+          {
+            "context": "When writing the headline for a paid landing page",
+            "instruction": "Name the specific operational problem being solved, not the product's category position.",
+            "example": "All your hotel's workflows. One place.",
+            "antiExample": "The #1 Hotel Operations Platform. Try It Free \u2014 Limited Offer!"
+          }
+        ]
+      },
+      {
+        "surface": "email_acquisition",
+        "pricing": {
+          "priceDisplayPermitted": false,
+          "urgencyLanguagePermitted": false,
+          "scarcityLanguagePermitted": false
+        },
+        "fallback": "escalate_to_human",
+        "alternativeApproach": "Frame the offer as an evaluation opportunity. Name the operational friction point the recipient likely has before naming sos or the offer type.",
+        "rails": [
+          {
+            "context": "When including a trial or demo CTA in an acquisition email",
+            "instruction": "Frame the CTA as 'see how sos works for your operation' \u2014 not as a promotional conversion event with time pressure.",
+            "example": "If that sounds like your operation, here is how sos works. See it for yourself.",
+            "antiExample": "Sign up now for your free trial \u2014 offer expires Friday."
+          }
+        ]
+      },
+      {
+        "surface": "social_paid",
+        "pricing": {
+          "priceDisplayPermitted": false,
+          "urgencyLanguagePermitted": false,
+          "scarcityLanguagePermitted": false
+        },
+        "fallback": "escalate_to_human",
+        "alternativeApproach": "Treat paid social as brand-building, not direct response. Use the same operational-reality-first structure as organic social. Do not switch to promotional copy simply because the surface is paid.",
+        "rails": [
+          {
+            "context": "When writing copy for a paid social ad unit",
+            "instruction": "Write the copy to the same standard as organic social. Open with the operational observation. Close with a single soft CTA. Do not introduce urgency, pricing, or superlatives because the ad has a budget behind it.",
+            "example": "Your front desk and your housekeeping team are both tracking room status. They are probably not looking at the same list. sos fixes that.",
+            "antiExample": "Limited time: get sos free for 30 days. The #1 hotel ops platform. Act now."
+          }
+        ]
+      }
+    ],
+    "globalForbiddenTerms": [
+      {
+        "value": "expert",
+        "severity": "absolute",
+        "rationale": "sos must never claim expertise in hotel operations. The operator is the domain expert. This applies to all commercial copy across all surfaces."
+      },
+      {
+        "value": "revolutionary",
+        "severity": "absolute",
+        "rationale": "Hyperbolic transformation claim that conflicts with the brand's optimist archetype and practical, modest tone."
+      },
+      {
+        "value": "industry-leading",
+        "severity": "absolute",
+        "rationale": "Unsubstantiated superlative. sos makes no comparative market position claims."
+      },
+      {
+        "value": "game-changer",
+        "severity": "strong",
+        "rationale": "Overpromises the scale of impact and reads as the kind of vendor hyperbole the sos audience is conditioned to distrust."
+      },
+      {
+        "value": "disrupt",
+        "severity": "strong",
+        "rationale": "Challenger framing that is inconsistent with the optimist archetype. sos improves, it does not disrupt."
+      },
+      {
+        "value": "crush",
+        "severity": "strong",
+        "rationale": "Aggressive language that conflicts with the non-aggressive, non-arrogant tone requirements."
+      },
+      {
+        "value": "synergy",
+        "severity": "contextual",
+        "rationale": "Corporate filler that reduces clarity. Replace with a specific operational description of what is working together."
+      },
+      {
+        "value": "transform",
+        "severity": "strong",
+        "rationale": "Transformation claims imply sos changes the fundamental nature of the operator's business. sos improves specific workflows \u2014 it does not transform organisations."
+      },
+      {
+        "value": "seamless",
+        "severity": "contextual",
+        "rationale": "Overused B2B SaaS filler that makes no specific operational claim. Replace with a concrete description of what the integration or handoff actually does."
+      },
+      {
+        "value": "powerful",
+        "severity": "contextual",
+        "rationale": "Vague capability claim that adds no operational specificity. Replace with a named capability or outcome."
+      }
+    ]
+  },
+  "governance": {
+    "_component": "governance",
+    "_version": "2.0.0",
+    "severity": {
+      "absolute": {
+        "constraints": [
+          "Do not claim that sos has expertise in hotel operations or that it was built by hotel operations experts. The operator is the expert. This is a brand-defining constraint derived directly from the never-do list.",
+          "Do not sound arrogant \u2014 do not claim sos is the best, most powerful, or industry-leading product in any form. No unsubstantiated superlatives.",
+          "Do not downplay, mention, or imply the inferiority of any competitor product by name or by category description designed to contrast with sos.",
+          "Do not use urgency or scarcity language \u2014 no limited time offers, limited spots, act now, or deadline-based pressure tactics.",
+          "Do not use the word 'revolutionary', 'game-changer', or 'disruptive' in any commercial or brand context."
+        ],
+        "violationResponse": "block_output"
+      },
+      "strong": {
+        "constraints": [
+          "Avoid superlatives without verified evidence. If a claim cannot be sourced to a case study or product specification, it must be rewritten as a functional description.",
+          "Do not open brand or product content with a claim about sos. Open with the operator's operational reality.",
+          "Do not use excited or enthusiastic tone markers \u2014 exclamation marks, 'thrilled to announce', 'exciting news' \u2014 in any context.",
+          "Testimonials and social proof must include role, property type, and source. Anonymous or unattributed proof points should be flagged before publication."
+        ],
+        "overrideProcess": "Requires written sign-off from a senior brand stakeholder with a documented rationale. Override is surface-specific and time-limited to the campaign in question.",
+        "violationResponse": "flag_for_review"
+      },
+      "contextual": {
+        "constraints": [
+          "Humour is not permitted as a default, but a dry, understated observation may be used in social_organic or editorial contexts if it reinforces the operational calm narrative and does not trivialise the operator's work.",
+          "Formality may be reduced by one level on customer_service and email_retention surfaces to maintain warmth, but must not tip into casual or colloquial.",
+          "Pricing may be omitted on brand narrative and editorial surfaces without explicit flagging \u2014 this is expected and aligned with the surface's purpose."
+        ],
+        "judgmentBounds": "Use judgment when tone adjustment is surface-appropriate and the core myth, forbidden words, and absolute constraints remain intact. Escalate to a human reviewer if the adjustment would change the perceived brand archetype from optimist to challenger or expert.",
+        "violationResponse": "log_for_audit"
+      }
+    },
+    "conflictResolution": {
+      "componentPriority": [
+        "governance",
+        "narrative",
+        "identity",
+        "voice",
+        "commercial"
+      ],
+      "knownConflicts": [
+        {
+          "scenario": "A paid landing page requires a compelling headline that drives conversion, but the most conversion-tested headline formats use urgency or superlative language that sos forbids.",
+          "winner": "governance",
+          "rationale": "Absolute constraints on urgency language and superlatives cannot be overridden for conversion optimisation. The headline must be rewritten to lead with a specific operational outcome. Conversion is served by credibility, not by tactics the audience distrusts.",
+          "resolution": "Rewrite the headline to open with the operational outcome or friction point. Remove all urgency modifiers and superlatives. If no compliant headline can be produced, escalate to brand review before publishing."
+        },
+        {
+          "scenario": "A customer service agent wants to acknowledge that a competitor product lacks a feature sos has, in order to help a customer who is evaluating both.",
+          "winner": "governance",
+          "rationale": "Downplaying competition is an absolute constraint. The agent should describe what sos does specifically and factually, without referencing what the competitor does not do.",
+          "resolution": "The agent describes sos's capability in concrete, factual terms only. No reference to the competitor's feature set, presence or absence. If the customer presses for a direct comparison, the agent acknowledges the question and redirects: 'I can tell you exactly what sos does here \u2014 for the other tool, their documentation will be the most accurate source.'"
+        },
+        {
+          "scenario": "A case study draft includes a customer quote that says 'sos is the best hotel operations tool we have ever used' \u2014 which is a strong social proof signal.",
+          "winner": "narrative",
+          "rationale": "The quote is customer-originated, not brand-generated, so it does not constitute a brand superlative claim. It may be used verbatim in a clearly attributed testimonial context. However, sos copy surrounding the quote must not amplify or editorially endorse the superlative.",
+          "resolution": "Use the quote verbatim with full attribution \u2014 name, role, property type. Do not add editorial framing that reinforces the superlative (e.g. do not write 'and they are not alone' or 'that says it all'). The surrounding copy must describe a specific operational outcome, not the product's market position."
+        },
+        {
+          "scenario": "An email retention campaign wants to use a mild sense of urgency \u2014 'your renewal is coming up' \u2014 to prompt action before contract lapse.",
+          "winner": "commercial",
+          "rationale": "Administrative urgency related to an actual, factual renewal date is not the same as manufactured scarcity or promotional urgency. This is permitted if the language is factual and matter-of-fact, not pressure-based. 'Your subscription renews on [date]' is permitted. 'Renew now before you lose access!' is not.",
+          "resolution": "State the renewal date factually in the email. Frame the communication as an informational update, not a conversion event. Copy must not use loss-framing, deadline pressure, or benefit-removal language. Approved: 'Your sos subscription renews on [date]. Here is what your team has been running on it.' Rejected: 'Act before your access expires.'"
+        },
+        {
+          "scenario": "A social_organic post draft uses a single dry, understated observation that could be read as mildly humorous \u2014 e.g. 'Turns out, one list is better than four.' \u2014 but the base voice spec says humour is not permitted.",
+          "winner": "voice",
+          "rationale": "The contextual constraint explicitly permits dry, understated observations on social_organic that reinforce the operational calm narrative and do not trivialise the operator's work. This example meets that test. The base humour prohibition targets performative or enthusiastic humour \u2014 not understated factual observations that happen to carry mild wit.",
+          "resolution": "Permit the post as written. Apply the contextual humour test before publishing: does the observation reinforce operational calm without trivialising the operator's work? If yes, it is within bounds. If the tone tips from dry wit into sarcasm or levity about operational failures that have real consequences for staff, hold for revision."
+        },
+        {
+          "scenario": "A content brief calls for a blog post that opens with a striking industry statistic about hotel staff turnover to drive SEO relevance and reader interest.",
+          "winner": "narrative",
+          "rationale": "The editorial rules explicitly forbid the 'industry stat opener that positions sos as the authority'. Even if the statistic is sourced and accurate, opening with it frames sos as an industry commentator rather than a practical tool \u2014 which conflicts with the brand's myth and the operator-as-expert constraint. The post must be rewritten to open with an operational observation instead.",
+          "resolution": "Replace the statistic opener with a grounded operational observation that a hotel operations manager would recognise from their own experience. The statistic may be used later in the piece as supporting context if it is sourced and directly relevant to the operational point being made \u2014 but it cannot open the piece and cannot be used to establish sos as an authority voice on the hospitality industry."
+        },
+        {
+          "scenario": "A display ad unit has a character limit that forces a choice between naming the operational outcome and naming the product \u2014 there is no room for both.",
+          "winner": "voice",
+          "rationale": "The structural rule is clear: state the operational outcome before the mechanism. In a constrained format, the outcome takes priority. The product name can be omitted or reduced to the logo lockup. A display ad that names the operational problem is more on-brand than one that leads with the brand name.",
+          "resolution": "Use the character limit for the operational outcome. Carry the brand through the logo lockup only. Do not abbreviate the outcome to make room for the product name. If the ad platform requires a brand name in the headline field, use 'sos' as a single lowercase word and devote the remaining characters to the operational statement."
+        }
+      ],
+      "defaultResolution": "escalate_to_human"
+    },
+    "surfaceRules": [
+      {
+        "surface": "paid_landing_page",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Drive qualified demo requests or trial sign-ups from hotel operations decision-makers without using urgency, superlatives, or competitive framing.",
+        "primaryRail": "Lead with a specific operational outcome in the headline. Single CTA. No promotional stacking.",
+        "rails": [
+          {
+            "context": "Headline",
+            "instruction": "Name the operational problem or outcome, not the product category or market position.",
+            "example": "All your hotel's workflows. One place.",
+            "antiExample": "The #1 Platform for Hotel Operations Teams."
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If a compliant headline cannot be written, escalate to brand review. Do not publish a non-compliant headline to capture conversion."
+      },
+      {
+        "surface": "comparison_page",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Present sos capabilities factually to a buyer actively evaluating alternatives, without naming competitors or making claims that cannot be substantiated.",
+        "primaryRail": "List only what sos does. Do not editorially mark competitor columns as deficient.",
+        "rails": [
+          {
+            "context": "Feature comparison grid",
+            "instruction": "Mark sos capabilities as present or absent based only on verified product facts. Leave competitor columns to be populated by the customer's own research.",
+            "example": "Real-time cross-department task visibility: sos \u2014 yes.",
+            "antiExample": "Real-time visibility: sos \u2014 yes. [Competitor] \u2014 no."
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If comparative content cannot be written without referencing competitor limitations, the comparison page should focus exclusively on sos capabilities and invite the prospect to evaluate the alternatives independently."
+      },
+      {
+        "surface": "social_organic",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Build brand presence with hotel operations audiences by sharing operationally grounded content that reinforces the consolidation and transparency pillars.",
+        "primaryRail": "Every post must be grounded in a real operational scenario or insight. No product promotion without operational context.",
+        "rails": [
+          {
+            "context": "When writing a post about a product feature",
+            "instruction": "Describe the operational problem the feature solves before mentioning the feature itself.",
+            "example": "When your maintenance team logs a request in one place and your front desk checks another, things get missed. sos keeps both in the same place.",
+            "antiExample": "Introducing sos's new cross-department task routing feature! \ud83d\ude80"
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If a post cannot be grounded in an operational scenario, do not publish it. Hold for revision."
+      },
+      {
+        "surface": "customer_service",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Resolve operational questions and product issues with directness, warmth, and honesty \u2014 without overselling, overpromising, or referencing competitors.",
+        "primaryRail": "Acknowledge the specific operational context. Describe what sos does. Offer a concrete next step.",
+        "rails": [
+          {
+            "context": "When a customer's issue cannot be resolved within the product",
+            "instruction": "Be direct about the current limitation. Do not deflect or promise a future fix that has not been confirmed.",
+            "example": "That is not something sos currently supports. Here is what you can do in the meantime, and I have logged this as a product feedback item.",
+            "antiExample": "Great question! Our team of experts is always working to improve the platform and we will definitely look into this for you!"
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If a response would require making a claim about sos's expertise, future roadmap promises, or competitor comparisons, escalate to a human agent."
+      },
+      {
+        "surface": "email_acquisition",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Introduce sos to cold or warm prospects by grounding the message in a recognisable operational friction point \u2014 not by promoting a product or an offer.",
+        "primaryRail": "Name the operational friction in the opening. Introduce sos only after the problem is established. Close with a low-pressure evaluation CTA.",
+        "rails": [
+          {
+            "context": "When writing the subject line for an acquisition email",
+            "instruction": "Frame the subject line as an observation the recipient will recognise from their own operation \u2014 not as a teaser, a question, or a promotional hook.",
+            "example": "When the maintenance log and the front desk are tracking rooms separately",
+            "antiExample": "You need to see this hotel ops tool \ud83d\udd25"
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If no operationally specific hook can be identified for the target segment, do not send. Return to brief."
+      },
+      {
+        "surface": "editorial",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Publish operationally grounded content that earns trust with hotel operations audiences by demonstrating understanding of their work \u2014 not by promoting sos features.",
+        "primaryRail": "Follow the three-beat editorial structure: problem stated plainly, mechanism described simply, outcome named without inflation. sos may appear as an example but cannot be the subject of the piece.",
+        "rails": [
+          {
+            "context": "When deciding whether to mention sos in an editorial piece",
+            "instruction": "sos may appear as a supporting example if it is directly relevant to the operational point being made. It must not be the focal subject of editorial content. If the piece requires a sos mention to make sense, it is product marketing, not editorial.",
+            "example": "Tools like sos consolidate those handoffs into a single log \u2014 but the more fundamental fix is agreeing on who owns the task before the shift starts.",
+            "antiExample": "sos's latest update means your hotel can finally achieve the operational clarity you have always needed."
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If the editorial piece cannot be written without centring sos as the subject, reclassify it as product marketing and route through the paid_landing_page or product_detail_page surface rules."
+      },
+      {
+        "surface": "video_script",
+        "applicableConstraints": "all",
+        "suspendedConstraints": [],
+        "objective": "Produce video content that shows a recognisable operational scenario and demonstrates how sos addresses a specific friction \u2014 without voiceover hyperbole, presenter enthusiasm, or transformation claims.",
+        "primaryRail": "The script must open on an operational scenario, not on the product. The product appears as the solution to a named problem, not as the hero of the story.",
+        "rails": [
+          {
+            "context": "When writing a voiceover script for a product demo video",
+            "instruction": "Open with the friction scenario in plain language. Show the product solving it. End with the operational outcome \u2014 not a CTA with urgency framing.",
+            "example": "Your housekeeping supervisor logs a room as ready. Your front desk does not see it for twenty minutes. Here is what that looks like in sos.",
+            "antiExample": "Welcome to sos \u2014 the revolutionary platform that is transforming hotel operations forever. Let us show you what you have been missing."
+          }
+        ],
+        "fallback": "escalate_to_human",
+        "fallbackContent": "If the script cannot open on an operational scenario without product-first framing, return to brief before recording."
+      }
+    ],
+    "overrideProtocol": {
+      "authorisedRoles": [
+        "Head of Marketing",
+        "CEO",
+        "Brand Lead"
+      ],
+      "requiredFields": [
+        "surface",
+        "constraint being overridden",
+        "rationale",
+        "duration in days",
+        "approving role"
+      ],
+      "maxDurationDays": 30,
+      "auditLogEndpoint": "/brand/governance/override-log"
+    },
+    "compliance": {
+      "violationWebhook": "/brand/governance/violations",
+      "routing": {
+        "absolute": "block_output \u2014 log to /brand/governance/absolute-violations \u2014 notify Head of Marketing immediately",
+        "strong": "flag_for_review \u2014 route to brand lead queue within 24 hours",
+        "contextual": "log_for_audit \u2014 review in weekly brand governance cycle"
+      },
+      "humanReviewTopics": [
+        "Any content that references competitor products or tools, even obliquely",
+        "Any content that makes a quantified efficiency or ROI claim",
+        "Any content that uses a customer testimonial containing a superlative",
+        "Any content produced for a new surface type not covered in surfaceRules",
+        "Any override request for an absolute constraint",
+        "Any content that uses the word 'transform' or 'transformation' in proximity to sos or hotel operations",
+        "Any content that attributes an outcome to sos that depends on factors sos does not control \u2014 staffing levels, guest behaviour, property management decisions"
+      ],
+      "zeroToleranceTerms": [
+        "expert (in hotel operations context)",
+        "revolutionary",
+        "industry-leading",
+        "limited time",
+        "only X spots left",
+        "act now",
+        "game-changer",
+        "disrupt",
+        "crush"
+      ],
+      "geographicOverrides": []
+    },
+    "preflight": {
+      "question1": "Does this content avoid claiming \u2014 directly or by implication \u2014 that sos has expertise in or deep knowledge of hotel operations that exceeds the operator's own experience?",
+      "question2": "Does this content make zero reference to competitor products, tools, or category norms that position sos as superior by contrast?",
+      "question3": "Does this content open with the operator's operational reality rather than a claim about sos's product, market position, or capabilities?"
+    }
+  }
+}

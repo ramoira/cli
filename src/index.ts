@@ -6,11 +6,13 @@ import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
+// import { enrichCommand } from "./commands/enrich.js";
 import { createTokenCommand } from "./commands/create-token.js";
 import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
+
 
 const program = new Command();
 
@@ -67,5 +69,14 @@ program
   .description("Generate a brand book HTML from a brand schema")
   .option("-o, --out <path>", "Output file path (default: <brandId>-brand-book.html)")
   .action(bookCommand);
+
+// enrich command — pending platform component PATCH API (roadmap)
+// program
+//   .command("enrich")
+//   .description("Add voice variants, pillars, and full governance to an existing schema")
+//   .option("-f, --file <path>", "Schema file path", DEFAULT_SCHEMA_PATH)
+//   .option("--url <url>", "Fetch brand context from a URL (repeatable)", collect, [])
+//   .option("--context <file>", "Load brand context from a .txt or .md file (repeatable)", collect, [])
+//   .action(enrichCommand);
 
 program.parse();
