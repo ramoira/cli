@@ -97,20 +97,20 @@ export async function runIntake(): Promise<IntakeAnswers> {
     default: suggestedId,
   });
 
+  console.log(chalk.gray("  e.g., 'B2B SaaS for accountants', 'B2C premium vegan skincare'"));
   const categoryDescriptor = await input({
-    message:
-      "What does your brand sell, and to whom? (Include B2B/B2C, product/service. e.g., 'B2B SaaS for accountants', 'B2C premium vegan skincare'):",
+    message: "What does your brand sell, and to whom?",
     transformer: (v) => v,
   });
 
+  console.log(chalk.gray("  e.g., 'Skincare should be a ritual, not a chore'"));
   const mythStatement = await input({
-    message:
-      "What is the core belief that drives your brand? (e.g., 'Skincare should be a ritual, not a chore'):",
+    message: "What is the core belief that drives your brand?",
   });
 
+  console.log(chalk.gray("  e.g., rebellious, sophisticated, grounded (comma-separated)"));
   const adjectivesRaw = await input({
-    message:
-      "If your brand was a person, what 3 personality traits define its vibe? (e.g., rebellious, sophisticated, grounded):",
+    message: "3 personality traits that define your brand's vibe:",
   });
   const threeAdjectives = parseList(adjectivesRaw, 3, "Three adjectives").slice(
     0,
@@ -118,26 +118,25 @@ export async function runIntake(): Promise<IntakeAnswers> {
   );
 
   const relationshipMode = (await select({
-    message:
-      "What is the relationship dynamic between your brand and your customers?",
+    message: "Brand-customer relationship dynamic:",
     choices: ARCHETYPES.map(({ name }) => ({ value: name, name })),
   })) as string;
 
+  console.log(chalk.gray("  e.g., authoritative, conversational, punchy (comma-separated)"));
   const approvedRaw = await input({
-    message:
-      "When your brand writes content, what should the writing style be? (e.g., authoritative, conversational, punchy):",
+    message: "What writing styles should your brand use?",
   });
   const approvedTones = parseList(approvedRaw, 1, "Approved tones");
 
+  console.log(chalk.gray("  e.g., corporate jargon, preachy, overly-excited (comma-separated)"));
   const forbiddenRaw = await input({
-    message:
-      "What cliché industry tones must your writing actively AVOID? (e.g., corporate jargon, preachy, overly-excited):",
+    message: "What tones must your brand actively AVOID?",
   });
   const forbiddenTones = parseList(forbiddenRaw, 1, "Forbidden tones");
 
+  console.log(chalk.gray("  e.g., 'never use fear tactics', 'never mention competitors'"));
   const neverDoRaw = await input({
-    message:
-      "What are the absolute 'Never Do' rules for your brand? (e.g., 'never use fear tactics', 'never mention competitors'):",
+    message: "What are your brand's absolute 'Never Do' rules?",
   });
   const neverDo = parseList(neverDoRaw, 1, "Never-do list");
 
