@@ -58,6 +58,7 @@ Phase 4 (CLI) ✅ complete
   ⬜ 4.4 studio  ← coming soon via Ramoira Cloud (Enterprise)
   ✅ 4.5 status
   ✅ 4.6 auth token management
+  ⬜ 4.7 enrich  ← pending platform component PATCH API
 
 Phase 5 (Schema Governance & Validation) ⬜ planned
   ⬜ 5.1 Schema versioning
@@ -175,6 +176,27 @@ ramoira status
 ```
 
 Calls `GET /brands/[slug]/status` → prints `workflowState`, `certified`, `confidence`, `canonicalUrl`.
+
+---
+
+### 4.7 — `ramoira enrich`
+
+Enriches an existing schema with optional sections (voice context variants, narrative pillars, editorial rules, full governance, commercial offer rules) informed by real brand content.
+
+**Blocked on:** Platform component PATCH API — enrich needs to patch individual schema sections server-side rather than rewriting the full local file, so the platform is the source of truth and enrichment passes are independently tracked.
+
+**Groundwork done:**
+- `enrichSchema()` generator function built in `generator.ts`
+- `context.ts` module for ingesting URLs (homepage + /about + /pricing, 1500 words/page) and .txt/.md files (2000 words), with word-count limits and truncation warnings
+- `commands/enrich.ts` with `--url` and `--context` flags (repeatable), multi-pass guidance when total exceeds 5000 words
+- Command registered but hidden in `index.ts` until platform API is ready
+
+**Planned usage:**
+```
+ramoira enrich --url https://yourbrand.com
+ramoira enrich --context brand-guidelines.md
+ramoira enrich --url https://yourbrand.com --context pricing-brief.txt
+```
 
 ---
 

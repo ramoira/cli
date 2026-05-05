@@ -9,6 +9,7 @@ interface Config {
   token?: string;
   brandSlug?: string;
   apiBase?: string;
+  anthropicApiKey?: string;
 }
 
 export function readConfig(): Config {

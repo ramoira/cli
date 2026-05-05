@@ -10,6 +10,8 @@ npm install -g ramoira
 
 `ramoira init` asks you ten questions and generates a `brand.schema.json` in your project — a structured, machine-readable definition of your brand identity. Your own LLM key does the generation. Nothing leaves your machine.
 
+Generation runs in fast mode by default (~20 seconds), producing the required schema sections immediately. After generation, the CLI surfaces a brand preview: personality scores, cultural tension, voice examples (approved vs rejected), and owned phrases — so you can see whether the model got your brand right before opening any file.
+
 Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf, v0, Lovable) read it automatically. No re-prompting every session. Consistent voice across tools, models, and collaborators.
 
 ## Commands
@@ -72,7 +74,8 @@ If you are a brand manager running this on your own laptop (Windows or macOS) to
      set ANTHROPIC_API_KEY=sk-ant-your-key-here
      npx ramoira init
      ```
-5. **Answer the questions:** The CLI will ask you 10 questions about your brand. Once finished, it will save a `brand.schema.json` file in your current folder.
+   - **No environment variable?** Just run `npx ramoira init` and paste your key when prompted. It will be saved for future commands.
+5. **Answer the questions:** The CLI will ask you 10 questions about your brand. Generation takes ~20 seconds. Once finished, it shows a brand preview and saves `ramoira/brand.schema.json`.
 
 ## How agents consume your schema
 
@@ -80,12 +83,14 @@ Any agent or tool with access to your project directory reads `brand.schema.json
 
 ## LLM key
 
-`ramoira init` calls your own LLM to generate the schema. It reads `ANTHROPIC_API_KEY` from your environment, or prompts you for one if not set. The key is used once for generation and never stored.
+`ramoira init` calls your own LLM to generate the schema. It reads `ANTHROPIC_API_KEY` from your environment, or prompts you for one if not set.
 
 ```sh
 export ANTHROPIC_API_KEY=sk-ant-...
 ramoira init
 ```
+
+If you enter the key manually at the prompt, it is saved to `~/.ramoira/config.json` so subsequent commands (`book`, `publish`) pick it up automatically — no need to export it again each session.
 
 OpenAI-compatible providers: set `OPENAI_API_KEY` and `OPENAI_BASE_URL`.
 

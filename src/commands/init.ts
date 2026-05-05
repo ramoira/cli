@@ -3,7 +3,7 @@ import ora from "ora";
 import { input } from "@inquirer/prompts";
 import { resolve } from "path";
 import { runIntake } from "../lib/intake.js";
-import { generateSchema, resolveApiKey } from "../lib/generator.js";
+import { generateSchema, resolveApiKey, saveApiKey } from "../lib/generator.js";
 import { validateSchema } from "../lib/validator.js";
 import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib/files.js";
 import { generateAgentsMd } from "../lib/agents-md.js";
@@ -39,6 +39,8 @@ export async function initCommand(options: InitOptions): Promise<void> {
       console.error(chalk.red("API key required. Set ANTHROPIC_API_KEY and try again."));
       process.exit(1);
     }
+    saveApiKey(apiKey);
+    console.log(chalk.gray("  API key saved to ~/.ramoira/config.json"));
   }
 
   // Run intake questions

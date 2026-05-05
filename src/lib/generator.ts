@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { IntakeAnswers } from "./intake.js";
 import { TOOL_DEFINITIONS, executeTool } from "./generator-tools.js";
 import { validateSchema } from "./validator.js";
+import { readConfig, writeConfig } from "./config.js";
 
 export interface GeneratorReporter {
   onStatus: (message: string) => void;
@@ -506,5 +507,11 @@ ${JSON.stringify(existing, null, 2)}`,
 }
 
 export function resolveApiKey(): string | null {
-  return process.env.ANTHROPIC_API_KEY ?? null;
+  return process.env.ANTHROPIC_API_KEY ?? readConfig().anthropicApiKey ?? null;
+}
+
+export function saveApiKey(key: string): void {
+  const config = readConfig();
+  config.anthropicApiKey = key;
+  writeConfig(config);
 }

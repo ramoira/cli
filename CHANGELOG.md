@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.3.5 — 2026-05-05
+
+### Features
+
+- API key entered manually during `init` is now saved to `~/.ramoira/config.json` — `book`, `publish`, and other commands pick it up automatically without re-exporting
+
+---
+
+## 0.3.4 — 2026-05-05
+
+### Features
+
+- `init` now generates in fast mode by default (~20s vs ~40s) — required fields only; optional sections skipped
+- Brand preview after `init` now shows personality scores (sincerity, excitement, competence, sophistication, ruggedness), cultural tension, approved vs rejected voice examples side-by-side, owned phrases, and a review checklist for agent-generated sections
+- `ramoira enrich` command and context-gathering module built (URL + .txt/.md file ingestion, word-count limits, truncation warnings) — hidden pending platform component PATCH API
+
+### Fixes
+
+- Intake prompt messages shortened to prevent cursor misalignment on terminal line-wrap (inquirer cursor bug with long messages)
+- MIT license added to `package.json` and `LICENSE` file populated
+
+---
+
 ## 0.2.6 — 2026-04-30
 
 ### Features
