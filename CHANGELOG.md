@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changes
+
+- `init` preview is labelled "Candidate — not ratified"; personality scores are labelled as a diagnostic, not a quality or certification score
+- `init` no longer suggests `ramoira enrich`, which is not available
+- `status` no longer shows `certified` or `confidence` (both deprecated in the spec ahead of 3.0.0)
+- `publish` states that publishing does not ratify the schema, and no longer mentions certification
+- README: tier table replaced; `book` documented as running with no account
+
+---
+
 ## 0.3.5 — 2026-05-05
 
 ### Features

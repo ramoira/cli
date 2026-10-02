@@ -4,14 +4,10 @@ export interface PublishResult {
   versionId: string;
   workflowState: string;
   canonicalUrl: string;
-  certified: boolean;
-  confidence: number;
 }
 
 export interface StatusResult {
   workflowState: string;
-  certified: boolean;
-  confidence: number;
   canonicalUrl: string | null;
 }
 

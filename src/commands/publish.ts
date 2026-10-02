@@ -60,9 +60,7 @@ export async function publishCommand(
     console.log(chalk.bold(`\n✓ Published to ${res.canonicalUrl}`));
     console.log(chalk.gray(`  Version: ${res.versionId}`));
     console.log(chalk.gray(`  State:   ${res.workflowState}`));
-    if (!res.certified) {
-      console.log(chalk.gray("\n  Certification is available for Studio tier accounts."));
-    }
+    console.log(chalk.gray("\n  Publishing does not ratify the schema. It stays a candidate until you ratify it."));
 
     // Refresh agents.md with canonical URL
     try {

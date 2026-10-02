@@ -9,8 +9,6 @@ export interface SummaryMeta {
   schemaVersion: string;
   ramoira?: {
     status?: string;
-    certified?: boolean;
-    confidence?: number;
     canonicalUrl?: string;
     updatedAt?: string;
   };
