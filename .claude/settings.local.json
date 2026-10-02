@@ -11,14 +11,14 @@
       "Bash(npm run *)",
       "Bash(npx vitest *)",
       "Bash(node -e ' *)",
-      "Read(//d/dev-projects/ramoira/**)",
-      "Bash(cd /d/dev-projects/ramoira && echo \"--- brand-schema-spec ---\" && ls brand-schema-spec 2>/dev/null && echo \"--- docs ---\" && ls docs 2>/dev/null && echo \"--- public logo files ---\" && ls platform/public 2>/dev/null)",
+      "Read(//d/lab/sol_018/ramoira/**)",
+      "Bash(cd /d/lab/sol_018/ramoira && echo \"--- brand-schema-spec ---\" && ls brand-schema-spec 2>/dev/null && echo \"--- docs ---\" && ls docs 2>/dev/null && echo \"--- public logo files ---\" && ls platform/public 2>/dev/null)",
       "Bash(python -c ' *)",
       "Read(//c/Program Files/Google/Chrome/Application/**)",
       "Read(//c/Program Files \\\\\\(x86\\\\\\)/Microsoft/Edge/Application/**)",
       "Bash(npx --version)",
       "Bash(npm ls *)",
-      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf=\"d:/dev-projects/ramoira/platform/docs/measuring-brand-identity.pdf\" --print-to-pdf-no-header \"file:///d:/dev-projects/ramoira/platform/docs/measuring-brand-identity.html\")"
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf=\"d:/lab/sol_018/ramoira/platform/docs/measuring-brand-identity.pdf\" --print-to-pdf-no-header \"file:///d:/lab/sol_018/ramoira/platform/docs/measuring-brand-identity.html\")"
     ]
   }
 }
