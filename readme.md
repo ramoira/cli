@@ -119,7 +119,7 @@ Everything in this CLI is free. An account is needed only to publish to ramoira.
 | `ramoira book` | ✓ | ✓ |
 | `ramoira publish` | — | ✓ |
 | Account required | No | Yes (free) |
-| Schema stored by Ramoira | Nothing | Summary only |
+| Schema stored by Ramoira | Nothing | Full schema, privately; only the summary is public |
 | Public URL | — | ✓ candidate (unratified) |
 
 Nothing the CLI produces is certified, and no tier makes a schema more trustworthy. What will distinguish one schema from another is whether the brand has *ratified* it and whether content is *checked* against it. Neither is available in the CLI yet.
