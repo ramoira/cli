@@ -52,10 +52,6 @@ export async function statusCommand(
 
     console.log(`\n  Brand:    ${chalk.bold(resolvedSlug)}`);
     console.log(`  State:    ${stateColor(res.workflowState)}`);
-    console.log(`  Certified: ${res.certified ? chalk.green("yes") : chalk.gray("no")}`);
-    if (res.confidence > 0) {
-      console.log(`  Confidence: ${res.confidence}`);
-    }
     if (res.canonicalUrl) {
       console.log(`  URL:      ${chalk.cyan(res.canonicalUrl)}`);
     }

@@ -10,7 +10,9 @@ npm install -g ramoira
 
 `ramoira init` asks you ten questions and generates a `brand.schema.json` in your project — a structured, machine-readable definition of your brand identity. Your own LLM key does the generation. Nothing leaves your machine.
 
-Generation runs in fast mode by default (~20 seconds), producing the required schema sections immediately. After generation, the CLI surfaces a brand preview: personality scores, cultural tension, voice examples (approved vs rejected), and owned phrases — so you can see whether the model got your brand right before opening any file.
+Generation runs in fast mode by default (~20 seconds), producing the required schema sections immediately. After generation, the CLI surfaces a brand preview: cultural tension, voice examples (approved vs rejected), owned phrases, and personality scores — so you can see whether the model got your brand right before opening any file. The personality scores are a diagnostic, not a quality or certification score.
+
+What `init` produces is a **candidate** schema. It becomes your brand's measure only when you review and ratify it. Publishing the summary does not ratify it.
 
 Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf, v0, Lovable) read it automatically. No re-prompting every session. Consistent voice across tools, models, and collaborators.
 
@@ -28,17 +30,17 @@ ramoira login       Save API token for publish and status commands
 ## Quick start
 
 ```sh
-# Tier 1 — local only, no account
+# Local only, no account
 npx ramoira init
 npx ramoira validate
 
-# Tier 2 — publish to ramoira.com (get a token at ramoira.com/tokens)
-export RAMOIRA_TOKEN=your_token
-npx ramoira publish
-
-# Generate a brand book HTML (requires token)
+# Generate a brand book HTML (no account; uses your own LLM key)
 npx ramoira book
 # → writes <brandId>-brand-book.html. Open in browser, print to PDF.
+
+# Publish the summary to ramoira.com (free account; get a token at ramoira.com/tokens)
+export RAMOIRA_TOKEN=your_token
+npx ramoira publish
 
 # Check publication state
 npx ramoira status
@@ -106,19 +108,21 @@ Integration guides, field reference, and agent workflow docs:
 
 **[github.com/ramoira/docs](https://github.com/ramoira/docs)**
 
-## Tiers
+## Accounts
 
-| | Tier 1 — Local | Tier 2 — Published | Tier 3 — Studio |
-|---|---|---|---|
-| `ramoira init` | ✓ | ✓ | ✓ |
-| `ramoira validate` | ✓ | ✓ | ✓ |
-| `ramoira publish` | — | ✓ | ✓ |
-| `ramoira book` | — | ✓ | ✓ |
-| `ramoira studio` | — | — | ✓ |
-| Account required | No | Yes (free) | Yes (paid) |
-| Schema stored by Ramoira | Nothing | Summary only | Full (private) |
-| Public URL | — | ✓ draft | ✓ certified |
-| LLM flywheel | — | Slow | Fast |
+Everything in this CLI is free. An account is needed only to publish to ramoira.com, so that a brand's slug belongs to whoever owns it.
+
+| | Local | Published |
+|---|---|---|
+| `ramoira init` | ✓ | ✓ |
+| `ramoira validate` | ✓ | ✓ |
+| `ramoira book` | ✓ | ✓ |
+| `ramoira publish` | — | ✓ |
+| Account required | No | Yes (free) |
+| Schema stored by Ramoira | Nothing | Full schema, privately; only the summary is public |
+| Public URL | — | ✓ candidate (unratified) |
+
+Nothing the CLI produces is certified, and no tier makes a schema more trustworthy. What will distinguish one schema from another is whether the brand has *ratified* it and whether content is *checked* against it. Neither is available in the CLI yet.
 
 ## Testing & local development
 
