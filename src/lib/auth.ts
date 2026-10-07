@@ -51,7 +51,7 @@ export async function loginCommand(options: { manual?: boolean } = {}): Promise<
     // ignore — URL is already printed
   }
 
-  const spinner = ora("Waiting for GitHub authorization…").start();
+  const spinner = ora("Waiting for you to approve in the browser…").start();
   const deadline = Date.now() + expiresIn * 1000;
   let pollInterval = interval * 1000;
 

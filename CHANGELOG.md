@@ -4,6 +4,9 @@
 
 ### 3.0.0 groundwork (roadmap P2)
 
+- `publish` sends 3.0.0 full schemas to Ramoira's new service: the slug is `ramoira.brand_id`; publishing to an unclaimed slug claims it; the same version again changes nothing. 2.0.0 is refused with the migration guide. Server-side validation errors are listed.
+- `login` waits for approval in the browser (GitHub or an emailed sign-in link), not only GitHub.
+- `@ramoira/schema` pinned to a build whose validators are compiled ahead of time.
 - New `check`: checks content items against your schema's rules with the spec's open checker (`@ramoira/schema/checker`, bundled). Free, no account. Exact and structural rules run without a model; judged rules use your own key and must quote the item and cite the rule's own examples, or they are void and the item needs review. Every finding names the rule and quotes the span; nothing suggests a rewrite. No option picks or skips rules. Results are tooling only; a candidate schema gives "Not certifiable". `--json` prints verdict events for CI; exit codes 0 pass, 1 fail, 2 needs review, 3 could not check.
 - Removed a stale readme line about OpenAI-compatible providers: the CLI calls Anthropic models only.
 - `validate` checks 3.0.0 full schemas, summaries, archetype templates, verdict records and adoption records, using the spec's reference validator (`@ramoira/schema`, bundled). Errors name the spec invariant behind them. It is described as schema validity, never conformance. 2.0.0 files are still checked, with a pointer to the migration guide. `--summary` is gone: the kind is detected.
