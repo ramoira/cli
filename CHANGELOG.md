@@ -4,6 +4,8 @@
 
 ### 3.0.0 groundwork (roadmap P2)
 
+- New `check`: checks content items against your schema's rules with the spec's open checker (`@ramoira/schema/checker`, bundled). Free, no account. Exact and structural rules run without a model; judged rules use your own key and must quote the item and cite the rule's own examples, or they are void and the item needs review. Every finding names the rule and quotes the span; nothing suggests a rewrite. No option picks or skips rules. Results are tooling only; a candidate schema gives "Not certifiable". `--json` prints verdict events for CI; exit codes 0 pass, 1 fail, 2 needs review, 3 could not check.
+- Removed a stale readme line about OpenAI-compatible providers: the CLI calls Anthropic models only.
 - `validate` checks 3.0.0 full schemas, summaries, archetype templates, verdict records and adoption records, using the spec's reference validator (`@ramoira/schema`, bundled). Errors name the spec invariant behind them. It is described as schema validity, never conformance. 2.0.0 files are still checked, with a pointer to the migration guide. `--summary` is gone: the kind is detected.
 - `status` shows facts, not a score: published, ratified, conformance checking, faithfulness, density. Fields the server does not report yet say so.
 - `book` renders a 3.0.0 schema without calling a model: every line comes from the schema, and example copy only from examples the brand judged. The cover reads "Candidate — not ratified" until the brand ratifies.

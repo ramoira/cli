@@ -23,6 +23,7 @@ ramoira init        Draft a candidate 3.0.0 schema locally (no account required)
 ramoira validate    Check a file is a well-formed schema (schema validity, not conformance)
 ramoira publish     Publish summary to ramoira.com (2.0.0 today; 3.0.0 opens with the new service)
 ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)
+ramoira check       Check content against your schema's rules (no account; judged rules use your key)
 ramoira status      Show what is true: published, ratified, checked
 ramoira login       Save API token for publish and status commands
 ```
@@ -33,6 +34,9 @@ ramoira login       Save API token for publish and status commands
 # Local only, no account
 npx ramoira init
 npx ramoira validate
+
+# Check a draft against your rules (no account; judged rules use your own key)
+npx ramoira check --surface product_detail_page draft.txt
 
 # Render a brand book HTML (no account, no key)
 npx ramoira book
@@ -87,16 +91,16 @@ Any agent or tool with access to your project directory reads `brand.schema.json
 
 ## LLM key
 
-`ramoira init` calls your own LLM to draft the schema, and `ramoira book --probe` uses it to draft sample lines for you to judge. Both read `ANTHROPIC_API_KEY` from your environment; `init` prompts for one if it is not set. `ramoira book` without `--probe` needs no key.
+`ramoira init` calls your own LLM to draft the schema, `ramoira book --probe` uses it to draft sample lines for you to judge, and `ramoira check` uses it to decide judged rules. All read `ANTHROPIC_API_KEY` from your environment; `init` prompts for one if it is not set. `ramoira book` without `--probe` needs no key, and `ramoira check` without a key runs every rule except the judged ones.
 
 ```sh
 export ANTHROPIC_API_KEY=sk-ant-...
 ramoira init
 ```
 
-If you enter the key manually at the prompt, it is saved to `~/.ramoira/config.json` so subsequent commands (`book`, `publish`) pick it up automatically — no need to export it again each session. (`book` uses it only with `--probe`.)
+If you enter the key manually at the prompt, it is saved to `~/.ramoira/config.json` so later commands (`book --probe`, `check`) pick it up automatically — no need to export it again each session.
 
-OpenAI-compatible providers: set `OPENAI_API_KEY` and `OPENAI_BASE_URL`.
+The CLI calls Anthropic models only.
 
 ## Schema format
 
@@ -119,12 +123,13 @@ Everything in this CLI is free. An account is needed only to publish to ramoira.
 | `ramoira init` | ✓ | ✓ |
 | `ramoira validate` | ✓ | ✓ |
 | `ramoira book` | ✓ | ✓ |
+| `ramoira check` | ✓ | ✓ |
 | `ramoira publish` | — | ✓ |
 | Account required | No | Yes (free) |
 | Schema stored by Ramoira | Nothing | Full schema, privately; only the summary is public |
 | Public URL | — | ✓ candidate (unratified) |
 
-Nothing the CLI produces is certified, and no tier makes a schema more trustworthy. What will distinguish one schema from another is whether the brand has *ratified* it and whether content is *checked* against it. Neither is available in the CLI yet.
+Nothing the CLI produces is certified, and no tier makes a schema more trustworthy. What will distinguish one schema from another is whether the brand has *ratified* it and whether content is *checked* against it. `ramoira check` lets you or your producers check content against your schema today, as a self-check (tooling only). Ratification, and checks that others can rely on, are not available yet.
 
 ## Testing & local development
 
