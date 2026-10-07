@@ -4,6 +4,12 @@ export interface PublishResult {
   versionId: string;
   workflowState: string;
   canonicalUrl: string;
+  contentHash?: string;
+  schemaVersion?: string;
+  /** This exact content_hash was already the published version. */
+  unchanged?: boolean;
+  /** This publish claimed the slug for the account. */
+  claimed?: boolean;
 }
 
 // /status reports facts, never a score (roadmap E2). Today the server returns
@@ -41,8 +47,9 @@ export async function publishSchema(
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-    throw new Error((body.error as string) ?? `Publish failed (${res.status})`);
+    const body = await res.json().catch(() => ({})) as { error?: string; issues?: Array<{ path: string; message: string }> };
+    const issues = (body.issues ?? []).map((i) => `\n  · ${i.path} ${i.message}`).join("");
+    throw new Error(`${body.error ?? `Publish failed (${res.status})`}${issues}`);
   }
 
   return res.json() as Promise<PublishResult>;

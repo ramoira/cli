@@ -48,7 +48,7 @@ program
 
 program
   .command("publish [file]")
-  .description("Publish brand schema to ramoira.com")
+  .description("Publish your 3.0.0 schema to ramoira.com (free account); the summary is public, the full schema stays private")
   .action(publishCommand);
 
 program

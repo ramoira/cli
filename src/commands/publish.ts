@@ -1,21 +1,17 @@
 import chalk from "chalk";
 import ora from "ora";
-import { isV2Schema, validateSchema } from "../lib/validator.js";
 import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 import { publishSchema } from "../lib/api.js";
 import { getToken } from "../lib/config.js";
+import { planPublish } from "../lib/publish-plan.js";
 
-interface PublishOptions {
-  //
-}
+// `ramoira publish` (roadmap C4): free; needs a free account only so the slug
+// belongs to whoever owns it. Sends the full 3.0.0 schema; Ramoira keeps it
+// private and serves the public summary at the slug.
 
-export async function publishCommand(
-  file: string | undefined,
-  _options: PublishOptions,
-): Promise<void> {
+export async function publishCommand(file: string | undefined): Promise<void> {
   const filePath = file ?? DEFAULT_SCHEMA_PATH;
 
-  // Read schema
   let schema: unknown;
   try {
     schema = readJsonFile(filePath);
@@ -24,49 +20,26 @@ export async function publishCommand(
     process.exit(1);
   }
 
-  if (!isV2Schema(schema)) {
-    console.log(chalk.yellow("Publishing 3.0.0 schemas opens with Ramoira's new service. It is not available yet."));
-    console.log(chalk.gray("  Your schema stays local. ramoira validate and ramoira book work now."));
+  const plan = planPublish(schema);
+  if (!plan.ok) {
+    console.error(chalk.red(plan.message));
+    plan.details?.forEach((d) => console.error(chalk.red(`  · ${d}`)));
     process.exit(1);
   }
 
-  // Check auth (2.0.0 publishing only)
   if (!getToken()) {
-    console.error(
-      chalk.red("Not authenticated. Set RAMOIRA_TOKEN or run: ramoira login"),
-    );
+    console.error(chalk.red("Not signed in. Run: ramoira login (free), or set RAMOIRA_TOKEN."));
     process.exit(1);
   }
 
-  // Validate locally
-  const result = validateSchema(schema);
-  if (!result.valid) {
-    console.log(chalk.red(`✗ ${filePath} failed validation:\n`));
-    result.errors.forEach((e) => console.log(chalk.red(`  · ${e}`)));
-    console.log(chalk.yellow("\nFix validation errors before publishing."));
-    process.exit(1);
-  }
-  console.log(chalk.green(`✓ Schema valid.`));
-
-  // Extract slug from schema meta
-  const schemaObj = schema as Record<string, unknown>;
-  const meta = schemaObj.meta as Record<string, unknown> | undefined;
-  const slug = meta?.brandId as string | undefined;
-  if (!slug) {
-    console.error(chalk.red("Cannot determine brand slug. Schema must have a meta.brandId field."));
-    process.exit(1);
-  }
-
-  // Publish
-  const spinner = ora(`Publishing to ramoira.com/brands/${slug}…`).start();
+  const spinner = ora(`Publishing ${plan.slug} ${plan.schemaVersion}…`).start();
   try {
-    const res = await publishSchema(slug, schemaObj);
-    spinner.succeed("Published.");
-    console.log(chalk.bold(`\n✓ Published to ${res.canonicalUrl}`));
-    console.log(chalk.gray(`  Version: ${res.versionId}`));
-    console.log(chalk.gray(`  State:   ${res.workflowState}`));
-    console.log(chalk.gray("\n  Publishing does not ratify the schema. It stays a candidate until you ratify it."));
-
+    const res = await publishSchema(plan.slug, schema as Record<string, unknown>);
+    spinner.succeed(res.unchanged ? "Already published: this exact version is current." : "Published.");
+    if (res.claimed) console.log(chalk.gray(`  The slug "${plan.slug}" is now yours. It is never given to anyone else.`));
+    console.log(chalk.bold(`\n  Public summary: ${res.canonicalUrl}`));
+    console.log(chalk.gray(`  Version: ${plan.schemaVersion} · ${plan.contentHash.slice(0, 19)}…`));
+    console.log(chalk.gray("\n  Candidate — not ratified. Publishing does not ratify the schema; your full schema stays private."));
   } catch (err) {
     spinner.fail("Publish failed.");
     console.error(chalk.red((err as Error).message));

@@ -21,7 +21,7 @@ Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf,
 ```
 ramoira init        Draft a candidate 3.0.0 schema locally (no account required)
 ramoira validate    Check a file is a well-formed schema (schema validity, not conformance)
-ramoira publish     Publish summary to ramoira.com (2.0.0 today; 3.0.0 opens with the new service)
+ramoira publish     Publish your 3.0.0 schema to ramoira.com (free account); the summary is public
 ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)
 ramoira check       Check content against your schema's rules (no account; judged rules use your key)
 ramoira status      Show what is true: published, ratified, checked
@@ -44,8 +44,8 @@ npx ramoira book
 npx ramoira book --probe
 # → writes <brandId>-brand-book.html. Open in browser, print to PDF.
 
-# Publish the summary to ramoira.com (free account; get a token at ramoira.com/tokens)
-export RAMOIRA_TOKEN=your_token
+# Publish to ramoira.com (free account: sign in through the browser)
+npx ramoira login
 npx ramoira publish
 
 # Check publication state
