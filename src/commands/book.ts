@@ -1,14 +1,15 @@
 import chalk from "chalk";
 import ora from "ora";
-import { confirm, input, select } from "@inquirer/prompts";
+import { confirm, select } from "@inquirer/prompts";
 import { writeFileSync, mkdirSync } from "fs";
 import { readJsonFile, writeJsonFile, DEFAULT_SCHEMA_PATH, RAMOIRA_DIR } from "../lib/files.js";
 import { isV2Schema, validateSchema } from "../lib/validator.js";
 import { anchorArchetypeId, brandJudgedExamples, buildBookContent } from "../lib/book-content.js";
 import { getTheme, resolveArchetypeKey } from "../lib/book-archetypes.js";
 import { renderBrandBook } from "../lib/book-renderer.js";
-import { applyJudgments, draftProbes, type JudgeRole, type Judgment, type Reaction } from "../lib/probes.js";
-import { resolveApiKey } from "../lib/generator.js";
+import { applyJudgments, draftProbes, type JudgeRole } from "../lib/probes.js";
+import { resolveApiKey } from "../lib/api-key.js";
+import { judgeProbes } from "../lib/judge-ui.js";
 
 interface BookOptions {
   out?: string;
@@ -105,26 +106,7 @@ async function runProbeSession(schema: Record<string, any>, filePath: string): P
     process.exit(1);
   }
 
-  const judgments: Judgment[] = [];
-  for (const [i, probe] of probes.entries()) {
-    console.log(chalk.gray(`\n  ${i + 1}/${probes.length} · ${probe.surface.replace(/_/g, " ")}`));
-    console.log(`  ${chalk.white(probe.text)}\n`);
-    const reaction = await select<Reaction | "skip">({
-      message: "Is this us?",
-      choices: [
-        { name: "That's us", value: "yes" },
-        { name: "Close", value: "close" },
-        { name: "Not us", value: "no" },
-        { name: "Skip", value: "skip" },
-      ],
-    });
-    if (reaction === "skip") continue;
-    const reason = await input({
-      message: reaction === "yes" ? "Why? (optional)" : "Why?",
-      validate: (v) => reaction === "yes" || v.trim().length > 0 || "A reason is what makes the judgment useful.",
-    });
-    judgments.push({ probe, reaction, reason: reason.trim() || null });
-  }
+  const judgments = await judgeProbes(probes);
 
   if (judgments.length === 0) {
     console.log(chalk.gray("\nNo judgments recorded."));

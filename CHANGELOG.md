@@ -10,7 +10,10 @@
 - `book --probe`: a model (your own key) drafts sample lines as probes; you mark them "That's us", "Close" or "Not us" with a reason; marked lines become brand-judged examples in your schema, with the reactions kept as evidence.
 - Removed: `book`'s model-written copy (sample lines "in the brand's actual voice" were Ramoira writing content), and the unused server-side book call.
 - Requires Node.js 20.10 or later. Anthropic SDK updated; probes use `claude-opus-5-5` with server-side refusal fallbacks.
-- `init` still writes 2.0.0 schemas; it moves to 3.0.0 next.
+- `init` writes a complete five-layer 3.0.0 candidate (C1, C2). New questionnaire (who is answering; words never to use, claims, competitors, surfaces instead of the archetype tagline and three adjectives). Your model drafts the rest in a fixed shape, and the CLI assembles the schema: what you typed is `authored`; model-proposed rules are `inherited, affirmed: false`, which blocks ratification until the brand affirms them; brand facts are left `unfilled`, not invented. No model-written sample copy: judged rules are backed by sample lines you judge, or become guidance questions. `--no-probes` skips judging; `--anchored` is reserved for the hosted archetype drafting service (not available yet). Fast mode is gone.
+- `agents.md` is built from the 3.0.0 public summary, so private rules stay out of a file that may be committed.
+- `publish` refuses 3.0.0 schemas until the new service opens; 2.0.0 publishing is unchanged.
+- Removed the v2 generator, including a worked example written about a real brand, and the unused `enrich` command code.
 
 ### Changes
 

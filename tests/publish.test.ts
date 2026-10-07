@@ -43,7 +43,7 @@ describe("summary extraction", () => {
     const { extractSummary } = await import("../src/lib/summary.js");
     const full = fixture("valid.schema.json");
     const summary = extractSummary(full);
-    expect(summary.meta.brandId).toBe("little-rituals");
+    expect(summary.meta.brandId).toBe("example-baby-co");
     expect(summary.identity.summary.threeAdjectives).toHaveLength(3);
     expect(summary.voice.approvedTones.length).toBeGreaterThan(0);
     expect(summary.voice.examples.length).toBeGreaterThan(0);

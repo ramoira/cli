@@ -89,6 +89,73 @@ export async function draftProbes(
     .map((p, i) => ({ probe_id: `probe_book_${stamp}_${i + 1}`, surface: p.surface, text: p.text.trim() }));
 }
 
+export interface RuleProbe extends Probe {
+  rule_id: string;
+}
+
+const RULE_PROBE_SCHEMA = {
+  type: "object",
+  properties: {
+    probes: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { rule_id: { type: "string" }, surface: { type: "string" }, text: { type: "string" } },
+        required: ["rule_id", "surface", "text"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["probes"],
+  additionalProperties: false,
+} as const;
+
+/**
+ * Probes for candidate judged rules: for each rule, one line that keeps to it
+ * and one that breaks it, in an order that does not say which is which. The
+ * brand's verdicts on them are what let a judged rule exist at all.
+ */
+export async function draftRuleProbes(
+  schema: Obj,
+  rules: Array<{ rule_id: string; statement: string; surfaces: "all" | string[] }>,
+  fallbackSurfaces: string[],
+  apiKey: string,
+): Promise<RuleProbe[]> {
+  if (rules.length === 0) return [];
+  const client = new Anthropic({ apiKey });
+  const list = rules
+    .map((r) => `- ${r.rule_id}: "${r.statement}" (surfaces: ${r.surfaces === "all" ? fallbackSurfaces.join(", ") : r.surfaces.join(", ")})`)
+    .join("\n");
+  const response = await client.beta.messages.create({
+    model: PROBE_MODEL,
+    max_tokens: 16000,
+    betas: ["server-side-fallback-2026-07-01"],
+    fallbacks: "default",
+    output_config: { effort: "medium", format: { type: "json_schema", schema: RULE_PROBE_SCHEMA } },
+    system: PROBE_SYSTEM,
+    messages: [
+      {
+        role: "user",
+        content: `Brand schema:\n${JSON.stringify(probeContext(schema), null, 2)}\n\nCandidate rules:\n${list}\n\nFor each rule, draft exactly two lines on one of its surfaces: one that keeps to the rule and one that clearly breaks it. Vary which comes first. Return the rule_id with each line.`,
+      },
+    ],
+  });
+  if (response.stop_reason === "refusal") throw new Error("The model declined to draft probes for this schema.");
+  const text = response.content.flatMap((b) => (b.type === "text" ? [b.text] : [])).join("");
+  const parsed = JSON.parse(text) as { probes: Array<{ rule_id: string; surface: string; text: string }> };
+
+  const known = new Set(rules.map((r) => r.rule_id));
+  const stamp = Date.now().toString(36);
+  return parsed.probes
+    .filter((p) => known.has(p.rule_id) && p.text.trim())
+    .map((p, i) => ({
+      probe_id: `probe_init_${stamp}_${i + 1}`,
+      rule_id: p.rule_id,
+      surface: fallbackSurfaces.includes(p.surface) ? p.surface : fallbackSurfaces[0],
+      text: p.text.trim(),
+    }));
+}
+
 /**
  * Records judgments in a 3.0.0 schema: every reaction goes into
  * draft_provenance.reactions; "yes" and "no" become examples judged by the
@@ -100,7 +167,7 @@ export function applyJudgments(
   judgments: Judgment[],
   role: JudgeRole,
   today = new Date(),
-): { schema: Obj; exampleIds: string[] } {
+): { schema: Obj; exampleIds: string[]; byJudgment: Array<string | null> } {
   if (schema?.ramoira?.ratification) {
     throw new Error("This schema is ratified. Adding examples would change it; edit a copy and ratify again.");
   }
@@ -121,6 +188,7 @@ export function applyJudgments(
   const reactions: Obj[] = (provenance.reactions ??= []);
   const taken = new Set(examples.map((e) => e.example_id));
   const exampleIds: string[] = [];
+  const byJudgment: Array<string | null> = [];
 
   for (const { probe, reaction, reason } of judgments) {
     const resulted: string[] = [];
@@ -141,6 +209,7 @@ export function applyJudgments(
       resulted.push(id);
       exampleIds.push(id);
     }
+    byJudgment.push(resulted[0] ?? null);
     reactions.push({
       probe_id: probe.probe_id,
       surface: probe.surface,
@@ -154,5 +223,5 @@ export function applyJudgments(
   }
 
   next.ramoira.content_hash = computeContentHash(next);
-  return { schema: next, exampleIds };
+  return { schema: next, exampleIds, byJudgment };
 }

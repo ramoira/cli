@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "physiquePermitted": ["dark carbon steel", "visible spin marks"],
+    "posture": "A tool that looks better after ten years than on the first day.",
+    "characterBrief": "The workshop foreman who tells you exactly how to season the pan.",
+    "coreValues": ["buy once, use for decades", "repair before replace"],
+    "sacredBoundary": "Never sell a pan we would not use ourselves.",
+    "formality": 4,
+    "warmth": 6,
+    "depictedCustomer": "The cook who wants fewer, better tools.",
+    "ageSignal": "",
+    "feelingDescriptors": ["I know how to look after my things"],
+    "identityStatement": "I keep what is worth keeping.",
+    "ownedWords": ["seasoning", "patina"],
+    "sentenceStructure": "Short declaratives.",
+    "punctuationStyle": "Full stops.",
+    "numeralStyle": ""
+  },
+  "narrative": {
+    "meaningClusters": ["things that improve with use"],
+    "emotionalRegister": "Quiet pride in something well looked after.",
+    "culturalTension": "Kitchens fill with cheap pans bought to be thrown away.",
+    "protagonistRole": "The cook, whose use makes the pan better.",
+    "antagonist": "The idea that cookware is a consumable.",
+    "mythPrinciple": "Keep, repair, hand down.",
+    "immutableCore": "Use makes it better.",
+    "modernTensions": [
+      { "tension": "Convenience culture says any effort is a defect.", "mythResolution": "Say the care plainly.", "permittedFraming": ["what it asks of you"], "rails": [{ "context": "Asked if it is high-maintenance", "instruction": "State the care in steps." }] }
+    ],
+    "pillars": [
+      { "name": "Better with use", "description": "", "coreClaim": "The hundredth egg slides better than the first.", "approvedArcs": ["a pan's first year"], "surfaces": ["social_organic", "out_of_home"], "rails": [] },
+      { "name": "", "description": "dropped: no name", "coreClaim": "x", "approvedArcs": [], "surfaces": [], "rails": [] }
+    ],
+    "openingPrinciple": "Open on the cooking.",
+    "structuralApproach": "What you cook, what the pan does, what it asks.",
+    "referencePool": ["repair stories"],
+    "timeScaleLanguage": "Years, never seasons.",
+    "guidanceQuestions": ["Would a ten-year owner recognise this?"]
+  },
+  "voice": {
+    "vocabularyLevel": 5,
+    "humourStyle": "dry",
+    "humourFrequency": "sparingly",
+    "permittedDevices": ["plain instructions"],
+    "contextVariants": [
+      { "surface": "social_organic", "formalityDelta": -9, "warmthDelta": 9, "sentenceLength": "short", "openingInstruction": "Open on a pan in use.", "closingInstruction": "", "fallbackInstruction": "", "rails": [] },
+      { "surface": "billboard", "formalityDelta": 0, "warmthDelta": 0, "sentenceLength": "short", "openingInstruction": "not a surface", "closingInstruction": "", "fallbackInstruction": "", "rails": [] },
+      { "surface": "product_detail_page", "formalityDelta": 0, "warmthDelta": 0, "sentenceLength": "varied", "openingInstruction": "Facts first.", "closingInstruction": "", "fallbackInstruction": "", "rails": [] }
+    ],
+    "globalRails": [{ "context": "Any mention of history", "instruction": "Credit the craft; state our own age plainly." }]
+  },
+  "commercial": {
+    "displayFormat": "Whole numbers",
+    "permittedPricingLanguage": ["price", "batch"],
+    "permittedOfferTypes": [],
+    "valueFraming": "Cost per year of use.",
+    "celebrityEndorsementStyle": "none",
+    "permittedAuthoritySignals": []
+  },
+  "governance": {
+    "reviewTopics": ["safety"],
+    "situations": [
+      { "trigger": "A product safety notice is in effect.", "category": "crisis", "posture": "Facts first.", "surfaces": ["social_organic", "press_release"], "persona": "restrained", "instruction": "Plain steps." }
+    ]
+  },
+  "rules": [
+    { "statement": "No urgency or scarcity language.", "kind": "exact", "terms": ["last chance", "hurry"], "severity": "strong", "topic": "commercial.pricing.urgency", "surfaces": [] },
+    { "statement": "Never present the pan as a gadget or a hack.", "kind": "judged", "terms": [], "severity": "strong", "topic": "narrative.connotative", "surfaces": ["product_detail_page"] },
+    { "statement": "Never sound breathless or hyped.", "kind": "judged", "terms": [], "severity": "contextual", "topic": "voice.tone", "surfaces": [] },
+    { "statement": "An exact rule with no terms becomes judged.", "kind": "exact", "terms": [], "severity": "contextual", "topic": "not a topic!", "surfaces": [] }
+  ]
+}

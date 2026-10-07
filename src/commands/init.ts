@@ -1,41 +1,55 @@
 import chalk from "chalk";
 import ora from "ora";
-import { input } from "@inquirer/prompts";
+import { confirm, input } from "@inquirer/prompts";
+import { createRequire } from "module";
 import { resolve } from "path";
 import { runIntake } from "../lib/intake.js";
-import { generateSchema, resolveApiKey, saveApiKey } from "../lib/generator.js";
+import { draftCandidate } from "../lib/draft.js";
+import { assembleCandidate, resolveJudgedRules, type PendingJudgedRule } from "../lib/assemble.js";
+import { applyJudgments, draftRuleProbes } from "../lib/probes.js";
+import { judgeProbes } from "../lib/judge-ui.js";
+import { resolveApiKey, saveApiKey } from "../lib/api-key.js";
 import { validateSchema } from "../lib/validator.js";
 import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib/files.js";
 import { generateAgentsMd } from "../lib/agents-md.js";
-import { confirm } from "@inquirer/prompts";
+
+// `ramoira init` (roadmap C1, C2; decisions D7, D8). Offline path: the
+// questionnaire, the user's own model, no Ramoira account. Writes a complete
+// five-layer 3.0.0 candidate. Archetype-anchored drafting (`--anchored`) is a
+// free hosted service and never ships in this CLI.
 
 interface InitOptions {
   output: string;
+  anchored?: boolean;
+  probes?: boolean;
 }
 
-export async function initCommand(options: InitOptions): Promise<void> {
-  const outputPath = options.output;
+type Obj = Record<string, any>;
 
-  // Check for existing file
+const MAX_PROBED_RULES = 5;
+const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
+
+export async function initCommand(options: InitOptions): Promise<void> {
+  if (options.anchored) {
+    console.log(chalk.yellow("Archetype-anchored drafting is a free, hosted Ramoira service. It is not available yet."));
+    console.log(chalk.gray("  Run ramoira init without --anchored to draft from the questionnaire."));
+    process.exit(1);
+  }
+
+  const outputPath = options.output;
   if (fileExists(outputPath)) {
-    const overwrite = await confirm({
-      message: `${outputPath} already exists. Overwrite?`,
-      default: false,
-    });
+    const overwrite = await confirm({ message: `${outputPath} already exists. Overwrite?`, default: false });
     if (!overwrite) {
       console.log(chalk.gray("Aborted."));
       process.exit(0);
     }
   }
 
-  // Resolve API key
   let apiKey = resolveApiKey();
   if (!apiKey) {
-    console.log(chalk.yellow("\nANTHROPIC_API_KEY not set in environment."));
-    apiKey = await input({
-      message: "Enter your Anthropic API key:",
-    });
-    if (!apiKey.trim()) {
+    console.log(chalk.yellow("\nANTHROPIC_API_KEY not set. init drafts with your own model key."));
+    apiKey = (await input({ message: "Enter your Anthropic API key:" })).trim();
+    if (!apiKey) {
       console.error(chalk.red("API key required. Set ANTHROPIC_API_KEY and try again."));
       process.exit(1);
     }
@@ -43,193 +57,114 @@ export async function initCommand(options: InitOptions): Promise<void> {
     console.log(chalk.gray("  API key saved to ~/.ramoira/config.json"));
   }
 
-  // Run intake questions
   const intake = await runIntake();
 
-  // Generate schema via LLM
-  const spinner = ora("Initializing schema generation…").start();
-
-  let schema: Record<string, unknown>;
+  const spinner = ora("Drafting your candidate schema (this can take a minute or two)…").start();
+  let assembled;
   try {
-    schema = await generateSchema(intake, apiKey, {
-      onStatus: (message: string) => {
-        spinner.text = message;
-      },
-    });
-    spinner.succeed("Schema generated successfully.");
+    assembled = assembleCandidate(intake, await draftCandidate(intake, apiKey), version);
+    spinner.succeed("Candidate drafted.");
   } catch (err) {
-    spinner.fail("Generation failed.");
+    spinner.fail("Drafting failed.");
     console.error(chalk.red((err as Error).message));
     process.exit(1);
   }
 
-  // Validate (repair + retry already ran inside generateSchema)
+  const interactive = options.probes !== false && process.stdin.isTTY === true;
+  const settled = interactive
+    ? await probeJudgedRules(assembled.schema, assembled.pending, intake.surfaces, intake.answeredBy, apiKey)
+    : resolveJudgedRules(assembled.schema, assembled.pending, {});
+  const schema = settled.schema;
+
   const result = validateSchema(schema);
   if (!result.valid) {
-    console.log(chalk.yellow("\nSchema has residual validation issues after auto-repair:"));
+    console.log(chalk.yellow("\nThe candidate has validation issues:"));
     result.errors.slice(0, 10).forEach((e) => console.log(chalk.yellow(`  · ${e}`)));
-    if (result.errors.length > 10) {
-      console.log(chalk.yellow(`  … and ${result.errors.length - 10} more`));
-    }
-    console.log(chalk.gray("  Run ramoira validate after editing to re-check."));
-    const save = await confirm({
-      message: "Save anyway?",
-      default: true,
-    });
+    const save = await confirm({ message: "Save anyway?", default: true });
     if (!save) {
       console.log(chalk.gray("Aborted."));
       process.exit(0);
     }
   } else {
-    console.log(chalk.green("✓ Schema validates against Ramoira spec."));
+    console.log(chalk.green("\n✓ Valid 3.0.0 schema."));
   }
 
-  // Write schema
-  const absPath = resolve(outputPath);
   writeJsonFile(outputPath, schema);
-  console.log(chalk.bold(`\n✓ Saved to ${absPath}`));
-
-  // Write agents.md
+  console.log(chalk.bold(`✓ Saved to ${resolve(outputPath)}`));
   try {
-    const md = generateAgentsMd(schema);
-    writeTextFile(AGENTS_MD_PATH, md);
+    writeTextFile(AGENTS_MD_PATH, generateAgentsMd(schema));
     console.log(chalk.gray(`✓ agents.md written to ${resolve(AGENTS_MD_PATH)}`));
   } catch {
-    // Non-fatal — schema may be incomplete
+    // Non-fatal: agents.md is a convenience.
   }
 
-  printPreview(schema);
+  printPreview(schema, settled.kept.length, settled.toGuidance.length);
 }
 
-function printPreview(schema: Record<string, unknown>): void {
-  const identity = schema.identity as Record<string, unknown> | undefined;
-  const narrative = schema.narrative as Record<string, unknown> | undefined;
-  const voice = schema.voice as Record<string, unknown> | undefined;
+async function probeJudgedRules(
+  schema: Obj,
+  pending: PendingJudgedRule[],
+  surfaces: string[],
+  role: Parameters<typeof applyJudgments>[2],
+  apiKey: string,
+): Promise<ReturnType<typeof resolveJudgedRules>> {
+  if (pending.length === 0) return resolveJudgedRules(schema, pending, {});
 
-  const summary = identity?.summary as Record<string, unknown> | undefined;
-  const prism = identity?.prism as Record<string, unknown> | undefined;
-  const personality = prism?.personality as Record<string, unknown> | undefined;
-  const linguistic = (identity?.distinctiveAssets as Record<string, unknown> | undefined)?.linguistic as Record<string, unknown> | undefined;
+  const probed = pending.slice(0, MAX_PROBED_RULES);
+  console.log(chalk.bold(`\nJudge a few sample lines (${probed.length * 2})`));
+  console.log(
+    chalk.gray(
+      "  Some proposed rules need judgment to check. For each, your model drafts two lines.\n" +
+        "  They are probes, not content: only you see them. Your verdicts become the examples\n" +
+        "  those rules are checked against. A rule you can't back with a \"That's us\" and a\n" +
+        "  \"Not us\" becomes a guidance question instead.\n",
+    ),
+  );
 
-  const brandName = (schema.meta as Record<string, unknown> | undefined)?.brandName as string | undefined;
-  const adjectives = summary?.threeAdjectives as string[] | undefined;
-  const myth = (narrative?.myth as Record<string, unknown> | undefined)?.mythStatement as string | undefined;
-  const culturalTension = (narrative?.myth as Record<string, unknown> | undefined)?.culturalTension as string | undefined;
-  const examples = voice?.examples as Array<Record<string, unknown>> | undefined;
-  const approved = examples?.find((e) => e.verdict === "approved");
-  const rejected = examples?.find((e) => e.verdict === "rejected");
-  const ownedPhrases = linguistic?.ownedPhrases as Array<Record<string, unknown>> | undefined;
-  const forbiddenWords = linguistic?.forbiddenWords as Array<Record<string, unknown>> | undefined;
+  const spinner = ora("Drafting probes…").start();
+  let probes;
+  try {
+    probes = await draftRuleProbes(schema, probed, surfaces, apiKey);
+    spinner.stop();
+  } catch (err) {
+    spinner.warn(`Could not draft probes (${(err as Error).message}). Judged rules become guidance questions.`);
+    return resolveJudgedRules(schema, pending, {});
+  }
 
-  const width = 58;
-  const rule = chalk.gray("  " + "╌".repeat(width));
+  const judgments = await judgeProbes(probes);
+  const { schema: withExamples, byJudgment } = applyJudgments(schema, judgments, role);
+  const examplesByRule: Record<string, string[]> = {};
+  judgments.forEach((j, i) => {
+    const id = byJudgment[i];
+    if (id) (examplesByRule[j.probe.rule_id] ??= []).push(id);
+  });
+  return resolveJudgedRules(withExamples, pending, examplesByRule);
+}
 
-  console.log();
-  console.log(rule);
-  console.log();
+function printPreview(schema: Obj, kept: number, toGuidance: number): void {
+  const name: string = schema.draft_provenance?.intake?.name ?? schema.ramoira.brand_id;
+  const myth: string | undefined = schema.narrative?.myth?.mythStatement;
+  const tension: string | undefined = schema.narrative?.myth?.culturalTension;
+  const rules: Obj[] = schema.rules ?? [];
+  const unaffirmed = rules.filter((r) => r.affirmed === false).length;
+  const judgedExamples = (schema.voice?.examples ?? []).filter((e: Obj) => ["brand_owner", "brand_team"].includes(e.judged_by)).length;
+  const unfilled = Object.entries(schema.draft_provenance?.fields ?? {})
+    .filter(([, status]) => status === "unfilled")
+    .map(([p]) => p.split("/").pop());
+
+  const rule = chalk.gray("  " + "╌".repeat(58));
+  console.log(`\n${rule}\n`);
   console.log("  " + chalk.yellow("Candidate — not ratified"));
-  console.log(chalk.gray("  Generated by your model from your answers. It becomes your brand's"));
-  console.log(chalk.gray("  measure only when you review and ratify it."));
+  console.log(chalk.gray("  Drafted by your model from your answers. It becomes your brand's measure"));
+  console.log(chalk.gray("  only when the brand reviews and ratifies it.\n"));
+  console.log("  " + chalk.bold(name));
+  if (myth) console.log("  " + chalk.italic(myth));
+  if (tension) console.log("\n  " + chalk.gray("The conflict your brand takes a side on: ") + chalk.dim(tension));
   console.log();
-
-  // Brand name + adjectives
-  if (brandName) {
-    const adj = adjectives?.length ? chalk.gray("  ·  ") + chalk.dim(adjectives.join("  ·  ")) : "";
-    console.log("  " + chalk.bold(brandName) + adj);
-  }
-
-  // Myth
-  if (myth) {
-    console.log();
-    wrapText(myth, width - 2).forEach((line) => console.log("  " + chalk.italic(chalk.white(line))));
-  }
-
-  // Cultural tension
-  if (culturalTension) {
-    console.log();
-    console.log("  " + chalk.gray("The conflict your brand takes a side on:"));
-    wrapText(culturalTension, width - 4).forEach((line) => console.log("    " + chalk.dim(line)));
-  }
-
-  // Personality scores
-  if (personality) {
-    const scores: [string, string][] = [
-      ["Sincerity",      "sincerity"],
-      ["Excitement",     "excitement"],
-      ["Competence",     "competence"],
-      ["Sophistication", "sophistication"],
-      ["Ruggedness",     "ruggedness"],
-    ];
-    const hasAny = scores.some(([, k]) => typeof personality[k] === "number");
-    if (hasAny) {
-      console.log();
-      console.log("  " + chalk.gray("Personality — diagnostic, not a quality or certification score"));
-      scores.forEach(([label, key]) => {
-        const val = personality[key];
-        if (typeof val !== "number") return;
-        const filled = Math.round(val);
-        const bar = chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(10 - filled));
-        console.log(`  ${label.padEnd(14)} ${bar}  ${val}`);
-      });
-    }
-  }
-
-  // Voice examples
-  if (approved || rejected) {
-    console.log();
-    console.log("  " + chalk.gray("Voice"));
-    if (approved) {
-      const ctx = ((approved.context as string) ?? "").replace(/_/g, " ");
-      const text = ((approved.text as string) ?? "").slice(0, 120);
-      console.log("  " + chalk.green("✓") + " " + chalk.dim(text) + (ctx ? chalk.gray(`  — ${ctx}`) : ""));
-    }
-    if (rejected) {
-      const reason = ((rejected.reason as string) ?? "").slice(0, 80);
-      const text = ((rejected.text as string) ?? "").slice(0, 120);
-      console.log("  " + chalk.red("✗") + " " + chalk.dim(text) + (reason ? chalk.gray(`  — ${reason}`) : ""));
-    }
-  }
-
-  // Owned phrases + forbidden words
-  const phrases = ownedPhrases?.slice(0, 3).map((p) => `"${p.value}"`).join("  ·  ");
-  const forbidden = forbiddenWords?.slice(0, 3).map((p) => `"${p.value}"`).join("  ·  ");
-  if (phrases || forbidden) {
-    console.log();
-    if (phrases) console.log("  " + chalk.gray("Own:       ") + chalk.dim(phrases));
-    if (forbidden) console.log("  " + chalk.gray("Never say: ") + chalk.dim(forbidden));
-  }
-
-  console.log();
-  console.log(rule);
-  console.log();
-
-  // Review prompts
-  console.log("  " + chalk.yellow("⚠  Review before publishing:"));
-  console.log(chalk.gray("     claims        — functionalClaims and approvedClaims are agent-generated"));
-  console.log(chalk.gray("     visual        — colors and photography style need your actual assets"));
-  console.log(chalk.gray("     commercial    — discount rules and pricing language"));
-  console.log();
-
-  // Next steps
-  console.log(chalk.gray("  ramoira book     — generate the full visual brand book"));
-  console.log(chalk.gray("  ramoira publish  — publish the summary to ramoira.com (free account; does not ratify)"));
-  console.log();
-}
-
-function wrapText(text: string, maxWidth: number): string[] {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let current = "";
-  for (const word of words) {
-    if (current.length === 0) {
-      current = word;
-    } else if (current.length + 1 + word.length <= maxWidth) {
-      current += " " + word;
-    } else {
-      lines.push(current);
-      current = word;
-    }
-  }
-  if (current) lines.push(current);
-  return lines;
+  console.log(`  Rules             ${rules.length}${unaffirmed ? chalk.gray(` (${unaffirmed} proposed by the model, not yet affirmed)`) : ""}`);
+  console.log(`  Judged rules      ${kept} backed by your examples${toGuidance ? chalk.gray(`, ${toGuidance} kept as guidance questions`) : ""}`);
+  console.log(`  Your examples     ${judgedExamples}`);
+  if (unfilled.length) console.log(`  Left for you      ${chalk.gray(unfilled.join(", "))}`);
+  console.log(`\n${rule}`);
+  console.log(chalk.gray("\n  Next: edit ramoira/brand.schema.json, then ramoira validate · ramoira book\n"));
 }

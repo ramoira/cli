@@ -2,6 +2,8 @@
 
 Publish a local brand schema to ramoira.com.
 
+> **3.0.0 schemas:** publishing opens with Ramoira's new service and is not available yet. `publish` says so and exits. The steps below describe publishing a 2.0.0 schema.
+
 ```
 ramoira publish [file]
 

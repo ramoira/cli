@@ -28,9 +28,9 @@ describe("files.ts", () => {
 
   it("writes and reads back a JSON file", () => {
     const path = resolve(TMP, "test-write.json");
-    writeJsonFile(path, { brand: "little-rituals" });
+    writeJsonFile(path, { brand: "corvane" });
     const back = readJsonFile(path) as { brand: string };
-    expect(back.brand).toBe("little-rituals");
+    expect(back.brand).toBe("corvane");
   });
 
   it("fileExists returns false for missing file", () => {
@@ -42,24 +42,5 @@ describe("files.ts", () => {
     writeFileSync(path, "{}", "utf8");
     expect(fileExists(path)).toBe(true);
     unlinkSync(path);
-  });
-});
-
-describe("generator extractJson", () => {
-  it("strips markdown fences from LLM output", async () => {
-    const { extractJson } = await import("../src/lib/generator.js");
-    const raw = "Here is the schema:\n```json\n{\"meta\":{\"brandId\":\"test\"}}\n```\nDone.";
-    expect(extractJson(raw)).toEqual({ meta: { brandId: "test" } });
-  });
-
-  it("parses bare JSON without fences", async () => {
-    const { extractJson } = await import("../src/lib/generator.js");
-    const raw = '{"meta":{"brandId":"test"}}';
-    expect(extractJson(raw)).toEqual({ meta: { brandId: "test" } });
-  });
-
-  it("throws on unparseable response", async () => {
-    const { extractJson } = await import("../src/lib/generator.js");
-    expect(() => extractJson("No JSON here at all")).toThrow();
   });
 });
