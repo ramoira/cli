@@ -6,9 +6,21 @@ export interface PublishResult {
   canonicalUrl: string;
 }
 
+// /status reports facts, never a score (roadmap E2). Today the server returns
+// only workflowState and canonicalUrl; the other fields are read when present.
 export interface StatusResult {
   workflowState: string;
   canonicalUrl: string | null;
+  ratified?: { hash: string; at: string; role: string } | null;
+  conformance?: {
+    active: boolean;
+    coverage: "sampled" | "complete" | null;
+    last_checked: string | null;
+  } | null;
+  /** Absent until independent faithfulness attestation exists. */
+  faithfulness?: null;
+  /** A diagnostic, reported separately; never a quality score. */
+  density?: { value: string; checked_at: string } | null;
 }
 
 export async function publishSchema(
@@ -34,31 +46,6 @@ export async function publishSchema(
   }
 
   return res.json() as Promise<PublishResult>;
-}
-
-export async function generateBook(
-  slug: string,
-  schema: Record<string, unknown>,
-): Promise<string> {
-  const token = getToken();
-  if (!token) throw new Error("Not authenticated. Run: ramoira login");
-
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/brands/${slug}/book`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ schema }),
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-    throw new Error((body.error as string) ?? `Brand book generation failed (${res.status})`);
-  }
-
-  return res.text();
 }
 
 export async function fetchStatus(slug: string): Promise<StatusResult> {

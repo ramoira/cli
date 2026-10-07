@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### 3.0.0 groundwork (roadmap P2)
+
+- `validate` checks 3.0.0 full schemas, summaries, archetype templates, verdict records and adoption records, using the spec's reference validator (`@ramoira/schema`, bundled). Errors name the spec invariant behind them. It is described as schema validity, never conformance. 2.0.0 files are still checked, with a pointer to the migration guide. `--summary` is gone: the kind is detected.
+- `status` shows facts, not a score: published, ratified, conformance checking, faithfulness, density. Fields the server does not report yet say so.
+- `book` renders a 3.0.0 schema without calling a model: every line comes from the schema, and example copy only from examples the brand judged. The cover reads "Candidate — not ratified" until the brand ratifies.
+- `book --probe`: a model (your own key) drafts sample lines as probes; you mark them "That's us", "Close" or "Not us" with a reason; marked lines become brand-judged examples in your schema, with the reactions kept as evidence.
+- Removed: `book`'s model-written copy (sample lines "in the brand's actual voice" were Ramoira writing content), and the unused server-side book call.
+- Requires Node.js 20.10 or later. Anthropic SDK updated; probes use `claude-opus-5-5` with server-side refusal fallbacks.
+- `init` still writes 2.0.0 schemas; it moves to 3.0.0 next.
+
 ### Changes
 
 - `init` preview is labelled "Candidate — not ratified"; personality scores are labelled as a diagnostic, not a quality or certification score

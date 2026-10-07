@@ -7,6 +7,8 @@ export interface BookContent {
   brandName: string;
   oneLiner: string;
   effectiveDate: string;
+  /** "Candidate — not ratified" until the brand ratifies the schema. */
+  statusLabel: string;
 
   // Chapter 1 — Myth
   mythNarrative: string;          // 2–3 sentence human myth story
@@ -131,7 +133,7 @@ function renderPreflight(items: string[]): string {
     .map(
       (q) => `
       <div class="rule-item rule-yes">
-        <span style="font-weight:500">Before generating:</span> ${escHtml(q)}
+        ${escHtml(q)}
       </div>`,
     )
     .join("");
@@ -755,6 +757,7 @@ hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
     <div class="cover-sub">${escHtml(content.oneLiner)}</div>
     <div class="cover-meta">
       <span class="cover-meta-line">${escHtml(content.effectiveDate)}</span>
+      <span class="cover-meta-line">${escHtml(content.statusLabel)}</span>
       <span class="cover-meta-line">Confidential</span>
     </div>
   </div>
@@ -785,15 +788,24 @@ hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
       <div class="portrait-text">${escHtml(content.customerPortrait)}</div>
     </div>
 
+    ${
+      content.threeAdjectives.length > 0
+        ? `
     <div class="section">
       <div class="section-title">Three words that must always be true</div>
       <div class="tag-list">${renderTagList(content.threeAdjectives)}</div>
-    </div>
-
+    </div>`
+        : ""
+    }
+    ${
+      content.neverDo.length > 0
+        ? `
     <div class="section">
       <div class="section-title">What this brand will never be</div>
       <div class="hard-lines">${renderHardLines(content.neverDo)}</div>
-    </div>
+    </div>`
+        : ""
+    }
   </div>
 
   <!-- CHAPTER 3: VOICE -->
@@ -857,17 +869,26 @@ hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
         : ""
     }
 
+    ${
+      content.preflight.length > 0
+        ? `
     <div class="section">
-      <div class="section-title">Before anything is written</div>
+      <div class="section-title">Questions to ask of any draft</div>
       ${renderPreflight(content.preflight)}
-    </div>
+    </div>`
+        : ""
+    }
   </div>
 
   <!-- CHAPTER 6: SCENARIOS -->
   <div class="chapter">
     <div class="chapter-number">${content.pillars.length > 0 ? "06" : "05"}</div>
     <h2 class="chapter-title">${escHtml(labels.chapterScenariosTitle)}</h2>
-    ${renderScenarios(content.scenarios)}
+    ${
+      content.scenarios.length > 0
+        ? renderScenarios(content.scenarios)
+        : `<p class="body-text">No brand-judged examples yet. Run <code>ramoira book --probe</code> to judge sample lines; the ones you mark appear here.</p>`
+    }
   </div>
 
 </div>
@@ -888,7 +909,8 @@ hr.divider { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
       <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/concepts/how-agents-consume-schemas.md" target="_blank">How agents consume schemas</a>
       <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/guides/brand-aware-copy.md" target="_blank">Generating brand-aware copy</a>
       <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/guides/content-pipeline.md" target="_blank">Setting up a content pipeline</a>
-      <a class="resources-link" href="https://github.com/ramoira/brand-schema-spec" target="_blank">Brand schema spec (v2.0.0)</a>
+      <a class="resources-link" href="https://github.com/ramoira/brand-schema-spec" target="_blank">Brand schema spec</a>
+      <a class="resources-link" href="https://github.com/ramoira/docs/blob/main/concepts/ratification.md" target="_blank">Ratification</a>
     </div>
     <div>
       <div class="resources-group-title">Integrate</div>
