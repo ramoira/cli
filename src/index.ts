@@ -29,8 +29,7 @@ program
 
 program
   .command("validate [file]")
-  .description("Validate a brand schema against the Ramoira spec")
-  .option("--summary", "Validate against the summary schema instead")
+  .description("Check that a file is a well-formed schema (full, summary, archetype, or a verdict record)")
   .action(validateCommand);
 
 program
@@ -40,7 +39,7 @@ program
 
 program
   .command("status [slug]")
-  .description("Show current publication state for a brand")
+  .description("Show what is true for a brand: published, ratified, checked")
   .action(statusCommand);
 
 program
@@ -66,8 +65,9 @@ program
 
 program
   .command("book [file]")
-  .description("Generate a brand book HTML from a brand schema")
+  .description("Render a brand book (HTML) from a 3.0.0 schema; --probe to judge sample lines first")
   .option("-o, --out <path>", "Output file path (default: <brandId>-brand-book.html)")
+  .option("--probe", "Judge model-drafted sample lines; the ones you mark become examples in your schema")
   .action(bookCommand);
 
 // enrich command — pending platform component PATCH API (roadmap)

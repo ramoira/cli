@@ -20,10 +20,10 @@ Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf,
 
 ```
 ramoira init        Generate brand.schema.json locally (no account required)
-ramoira validate    Validate schema against the Ramoira spec
+ramoira validate    Check a file is a well-formed schema (schema validity, not conformance)
 ramoira publish     Publish summary to ramoira.com (free account required)
-ramoira book        Generate a brand book HTML from your schema
-ramoira status      Show current publication state
+ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)
+ramoira status      Show what is true: published, ratified, checked
 ramoira login       Save API token for publish and status commands
 ```
 
@@ -34,8 +34,10 @@ ramoira login       Save API token for publish and status commands
 npx ramoira init
 npx ramoira validate
 
-# Generate a brand book HTML (no account; uses your own LLM key)
+# Render a brand book HTML (no account, no key)
 npx ramoira book
+# Judge sample lines first (uses your own ANTHROPIC_API_KEY)
+npx ramoira book --probe
 # → writes <brandId>-brand-book.html. Open in browser, print to PDF.
 
 # Publish the summary to ramoira.com (free account; get a token at ramoira.com/tokens)
@@ -51,7 +53,7 @@ npx ramoira status
 If you are a brand manager running this on your own laptop (Windows or macOS) to generate a brand schema:
 
 1. **Install Node.js (Required):**
-   - The CLI requires Node.js to run.
+   - The CLI requires Node.js 20.10 or later.
    - **Windows:** Download the "LTS" (Long Term Support) installer from [nodejs.org](https://nodejs.org/) and run it. Follow the standard prompts.
    - **macOS:** Download the "LTS" macOS installer from [nodejs.org](https://nodejs.org/) and run it.
    - *Note: After installing, you must restart your terminal or computer.*
@@ -85,14 +87,14 @@ Any agent or tool with access to your project directory reads `brand.schema.json
 
 ## LLM key
 
-`ramoira init` calls your own LLM to generate the schema. It reads `ANTHROPIC_API_KEY` from your environment, or prompts you for one if not set.
+`ramoira init` calls your own LLM to draft the schema, and `ramoira book --probe` uses it to draft sample lines for you to judge. Both read `ANTHROPIC_API_KEY` from your environment; `init` prompts for one if it is not set. `ramoira book` without `--probe` needs no key.
 
 ```sh
 export ANTHROPIC_API_KEY=sk-ant-...
 ramoira init
 ```
 
-If you enter the key manually at the prompt, it is saved to `~/.ramoira/config.json` so subsequent commands (`book`, `publish`) pick it up automatically — no need to export it again each session.
+If you enter the key manually at the prompt, it is saved to `~/.ramoira/config.json` so subsequent commands (`book`, `publish`) pick it up automatically — no need to export it again each session. (`book` uses it only with `--probe`.)
 
 OpenAI-compatible providers: set `OPENAI_API_KEY` and `OPENAI_BASE_URL`.
 

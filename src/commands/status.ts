@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
 import { fetchStatus } from "../lib/api.js";
+import { statusLines } from "../lib/status-view.js";
 import { readConfig } from "../lib/config.js";
 import { readJsonFile, fileExists, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 
@@ -22,8 +23,9 @@ export async function statusCommand(
   if (!resolvedSlug && fileExists(DEFAULT_SCHEMA_PATH)) {
     try {
       const schema = readJsonFile(DEFAULT_SCHEMA_PATH) as Record<string, unknown>;
-      const meta = schema.meta as Record<string, unknown> | undefined;
-      resolvedSlug = meta?.brandId as string | undefined;
+      const meta = schema.meta as Record<string, unknown> | undefined; // 2.0.0
+      const ramoira = schema.ramoira as Record<string, unknown> | undefined; // 3.0.0
+      resolvedSlug = (ramoira?.brand_id ?? meta?.brandId) as string | undefined;
     } catch {
       // ignore
     }
@@ -43,18 +45,12 @@ export async function statusCommand(
     const res = await fetchStatus(resolvedSlug);
     spinner.stop();
 
-    const stateColor =
-      res.workflowState === "published"
-        ? chalk.green
-        : res.workflowState === "in_review"
-          ? chalk.yellow
-          : chalk.gray;
-
-    console.log(`\n  Brand:    ${chalk.bold(resolvedSlug)}`);
-    console.log(`  State:    ${stateColor(res.workflowState)}`);
-    if (res.canonicalUrl) {
-      console.log(`  URL:      ${chalk.cyan(res.canonicalUrl)}`);
+    const paint = { good: chalk.green, neutral: chalk.white, muted: chalk.gray };
+    console.log();
+    for (const line of statusLines(resolvedSlug, res)) {
+      console.log(`  ${line.label.padEnd(13)} ${paint[line.tone](line.value)}`);
     }
+    console.log(chalk.gray("\n  Facts only. Nothing here is a quality or trust score."));
     console.log();
   } catch (err) {
     spinner.fail("Status check failed.");

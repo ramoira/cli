@@ -50,6 +50,13 @@ export function resolveArchetype(relationshipMode: string): ArchetypeKey {
   return MODE_TO_ARCHETYPE[relationshipMode] ?? "peer";
 }
 
+const ARCHETYPE_KEYS = new Set<string>(Object.values(MODE_TO_ARCHETYPE));
+
+/** 3.0.0: the theme follows the draft's anchor (draft_provenance.anchors[0]), if it names a known one. */
+export function resolveArchetypeKey(archetypeId: string | undefined): ArchetypeKey {
+  return archetypeId && ARCHETYPE_KEYS.has(archetypeId) ? (archetypeId as ArchetypeKey) : "peer";
+}
+
 // ── Theme definitions ─────────────────────────────────────────────────────────
 
 const THEMES: Record<ArchetypeKey, ArchetypeTheme> = {

@@ -1,0 +1,980 @@
+{
+  "ramoira": {
+    "spec_version": "3.0.0",
+    "schema_type": "full",
+    "brand_id": "corvane",
+    "schema_version": "1.0.0",
+    "content_hash": "sha256:eaed480d372bcbef2cee6798f2d142003dfcdb71585f64da08cda7b6c486f863",
+    "workflow_state": "in_review",
+    "ratification": null,
+    "account_owner_verified": false,
+    "canonical_url": null,
+    "summary_opt_in": []
+  },
+  "rules": [
+    {
+      "rule_id": "r_fear_vocabulary",
+      "statement": "Never describe the pans with fear vocabulary about other cookware.",
+      "check_class": "deterministic_exact",
+      "severity": "absolute",
+      "topic": "narrative.denotative.claims",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "Corvane sells on what the pan is, never on what other pans are alleged to contain.",
+      "match": {
+        "terms": [
+          "non-toxic",
+          "toxin-free",
+          "chemical-free"
+        ],
+        "mode": "phrase",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_warranty_wording",
+      "statement": "Never call the warranty lifetime. It is 25 years.",
+      "check_class": "deterministic_exact",
+      "severity": "strong",
+      "topic": "narrative.denotative.claims",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "The warranty terms say 25 years against cracking and warping. Anything longer is a claim Corvane cannot honour.",
+      "match": {
+        "terms": [
+          "lifetime warranty",
+          "lifetime guarantee",
+          "guaranteed for life"
+        ],
+        "mode": "phrase",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_claims_approved",
+      "statement": "Every product claim must be one of the approved claims, within its markets and surfaces.",
+      "check_class": "deterministic_structural",
+      "severity": "absolute",
+      "topic": "narrative.denotative.claims",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": null,
+      "predicate": {
+        "type": "claim_must_be_approved",
+        "params": {
+          "against": "/narrative/semiotic/denotative/claims"
+        }
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_owned_phrase_misquote",
+      "statement": "Quote the owned phrase exactly: \"Made to be handed down.\"",
+      "check_class": "deterministic_exact",
+      "severity": "contextual",
+      "topic": "identity.distinctiveAssets.linguistic.ownedPhrases",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "A near-miss weakens the phrase more than leaving it out.",
+      "match": {
+        "terms": [
+          "made to be passed down",
+          "built to be handed down",
+          "made to hand down"
+        ],
+        "mode": "phrase",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_self_reference",
+      "statement": "Corvane refers to itself as \"we\", never in the third person.",
+      "check_class": "deterministic_structural",
+      "severity": "contextual",
+      "topic": "identity.prism.relationship.pronoun",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": null,
+      "predicate": {
+        "type": "self_reference_form",
+        "params": {
+          "form": "we",
+          "brand_name": "Corvane"
+        }
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_no_exclamation",
+      "statement": "No exclamation marks.",
+      "check_class": "deterministic_structural",
+      "severity": "contextual",
+      "topic": "identity.distinctiveAssets.linguistic.typographicVoice",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "The pan does not need shouting about.",
+      "predicate": {
+        "type": "max_character_count",
+        "params": {
+          "character": "!",
+          "max": 0
+        }
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_no_disposable_language",
+      "statement": "Never use the vocabulary of disposability about cookware.",
+      "check_class": "deterministic_exact",
+      "severity": "contextual",
+      "topic": "narrative.connotative",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "Inherited from the anchor archetype and kept by the owner.",
+      "match": {
+        "terms": [
+          "disposable",
+          "throwaway",
+          "replace it every year"
+        ],
+        "mode": "phrase",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "inherited",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_not_a_gadget",
+      "statement": "Never present the pan as a gadget, a hack or a shortcut.",
+      "check_class": "judged_bounded",
+      "severity": "strong",
+      "topic": "narrative.connotative",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "The pan rewards use over years. Gadget framing promises the opposite.",
+      "rubric": {
+        "question": "Does this present the pan as a tool you grow into, or as a trick that saves effort?",
+        "example_refs": [
+          "ex_pdp_seasoning",
+          "ex_pdp_gadget"
+        ],
+        "rail_refs": []
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_no_invented_heritage",
+      "statement": "Never invent heritage. Corvane was founded in 2014; no centuries-old, ancestral or grandmother framing.",
+      "check_class": "judged_bounded",
+      "severity": "strong",
+      "topic": "identity.prism.culture",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": "The old craft is real; Corvane's part in it is recent. Claiming otherwise is costume.",
+      "rubric": {
+        "question": null,
+        "example_refs": [
+          "ex_email_honest_age",
+          "ex_email_heritage_costume"
+        ],
+        "rail_refs": [
+          "rail_heritage"
+        ]
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_social_formality_floor",
+      "statement": "On social, formality never drops below 3 on the shared scale.",
+      "check_class": "judged_bounded",
+      "severity": "contextual",
+      "topic": "identity.prism.relationship.formality",
+      "surfaces": [
+        "social_organic",
+        "social_paid"
+      ],
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "public",
+      "rationale": null,
+      "rubric": {
+        "question": "Is this at least \"friendly but not informal\" (scale anchor 3)?",
+        "example_refs": [
+          "ex_social_ritual",
+          "ex_social_hype"
+        ],
+        "rail_refs": []
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_max_discount",
+      "statement": "No discount above 15 percent.",
+      "check_class": "deterministic_structural",
+      "severity": "strong",
+      "topic": "commercial.pricing.discount",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "private",
+      "rationale": "Deep discounts teach customers to wait.",
+      "predicate": {
+        "type": "max_number",
+        "params": {
+          "field": "discount_percent",
+          "max": 15
+        }
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_no_urgency",
+      "statement": "No urgency or scarcity language.",
+      "check_class": "deterministic_exact",
+      "severity": "strong",
+      "topic": "commercial.pricing.urgency",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "private",
+      "rationale": null,
+      "match": {
+        "terms": [
+          "only a few left",
+          "ends tonight",
+          "last chance",
+          "hurry",
+          "while stocks last"
+        ],
+        "mode": "phrase",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_no_competitor_names",
+      "statement": "Never name a competitor.",
+      "check_class": "deterministic_exact",
+      "severity": "strong",
+      "topic": "commercial.claims.comparative",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "text",
+      "visibility": "private",
+      "rationale": "Corvane does not define itself against anyone. (The names below are fictional.)",
+      "match": {
+        "terms": [
+          "Ironhold",
+          "Pansmith",
+          "Brightforge"
+        ],
+        "mode": "word",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_safety_notice_no_promotion",
+      "statement": "While a safety notice is active, no promotional language on any surface.",
+      "check_class": "deterministic_exact",
+      "severity": "absolute",
+      "topic": "governance.situations.safety",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": [
+        "sit_safety_notice"
+      ],
+      "modality": "text",
+      "visibility": "private",
+      "rationale": null,
+      "match": {
+        "terms": [
+          "sale",
+          "offer",
+          "discount",
+          "new and improved",
+          "upgrade"
+        ],
+        "mode": "word",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_forbidden_colour",
+      "statement": "Never use fluorescent green in brand visuals.",
+      "check_class": "deterministic_exact",
+      "severity": "contextual",
+      "topic": "identity.distinctiveAssets.visual",
+      "surfaces": "all",
+      "markets": "all",
+      "situations": "any",
+      "modality": "visual",
+      "visibility": "public",
+      "rationale": null,
+      "match": {
+        "terms": [
+          "#39FF14"
+        ],
+        "mode": "substring",
+        "normalization": "casefold_nfkc"
+      },
+      "provenance": "authored",
+      "affirmed": true
+    },
+    {
+      "rule_id": "r_audio_tempo",
+      "statement": "Brand audio stays between 70 and 110 bpm.",
+      "check_class": "deterministic_structural",
+      "severity": "contextual",
+      "topic": "identity.distinctiveAssets.sonic",
+      "surfaces": [
+        "video_script",
+        "audio_script"
+      ],
+      "markets": "all",
+      "situations": "any",
+      "modality": "audio",
+      "visibility": "public",
+      "rationale": null,
+      "predicate": {
+        "type": "tempo_range",
+        "params": {
+          "min_bpm": 70,
+          "max_bpm": 110
+        }
+      },
+      "provenance": "authored",
+      "affirmed": true
+    }
+  ],
+  "identity": {
+    "prism": {
+      "physique": {
+        "permitted": [
+          "dark carbon steel",
+          "visible hammer and spin marks",
+          "riveted handles",
+          "patina as a feature"
+        ],
+        "posture": "A tool that looks better after ten years than on the first day."
+      },
+      "personality": {
+        "characterBrief": "The workshop foreman who will tell you exactly how to season the pan, and will not pretend it is effortless."
+      },
+      "culture": {
+        "coreValues": [
+          "buy once, use for decades",
+          "say what the pan does, and what it asks of you",
+          "repair before replace"
+        ],
+        "originNarrative": "Two metalworkers started spinning carbon-steel pans in a rented unit in 2014 because the pans they could buy warped within a year.",
+        "sacredBoundary": "The day Corvane sells a pan it would not use itself, it has become the thing it was started against."
+      },
+      "relationship": {
+        "formality": 4,
+        "warmth": 6
+      },
+      "reflection": {
+        "depictedCustomer": "The cook who wants fewer, better tools and is willing to learn how to look after them.",
+        "ageSignal": "Anyone who has set up a kitchen at least once and noticed what lasted."
+      },
+      "selfImage": {
+        "feelingDescriptors": [
+          "I know how to look after my things",
+          "this pan has my cooking in it"
+        ],
+        "identityStatement": "I keep what is worth keeping."
+      }
+    },
+    "distinctiveAssets": {
+      "visual": {
+        "primaryColor": "#2B2A28",
+        "secondaryColors": [
+          "#B87333",
+          "#E8E2D6"
+        ],
+        "logoUsage": {
+          "minimumClearSpace": "1× the height of the C mark"
+        },
+        "iconography": [
+          "line drawings of tools",
+          "hand-lettered numerals"
+        ],
+        "characterAssets": [],
+        "photographyStyle": {
+          "permitted": [
+            "pans in use, mid-cook",
+            "hands and forearms",
+            "worn pans next to new ones"
+          ],
+          "lightingMood": "Kitchen light at the end of the day."
+        }
+      },
+      "sonic": {
+        "permittedGenres": [
+          "workshop ambience",
+          "solo acoustic guitar"
+        ],
+        "instrumentalMood": "The sound of something being made carefully."
+      },
+      "linguistic": {
+        "ownedPhrases": [
+          "Made to be handed down."
+        ],
+        "ownedWords": [
+          "seasoning",
+          "patina",
+          "spun",
+          "keep"
+        ],
+        "typographicVoice": {
+          "sentenceStructure": "Short declaratives. The occasional long sentence when explaining how.",
+          "punctuationStyle": "Full stops. Em dashes sparingly.",
+          "numeralStyle": "Numerals for measurements and years, words for small counts in prose."
+        }
+      }
+    }
+  },
+  "narrative": {
+    "semiotic": {
+      "denotative": {
+        "categoryDescriptor": "Carbon-steel and cast-iron frying pans and skillets, spun and finished in a small workshop.",
+        "specifications": [
+          "2 mm carbon steel for frying pans; 4 mm cast iron for skillets",
+          "Riveted steel handles; no plastic, no coatings"
+        ],
+        "claims": [
+          {
+            "claim_id": "c_carbon_steel",
+            "claim": "Spun from 2 mm carbon steel.",
+            "evidenceRequired": false,
+            "evidenceType": null,
+            "markets": "all",
+            "surfaces": "all"
+          },
+          {
+            "claim_id": "c_warranty",
+            "claim": "25-year warranty against cracking and warping.",
+            "evidenceRequired": true,
+            "evidenceType": "published warranty terms",
+            "markets": [
+              "GB",
+              "EU",
+              "US"
+            ],
+            "surfaces": "all"
+          },
+          {
+            "claim_id": "c_preseasoned",
+            "claim": "Pre-seasoned with flaxseed oil.",
+            "evidenceRequired": false,
+            "evidenceType": null,
+            "markets": "all",
+            "surfaces": "all"
+          },
+          {
+            "claim_id": "c_hobs",
+            "claim": "Works on induction, gas, electric and open fire.",
+            "evidenceRequired": false,
+            "evidenceType": null,
+            "markets": "all",
+            "surfaces": "all"
+          }
+        ]
+      },
+      "connotative": {
+        "meaningClusters": [
+          "things that improve with use",
+          "competence you earn",
+          "fewer, better things"
+        ],
+        "emotionalRegister": "Quiet pride in something well looked after."
+      }
+    },
+    "myth": {
+      "culturalTension": "Kitchens fill with cheap pans bought to be thrown away, while people say they want things that last.",
+      "mythStatement": "A pan is not finished when you buy it. You finish it by cooking.",
+      "protagonistRole": "The cook, whose use makes the pan better.",
+      "antagonist": "The idea that cookware is a consumable."
+    },
+    "mythEvolution": {
+      "principle": "The myth widens from the pan to the kitchen: keep, repair, hand down.",
+      "immutableCore": "Use makes it better.",
+      "modernTensions": [
+        {
+          "tension": "Convenience culture says any effort is a defect.",
+          "mythResolution": "Seasoning is ten minutes once, then a habit. Corvane says so plainly instead of hiding it.",
+          "permittedFraming": [
+            "what it asks of you, and what you get back"
+          ],
+          "rails": [
+            {
+              "rail_id": "rail_effort",
+              "context": "When asked whether the pan is high-maintenance",
+              "instruction": "State the care plainly, in steps. Do not minimise it and do not dramatise it.",
+              "example": "Rinse, dry on the hob, wipe with oil. About a minute after each cook.",
+              "antiExample": "Zero effort, zero maintenance, it practically cleans itself."
+            }
+          ]
+        }
+      ]
+    },
+    "pillars": [
+      {
+        "name": "Better with use",
+        "description": "The pan improves as the seasoning builds.",
+        "coreClaim": "The hundredth egg slides better than the first.",
+        "approvedArcs": [
+          "a pan's first year",
+          "the patina as a record of meals"
+        ],
+        "surfaces": [
+          "social_organic",
+          "email_retention",
+          "editorial"
+        ],
+        "rails": [
+          {
+            "rail_id": "rail_patina",
+            "context": "Showing a used pan",
+            "instruction": "Treat marks and darkening as the point, not a flaw to excuse.",
+            "example": "Six years of Sunday breakfasts, and it shows.",
+            "antiExample": "Don't worry, the discolouration is completely normal."
+          }
+        ]
+      },
+      {
+        "name": "Honest about the work",
+        "description": "Say what the pan asks of you.",
+        "coreClaim": "A minute of care after each cook. That is the whole deal.",
+        "approvedArcs": [
+          "seasoning, step by step",
+          "what to do if it rusts"
+        ],
+        "surfaces": [
+          "product_detail_page",
+          "customer_service",
+          "editorial"
+        ],
+        "rails": []
+      }
+    ],
+    "editorial": {
+      "openingPrinciple": "Open on the cooking, not the pan.",
+      "structuralApproach": "What you cook → what the pan does → what it asks of you.",
+      "referencePool": [
+        "workshop process",
+        "seasoning chemistry explained simply",
+        "repair stories"
+      ],
+      "timeScaleLanguage": "Years and decades, never seasons or drops."
+    },
+    "guidance": [
+      {
+        "question": "Would someone who has owned a Corvane pan for ten years recognise this?",
+        "applies_to": "all"
+      }
+    ]
+  },
+  "voice": {
+    "base": {
+      "vocabularyLevel": 5,
+      "humourStyle": {
+        "style": "dry",
+        "frequency": "sparingly"
+      },
+      "permittedDevices": [
+        "plain instructions",
+        "understatement",
+        "the occasional workshop aside"
+      ]
+    },
+    "approvedTones": [
+      "plain-spoken",
+      "practical",
+      "quietly proud"
+    ],
+    "examples": [
+      {
+        "example_id": "ex_pdp_seasoning",
+        "surface": "product_detail_page",
+        "text": "Spun from 2 mm carbon steel and pre-seasoned with flaxseed oil. Cook in it often and the surface gets better. Rinse, dry on the hob, wipe with oil.",
+        "verdict": "approved",
+        "reason": "Facts first, then what it asks of you. Use makes it better.",
+        "judged_by": "brand_owner",
+        "source": "authored",
+        "captured_at": "2026-10-05"
+      },
+      {
+        "example_id": "ex_pdp_gadget",
+        "surface": "product_detail_page",
+        "text": "The kitchen hack you need: one pan that does it all with zero effort.",
+        "verdict": "rejected",
+        "reason": "Gadget framing and a promise of no effort. Neither is true.",
+        "judged_by": "brand_owner",
+        "source": "owner_reaction",
+        "captured_at": "2026-10-05"
+      },
+      {
+        "example_id": "ex_social_ritual",
+        "surface": "social_organic",
+        "text": "Six years of Sunday breakfasts. Still the first pan out of the drawer.",
+        "verdict": "approved",
+        "reason": "Friendly, not sloppy. The patina is the story.",
+        "judged_by": "brand_team",
+        "source": "authored",
+        "captured_at": "2026-10-05"
+      },
+      {
+        "example_id": "ex_social_hype",
+        "surface": "social_organic",
+        "text": "omg this pan tho 🔥🔥 literally obsessed, u need it",
+        "verdict": "rejected",
+        "reason": "Below formality 3. Not how we talk.",
+        "judged_by": "brand_team",
+        "source": "authored",
+        "captured_at": "2026-10-05"
+      },
+      {
+        "example_id": "ex_email_honest_age",
+        "surface": "email_acquisition",
+        "text": "People have spun steel pans for a long time. We started in 2014, because the ones we could buy kept warping.",
+        "verdict": "approved",
+        "reason": "Credits the craft without borrowing an age we do not have.",
+        "judged_by": "brand_owner",
+        "source": "authored",
+        "captured_at": "2026-10-05"
+      },
+      {
+        "example_id": "ex_email_heritage_costume",
+        "surface": "email_acquisition",
+        "text": "Forged by centuries of ancestral craft, the way our grandmothers cooked.",
+        "verdict": "rejected",
+        "reason": "Invented heritage. Corvane is twelve years old.",
+        "judged_by": "brand_owner",
+        "source": "authored",
+        "captured_at": "2026-10-05"
+      }
+    ],
+    "contextVariants": [
+      {
+        "surface": "social_organic",
+        "formalityDelta": -1,
+        "warmthDelta": 1,
+        "sentenceLength": "short",
+        "openingInstruction": "Open on a pan in use.",
+        "closingInstruction": "No sales call to action.",
+        "rails": [],
+        "fallbackInstruction": "If it only works as an ad, it is not an organic post."
+      },
+      {
+        "surface": "customer_service",
+        "formalityDelta": 0,
+        "warmthDelta": 2,
+        "sentenceLength": "varied",
+        "openingInstruction": "Answer the question in the first sentence.",
+        "closingInstruction": "Say what happens next, and when.",
+        "rails": [
+          {
+            "rail_id": "rail_rust",
+            "context": "A customer reports rust",
+            "instruction": "Reassure with the fix, in steps. Never blame the customer.",
+            "example": "Rust on carbon steel is fixable. Scrub the spot with steel wool, dry it on the hob, then wipe with a little oil and heat for five minutes.",
+            "antiExample": "This happens when the pan is not cared for properly."
+          }
+        ]
+      }
+    ],
+    "rails": {
+      "global": [
+        {
+          "rail_id": "rail_heritage",
+          "context": "Any mention of history or craft",
+          "instruction": "Credit the craft's age; state Corvane's own age plainly.",
+          "example": "An old craft. A young workshop.",
+          "antiExample": "A century of family tradition in every pan."
+        }
+      ],
+      "alternatives": {
+        "whenUrgencyForbidden": [
+          {
+            "rail_id": "rail_restock",
+            "context": "A product is selling out",
+            "instruction": "Say when the next batch is due. No pressure.",
+            "example": "The 28 cm is out until the next batch in March."
+          }
+        ]
+      }
+    }
+  },
+  "commercial": {
+    "pricing": {
+      "style": "transparent",
+      "displayFormat": "£ and whole numbers, VAT included",
+      "surfaceOverrides": [],
+      "permittedLanguage": [
+        "price",
+        "batch",
+        "made to order"
+      ]
+    },
+    "claims": {
+      "superlatives": {
+        "approved": []
+      }
+    },
+    "offers": {
+      "permittedTypes": [
+        "free re-seasoning service",
+        "bundle of two sizes"
+      ],
+      "communicationRules": {
+        "valueFraming": "Cost per year of use, never percentage off."
+      }
+    },
+    "socialProof": {
+      "celebrityEndorsementStyle": "none",
+      "permittedAuthoritySignals": [
+        "professional cooks using the pan unpaid",
+        "repair counts"
+      ]
+    }
+  },
+  "governance": {
+    "conflictResolution": {
+      "componentPriority": [
+        "governance",
+        "commercial",
+        "narrative",
+        "voice",
+        "identity"
+      ],
+      "knownConflicts": [
+        {
+          "scenario": "A retailer asks for a percentage-off headline.",
+          "components": [
+            "commercial",
+            "voice"
+          ],
+          "resolution": "Offer the cost-per-year framing instead. If refused, escalate.",
+          "example": ""
+        }
+      ],
+      "defaultResolution": "escalate_to_human"
+    },
+    "situations": [
+      {
+        "situation_id": "sit_safety_notice",
+        "trigger": "A product safety notice or recall is in effect.",
+        "category": "crisis",
+        "posture": "Facts and instructions first. Nothing else is said until the notice is closed.",
+        "surfaces": [
+          "press_release",
+          "customer_service",
+          "social_organic",
+          "email_retention"
+        ],
+        "voice": {
+          "persona": "restrained",
+          "formalityDelta": 2,
+          "warmthDelta": 0,
+          "instruction": "Plain steps. No brand voice flourishes."
+        },
+        "rails": [
+          {
+            "rail_id": "rail_safety_first",
+            "context": "First message of a safety notice",
+            "instruction": "Say what is affected, what to do, and how to get a replacement, in that order.",
+            "example": "Some 24 cm pans from batch 1408 may have a loose rivet. Stop using them and reply to this message; we will send a replacement."
+          }
+        ],
+        "suspended_rule_ids": []
+      },
+      {
+        "situation_id": "sit_competitor_claim",
+        "trigger": "A competitor publicly claims its pans outlast Corvane's.",
+        "category": "competitor_action",
+        "posture": "Do not reply to the claim. Keep showing pans in long use.",
+        "surfaces": [
+          "social_organic",
+          "editorial"
+        ],
+        "voice": {
+          "persona": "normal"
+        },
+        "rails": [],
+        "suspended_rule_ids": []
+      }
+    ],
+    "surfaces": [
+      {
+        "surface": "packaging_copy",
+        "objective": "Tell the new owner how to look after the pan.",
+        "primaryRail": "rail_effort",
+        "rails": [],
+        "fallback": "use_brand_default",
+        "suspended_rule_ids": [
+          "r_self_reference"
+        ]
+      },
+      {
+        "surface": "customer_service",
+        "objective": "Fix the problem; keep the pan in use.",
+        "primaryRail": "rail_rust",
+        "rails": [],
+        "fallback": "escalate_to_human",
+        "intentRules": [
+          {
+            "intent": "service_enquiry",
+            "instruction": "Repair or re-season before offering a replacement."
+          }
+        ],
+        "suspended_rule_ids": []
+      }
+    ],
+    "override": {
+      "authorisedRoles": [
+        "founder",
+        "head of brand"
+      ],
+      "requiredFields": [
+        "rule_id",
+        "rationale",
+        "expiry"
+      ],
+      "maxDurationDays": 30,
+      "overrideProcess": "Written approval from an authorised role, recorded before publication.",
+      "judgmentBounds": "Contextual rules may be read in the spirit of the brand; strong rules need an override."
+    },
+    "reviewTopics": [
+      "safety",
+      "warranty terms"
+    ]
+  },
+  "draft_provenance": {
+    "method": "archetype_anchored",
+    "instrument_version": "illustrative",
+    "intake": {
+      "name": "Corvane",
+      "category": "Cookware",
+      "description": "Carbon-steel and cast-iron pans, made in a small workshop.",
+      "founded": "2014",
+      "source_documents": []
+    },
+    "participants": [
+      {
+        "participant_id": "p_owner",
+        "role": "brand_owner"
+      },
+      {
+        "participant_id": "p_team",
+        "role": "brand_team"
+      },
+      {
+        "participant_id": "p_facilitator",
+        "role": "ramoira_facilitator"
+      }
+    ],
+    "closeness_ratings": [
+      {
+        "archetype_id": "workshop",
+        "closeness": 0.7
+      }
+    ],
+    "anchors": [
+      {
+        "archetype_id": "workshop",
+        "closeness": 0.7,
+        "exemplars_shown": []
+      }
+    ],
+    "delta_answers": [
+      {
+        "zone_id": "dz_effort",
+        "field": "/narrative/mythEvolution/modernTensions",
+        "question": "When a customer says the product sounds like hard work, what do you say?",
+        "answer": "That it is a minute after each cook, and that we will not pretend otherwise.",
+        "answered_by": "p_owner"
+      },
+      {
+        "zone_id": "dz_heritage",
+        "field": "/identity/prism/culture/originNarrative",
+        "question": "How old is the craft you draw on, and how old are you?",
+        "answer": "The craft is old. We started in 2014. Say both.",
+        "answered_by": "p_owner"
+      }
+    ],
+    "fields": {
+      "/narrative/mythEvolution/modernTensions": "adapted",
+      "/identity/prism/culture/originNarrative": "authored",
+      "/narrative/semiotic/denotative/claims": "authored",
+      "/voice/approvedTones": "affirmed",
+      "/identity/distinctiveAssets/sonic/sonicLogoURL": "unfilled"
+    },
+    "reactions": [
+      {
+        "probe_id": "probe_pdp_1",
+        "surface": "product_detail_page",
+        "text": "The kitchen hack you need: one pan that does it all with zero effort.",
+        "reaction": "no",
+        "reason": "Gadget framing and a promise of no effort. Neither is true.",
+        "answered_by": "p_owner",
+        "captured_at": "2026-10-05",
+        "resulted_in": {
+          "fields": [],
+          "example_ids": [
+            "ex_pdp_gadget"
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -17,7 +17,7 @@
     "readme.md"
   ],
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@anthropic-ai/sdk": "^0.131.0",
     "@inquirer/prompts": "^7.4.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
@@ -27,6 +27,7 @@
     "ora": "^8.1.1"
   },
   "devDependencies": {
+    "@ramoira/schema": "github:ramoira/brand-schema-spec#b794de3a1b739a33dec5c203d4492d72ed39a24f",
     "@types/node": "^22.0.0",
     "tsup": "^8.3.0",
     "tsx": "^4.19.0",
@@ -34,7 +35,7 @@
     "vitest": "^2.1.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.10"
   },
   "license": "MIT"
 }
