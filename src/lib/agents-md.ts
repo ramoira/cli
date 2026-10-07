@@ -1,117 +1,84 @@
-import { extractSummary } from "./summary.js";
+import { extractSummary } from "./validator.js";
 
-export function generateAgentsMd(
-  schema: unknown,
-  canonicalUrl?: string,
-): string {
-  const s = extractSummary(schema);
+// ramoira/agents.md: a plain-language brief for the AI tools in the brand's
+// project. Built from the public summary, not the full schema, because this
+// file often ends up committed: private rules, and the commercial and
+// governance layers, stay out unless the brand opted them in.
 
-  const brandName = s.meta.brandName || s.meta.brandId;
+type Obj = Record<string, any>;
+
+const surface = (s: string) => s.replace(/_/g, " ");
+
+export function generateAgentsMd(full: Obj, canonicalUrl?: string): string {
+  const s = extractSummary(full) as Obj;
+  const name: string = full.draft_provenance?.intake?.name || s.ramoira.brand_id;
+  const ratified = Boolean(s.ramoira.ratification);
   const lines: string[] = [];
+  const push = (...xs: string[]) => lines.push(...xs);
 
-  lines.push(`# ${brandName} — Brand Context`);
-  lines.push("");
+  push(`# ${name} — brand context`, "");
+  push(
+    ratified
+      ? "> This schema has a ratification pointer: the brand says it stands behind this version."
+      : "> **Candidate — not ratified.** A draft of what this brand means. Treat it as guidance, not as the brand's approved measure.",
+    "",
+  );
 
-  // Myth — the one-sentence brand truth
-  if (s.narrative.mythStatement) {
-    lines.push(`> ${s.narrative.mythStatement}`);
-    lines.push("");
-  }
+  const myth = s.narrative?.myth?.mythStatement;
+  if (myth) push(`**What we believe:** ${myth}`, "");
+  push(`**What we make:** ${s.narrative.semiotic.denotative.categoryDescriptor}`, "");
 
-  // Identity
-  lines.push("## Identity");
-  lines.push("");
-  if (s.identity.summary.oneLineBrief) {
-    lines.push(`**Brief:** ${s.identity.summary.oneLineBrief}`);
-  }
-  if (s.identity.summary.threeAdjectives?.length) {
-    lines.push(`**Character:** ${s.identity.summary.threeAdjectives.join("  ·  ")}`);
-  }
-  if (s.identity.summary.neverDo?.length) {
-    lines.push(`**Never:** ${s.identity.summary.neverDo.join(", ")}`);
-  }
-  if (s.identity.relationshipMode) {
-    lines.push(`**Relationship mode:** ${s.identity.relationshipMode}`);
-  }
-  lines.push("");
-
-  // Narrative
-  lines.push("## Narrative");
-  lines.push("");
-  if (s.narrative.categoryDescriptor) {
-    lines.push(`**Category:** ${s.narrative.categoryDescriptor}`);
-  }
-  if (s.narrative.emotionalRegister) {
-    lines.push(`**Emotional register:** ${s.narrative.emotionalRegister}`);
-  }
-  if (s.narrative.meaningClusters?.length) {
-    lines.push(`**Meaning clusters:** ${s.narrative.meaningClusters.join(", ")}`);
-  }
-  lines.push("");
-
-  // Voice
-  lines.push("## Voice");
-  lines.push("");
-  if (s.voice.approvedTones?.length) {
-    lines.push(`**Approved tones:** ${s.voice.approvedTones.join(", ")}`);
-  }
-  if (s.voice.forbiddenTones?.length) {
-    lines.push(`**Forbidden tones:** ${s.voice.forbiddenTones.join(", ")}`);
-  }
-  if (s.voice.structuralRules?.length) {
-    lines.push("");
-    lines.push("**Structural rules:**");
-    s.voice.structuralRules.forEach((r) => lines.push(`- ${r}`));
-  }
-  lines.push("");
-
-  const approved = s.voice.examples?.filter((e) => e.verdict === "approved").slice(0, 1);
-  const rejected = s.voice.examples?.filter((e) => e.verdict === "rejected").slice(0, 1);
-
-  if (approved?.length) {
-    lines.push("### Write like this");
-    lines.push("");
-    approved.forEach((ex) => {
-      if (ex.context) lines.push(`*${ex.context}*`);
-      lines.push(`> ${ex.text}`);
-      lines.push("");
-    });
+  const rules: Obj[] = s.rules ?? [];
+  if (rules.length) {
+    push("## Rules", "", "Follow these exactly. Severity: absolute rules are never broken; strong rules need sign-off to break.", "");
+    for (const sev of ["absolute", "strong", "contextual"]) {
+      for (const r of rules.filter((x) => x.severity === sev)) {
+        const terms = r.match?.terms?.length ? ` Terms: ${r.match.terms.map((t: string) => `"${t}"`).join(", ")}.` : "";
+        const where = r.surfaces === "all" ? "" : ` (on: ${r.surfaces.map(surface).join(", ")})`;
+        push(`- **${sev}** — ${r.statement}${terms}${where}`);
+      }
+    }
+    push("");
   }
 
-  if (rejected?.length) {
-    lines.push("### Not like this");
-    lines.push("");
-    rejected.forEach((ex) => {
-      if (ex.context) lines.push(`*${ex.context}*`);
-      lines.push(`> ${ex.text}`);
-      if (ex.reason) lines.push(`*Why: ${ex.reason}*`);
-      lines.push("");
-    });
+  const claims: Obj[] = s.narrative.semiotic.denotative.claims ?? [];
+  if (claims.length) {
+    push("## Claims you may make", "", "Only these. Do not invent or embellish product facts.", "");
+    claims.forEach((c) => push(`- ${c.claim}`));
+    push("");
   }
 
-  // Content tests
-  lines.push("## Content Tests");
-  lines.push("");
-  lines.push("Before publishing content, ask:");
-  lines.push("");
-  if (s.narrative.mythTest) {
-    lines.push(`- ${s.narrative.mythTest}`);
-  }
-  if (s.narrative.minimumConnotativeTest) {
-    lines.push(`- ${s.narrative.minimumConnotativeTest}`);
-  }
-  lines.push("");
+  push("## Voice", "");
+  if (s.voice.approvedTones?.length) push(`**Sounds:** ${s.voice.approvedTones.join(", ")}`);
+  const brief = s.identity?.prism?.personality?.characterBrief;
+  if (brief) push(`**Character:** ${brief}`);
+  push(`**Humour:** ${s.voice.base.humourStyle.style}${s.voice.base.humourStyle.frequency ? ` (${s.voice.base.humourStyle.frequency})` : ""}`);
+  push("");
 
-  // Source
-  lines.push("---");
-  lines.push("");
-  if (canonicalUrl) {
-    lines.push(`Brand schema (machine-readable): ${canonicalUrl}`);
-  } else {
-    lines.push("Run `ramoira publish` to get a live canonical URL for agent consumption.");
+  const judged = (s.voice.examples ?? []).filter((e: Obj) => ["brand_owner", "brand_team"].includes(e.judged_by));
+  if (judged.length) {
+    push("## Examples the brand judged", "");
+    for (const e of judged) push(`- ${e.verdict === "approved" ? "✓" : "✗"} *${surface(e.surface)}*: "${e.text}" — ${e.reason}`);
+    push("");
   }
-  lines.push("Full schema: `ramoira/brand.schema.json`");
-  lines.push("");
 
+  const variants: Obj[] = s.voice.contextVariants ?? [];
+  if (variants.length) {
+    push("## By surface", "");
+    for (const v of variants) {
+      const bits = [v.openingInstruction, v.closingInstruction].filter(Boolean).join(" ");
+      push(`- **${surface(v.surface)}**${bits ? `: ${bits}` : ""}`);
+    }
+    push("");
+  }
+
+  const guidance: Obj[] = s.narrative.guidance ?? [];
+  if (guidance.length) {
+    push("## Questions to ask of any draft", "");
+    guidance.forEach((g) => push(`- ${g.question}`));
+    push("");
+  }
+
+  push("---", "", `Source: \`ramoira/brand.schema.json\` (spec 3.0.0, ${s.ramoira.content_hash.slice(0, 19)}…)${canonicalUrl ? ` · Public summary: ${canonicalUrl}` : ""}`, "");
   return lines.join("\n");
 }

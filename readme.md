@@ -8,9 +8,9 @@ npm install -g ramoira
 
 ## What it does
 
-`ramoira init` asks you ten questions and generates a `brand.schema.json` in your project — a structured, machine-readable definition of your brand identity. Your own LLM key does the generation. Nothing leaves your machine.
+`ramoira init` asks a short questionnaire, has your own model draft the rest, and lets you judge a few sample lines. It writes a complete 3.0.0 `brand.schema.json` to your project: the rules content must follow, and the facts and voice producers write from. Your own LLM key does the drafting; nothing is sent to Ramoira.
 
-Generation runs in fast mode by default (~20 seconds), producing the required schema sections immediately. After generation, the CLI surfaces a brand preview: cultural tension, voice examples (approved vs rejected), owned phrases, and personality scores — so you can see whether the model got your brand right before opening any file. The personality scores are a diagnostic, not a quality or certification score.
+The model writes no sample copy and invents no brand facts. Rules it proposes stay unaffirmed until your brand affirms them, and the only example lines in your schema are the ones you judged.
 
 What `init` produces is a **candidate** schema. It becomes your brand's measure only when you review and ratify it. Publishing the summary does not ratify it.
 
@@ -19,9 +19,9 @@ Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf,
 ## Commands
 
 ```
-ramoira init        Generate brand.schema.json locally (no account required)
+ramoira init        Draft a candidate 3.0.0 schema locally (no account required)
 ramoira validate    Check a file is a well-formed schema (schema validity, not conformance)
-ramoira publish     Publish summary to ramoira.com (free account required)
+ramoira publish     Publish summary to ramoira.com (2.0.0 today; 3.0.0 opens with the new service)
 ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)
 ramoira status      Show what is true: published, ratified, checked
 ramoira login       Save API token for publish and status commands
@@ -79,7 +79,7 @@ If you are a brand manager running this on your own laptop (Windows or macOS) to
      npx ramoira init
      ```
    - **No environment variable?** Just run `npx ramoira init` and paste your key when prompted. It will be saved for future commands.
-5. **Answer the questions:** The CLI will ask you 10 questions about your brand. Generation takes ~20 seconds. Once finished, it shows a brand preview and saves `ramoira/brand.schema.json`.
+5. **Answer the questions:** The CLI asks a short questionnaire, your model drafts the rest (a minute or two), and you judge a few sample lines. It then shows a preview and saves `ramoira/brand.schema.json`, a candidate until your brand ratifies it.
 
 ## How agents consume your schema
 

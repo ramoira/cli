@@ -1,160 +1,133 @@
-import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import { checkbox, input, select } from "@inquirer/prompts";
+import { OUTPUT_SURFACES, surfaceLabel } from "./surfaces.js";
+
+// The offline questionnaire for `ramoira init` (roadmap C1, D7). Archetype-
+// anchored drafting is a hosted service (`init --anchored`); this path asks
+// what feeds a 3.0.0 schema directly: facts, rules and voice.
+
+export type AnswerRole = "brand_owner" | "brand_team" | "agency" | "freelancer";
 
 export interface IntakeAnswers {
+  answeredBy: AnswerRole;
   brandName: string;
   brandId: string;
   categoryDescriptor: string;
   mythStatement: string;
-  threeAdjectives: string[];
-  relationshipMode: string;
+  founded: string | null;
   approvedTones: string[];
-  forbiddenTones: string[];
+  avoidTones: string[];
   neverDo: string[];
+  forbiddenWords: string[];
+  claims: string[];
+  competitors: string[];
+  surfaces: string[];
   pricingStyle: string;
 }
 
-const ARCHETYPES = [
-  {
-    value: "peer",
-    name: "We're like you. We just happen to know a bit more about this one thing.",
-  },
-  {
-    value: "optimist",
-    name: "Things can be better. Here is a small thing that helps.",
-  },
-  { value: "coach", name: "We believe in what you can do before you do." },
-  { value: "expert", name: "We know more. Here is the proof." },
-  {
-    value: "monument",
-    name: "Built to outlast everything. Excellence as philosophy, not strategy.",
-  },
-  {
-    value: "activist",
-    name: "Business as a force for change. Profit is the fuel, not the point.",
-  },
-  {
-    value: "provocateur",
-    name: "Limits are the starting point. Mediocrity is the only enemy.",
-  },
-  {
-    value: "challenger",
-    name: "The category is broken. We are what replaces it.",
-  },
-];
-
 const PRICING_STYLES = [
   { value: "simple", name: "We state the price clearly and move on" },
-  {
-    value: "transparent",
-    name: "We show all costs upfront — no surprises, ever",
-  },
-  {
-    value: "anchored",
-    name: "We reference what others charge to show our value",
-  },
-  {
-    value: "value_led",
-    name: "We lead with what it does — price comes second",
-  },
-  {
-    value: "opaque",
-    name: "We don't discuss price publicly — enquire to find out",
-  },
+  { value: "transparent", name: "We show all costs upfront — no surprises" },
+  { value: "value_led", name: "We lead with what it does — price comes second" },
+  { value: "opaque", name: "We don't discuss price publicly — enquire to find out" },
 ];
 
-function slugify(name: string): string {
+const DEFAULT_SURFACES = ["product_detail_page", "social_organic", "email_acquisition"];
+
+export function slugify(name: string): string {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
 
-function parseList(raw: string, min: number, label: string): string[] {
-  const items = raw
-    .split(",")
+/** Splits a comma- or semicolon-separated answer. Semicolons win when present, so commas can sit inside items. */
+export function parseList(raw: string): string[] {
+  const sep = raw.includes(";") ? ";" : ",";
+  return raw
+    .split(sep)
     .map((s) => s.trim())
     .filter(Boolean);
-  if (items.length < min) {
-    throw new Error(`${label} requires at least ${min} item(s).`);
-  }
-  return items;
 }
 
+const required = (v: string) => v.trim().length > 0 || "Required.";
+const atLeastOne = (v: string) => parseList(v).length > 0 || "Give at least one.";
+
 export async function runIntake(): Promise<IntakeAnswers> {
-  console.log(chalk.bold("\nRamoira — brand schema init\n"));
+  console.log(chalk.bold("\nRamoira — draft a brand schema\n"));
   console.log(
     chalk.gray(
-      "Answer a few questions. Your LLM will generate the full schema.\n",
+      "Answer a few questions. Your own model drafts a candidate from them; you judge a few\n" +
+        "sample lines; nothing becomes your brand's measure until you ratify it.\n",
     ),
   );
 
-  const brandName = await input({ message: "Brand name:" });
+  const answeredBy = await select<AnswerRole>({
+    message: "Who is answering?",
+    choices: [
+      { name: "Brand owner", value: "brand_owner" },
+      { name: "Brand team", value: "brand_team" },
+      { name: "Agency, on the brand's behalf", value: "agency" },
+      { name: "Freelancer, on the brand's behalf", value: "freelancer" },
+    ],
+  });
 
-  const suggestedId = slugify(brandName);
+  const brandName = await input({ message: "Brand name:", validate: required });
   const brandId = await input({
     message: "Brand ID (URL-safe slug):",
-    default: suggestedId,
+    default: slugify(brandName),
+    validate: (v) => /^[a-z0-9][a-z0-9-]*$/.test(v) || "Lowercase letters, numbers and hyphens.",
   });
 
-  console.log(chalk.gray("  e.g., 'B2B SaaS for accountants', 'B2C premium vegan skincare'"));
-  const categoryDescriptor = await input({
-    message: "What does your brand sell, and to whom?",
-    transformer: (v) => v,
-  });
+  console.log(chalk.gray("  e.g. 'Carbon-steel frying pans for home cooks'"));
+  const categoryDescriptor = await input({ message: "What do you make, and for whom?", validate: required });
 
-  console.log(chalk.gray("  e.g., 'Skincare should be a ritual, not a chore'"));
-  const mythStatement = await input({
-    message: "What is the core belief that drives your brand?",
-  });
+  console.log(chalk.gray("  e.g. 'A pan is not finished when you buy it. You finish it by cooking.'"));
+  const mythStatement = await input({ message: "What does your brand believe about the world?", validate: required });
 
-  console.log(chalk.gray("  e.g., rebellious, sophisticated, grounded (comma-separated)"));
-  const adjectivesRaw = await input({
-    message: "3 personality traits that define your brand's vibe:",
-  });
-  const threeAdjectives = parseList(adjectivesRaw, 3, "Three adjectives").slice(
-    0,
-    3,
+  const foundedRaw = await input({ message: "Year founded (optional):" });
+
+  console.log(chalk.gray("  e.g. plain-spoken, practical, quietly proud"));
+  const approvedTones = parseList(await input({ message: "How should you sound? (comma-separated)", validate: atLeastOne }));
+
+  console.log(chalk.gray("  e.g. hype, jargon, guilt-tripping"));
+  const avoidTones = parseList(await input({ message: "How must you never sound? (comma-separated)", validate: atLeastOne }));
+
+  console.log(chalk.gray("  e.g. never use fear about other products; never promise effortlessness"));
+  const neverDo = parseList(
+    await input({ message: "What must your brand never do? (separate with ;)", validate: atLeastOne }),
   );
 
-  const relationshipMode = (await select({
-    message: "Brand-customer relationship dynamic:",
-    choices: ARCHETYPES.map(({ name }) => ({ value: name, name })),
-  })) as string;
+  console.log(chalk.gray("  Exact words or phrases. e.g. non-toxic, chemical-free"));
+  const forbiddenWords = parseList(await input({ message: "Words never to use (optional, comma-separated):" }));
 
-  console.log(chalk.gray("  e.g., authoritative, conversational, punchy (comma-separated)"));
-  const approvedRaw = await input({
-    message: "What writing styles should your brand use?",
-  });
-  const approvedTones = parseList(approvedRaw, 1, "Approved tones");
+  console.log(chalk.gray("  Facts you can stand behind. e.g. Spun from 2 mm carbon steel; 25-year warranty"));
+  const claims = parseList(await input({ message: "Product claims you can make (optional, separate with ;):" }));
 
-  console.log(chalk.gray("  e.g., corporate jargon, preachy, overly-excited (comma-separated)"));
-  const forbiddenRaw = await input({
-    message: "What tones must your brand actively AVOID?",
-  });
-  const forbiddenTones = parseList(forbiddenRaw, 1, "Forbidden tones");
+  const competitors = parseList(await input({ message: "Competitors never to name (optional, comma-separated):" }));
 
-  console.log(chalk.gray("  e.g., 'never use fear tactics', 'never mention competitors'"));
-  const neverDoRaw = await input({
-    message: "What are your brand's absolute 'Never Do' rules?",
+  const surfaces = await checkbox<string>({
+    message: "Where does your content appear?",
+    choices: OUTPUT_SURFACES.map((s) => ({ value: s, name: surfaceLabel(s), checked: DEFAULT_SURFACES.includes(s) })),
+    validate: (chosen) => chosen.length > 0 || "Choose at least one.",
   });
-  const neverDo = parseList(neverDoRaw, 1, "Never-do list");
 
-  const pricingStyle = await select({
-    message: "How does your brand talk about money?",
-    choices: PRICING_STYLES,
-  });
+  const pricingStyle = await select({ message: "How does your brand talk about money?", choices: PRICING_STYLES });
 
   return {
-    brandName,
+    answeredBy,
+    brandName: brandName.trim(),
     brandId,
-    categoryDescriptor,
-    mythStatement,
-    threeAdjectives,
-    relationshipMode,
+    categoryDescriptor: categoryDescriptor.trim(),
+    mythStatement: mythStatement.trim(),
+    founded: foundedRaw.trim() || null,
     approvedTones,
-    forbiddenTones,
+    avoidTones,
     neverDo,
+    forbiddenWords,
+    claims,
+    competitors,
+    surfaces,
     pricingStyle,
   };
 }

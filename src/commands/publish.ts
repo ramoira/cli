@@ -1,8 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
-import { validateSchema } from "../lib/validator.js";
-import { readJsonFile, writeTextFile, DEFAULT_SCHEMA_PATH, AGENTS_MD_PATH } from "../lib/files.js";
-import { generateAgentsMd } from "../lib/agents-md.js";
+import { isV2Schema, validateSchema } from "../lib/validator.js";
+import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 import { publishSchema } from "../lib/api.js";
 import { getToken } from "../lib/config.js";
 
@@ -16,20 +15,26 @@ export async function publishCommand(
 ): Promise<void> {
   const filePath = file ?? DEFAULT_SCHEMA_PATH;
 
-  // Check auth first
-  if (!getToken()) {
-    console.error(
-      chalk.red("Not authenticated. Set RAMOIRA_TOKEN or run: ramoira login"),
-    );
-    process.exit(1);
-  }
-
   // Read schema
   let schema: unknown;
   try {
     schema = readJsonFile(filePath);
   } catch (err) {
     console.error(chalk.red(`Cannot read ${filePath}: ${(err as Error).message}`));
+    process.exit(1);
+  }
+
+  if (!isV2Schema(schema)) {
+    console.log(chalk.yellow("Publishing 3.0.0 schemas opens with Ramoira's new service. It is not available yet."));
+    console.log(chalk.gray("  Your schema stays local. ramoira validate and ramoira book work now."));
+    process.exit(1);
+  }
+
+  // Check auth (2.0.0 publishing only)
+  if (!getToken()) {
+    console.error(
+      chalk.red("Not authenticated. Set RAMOIRA_TOKEN or run: ramoira login"),
+    );
     process.exit(1);
   }
 
@@ -62,14 +67,6 @@ export async function publishCommand(
     console.log(chalk.gray(`  State:   ${res.workflowState}`));
     console.log(chalk.gray("\n  Publishing does not ratify the schema. It stays a candidate until you ratify it."));
 
-    // Refresh agents.md with canonical URL
-    try {
-      const md = generateAgentsMd(schemaObj, res.canonicalUrl);
-      writeTextFile(AGENTS_MD_PATH, md);
-      console.log(chalk.gray(`\n✓ agents.md updated with canonical URL`));
-    } catch {
-      // Non-fatal
-    }
   } catch (err) {
     spinner.fail("Publish failed.");
     console.error(chalk.red((err as Error).message));

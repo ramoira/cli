@@ -6,7 +6,6 @@ import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
-// import { enrichCommand } from "./commands/enrich.js";
 import { createTokenCommand } from "./commands/create-token.js";
 import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
@@ -18,13 +17,15 @@ const program = new Command();
 
 program
   .name("ramoira")
-  .description("Brand schema generation and publishing for the agent web")
+  .description("Draft, validate and publish an open brand schema")
   .version(version);
 
 program
   .command("init")
-  .description("Generate a brand.schema.json in the current directory")
+  .description("Draft a candidate 3.0.0 brand schema from a short questionnaire, with your own model key")
   .option("-o, --output <path>", "Output file path", DEFAULT_SCHEMA_PATH)
+  .option("--anchored", "Draft from the archetype library (free hosted service; not available yet)")
+  .option("--no-probes", "Skip judging sample lines; judged rules become guidance questions")
   .action(initCommand);
 
 program
@@ -69,14 +70,5 @@ program
   .option("-o, --out <path>", "Output file path (default: <brandId>-brand-book.html)")
   .option("--probe", "Judge model-drafted sample lines; the ones you mark become examples in your schema")
   .action(bookCommand);
-
-// enrich command — pending platform component PATCH API (roadmap)
-// program
-//   .command("enrich")
-//   .description("Add voice variants, pillars, and full governance to an existing schema")
-//   .option("-f, --file <path>", "Schema file path", DEFAULT_SCHEMA_PATH)
-//   .option("--url <url>", "Fetch brand context from a URL (repeatable)", collect, [])
-//   .option("--context <file>", "Load brand context from a .txt or .md file (repeatable)", collect, [])
-//   .action(enrichCommand);
 
 program.parse();
