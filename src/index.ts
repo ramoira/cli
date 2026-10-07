@@ -6,6 +6,7 @@ import { publishCommand } from "./commands/publish.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
+import { checkCommand } from "./commands/check.js";
 import { createTokenCommand } from "./commands/create-token.js";
 import { DEFAULT_SCHEMA_PATH } from "./lib/files.js";
 
@@ -32,6 +33,18 @@ program
   .command("validate [file]")
   .description("Check that a file is a well-formed schema (full, summary, archetype, or a verdict record)")
   .action(validateCommand);
+
+program
+  .command("check [items...]")
+  .description("Check content against your brand schema's rules (free, no account); judged rules use your own model key")
+  .option("-s, --surface <surface>", "Where the item will appear (required; e.g. product_detail_page, social_organic)")
+  .option("-m, --market <code>", "The market the item is for; rules scoped to markets need it")
+  .option("--schema <path>", "Schema to check against", DEFAULT_SCHEMA_PATH)
+  .option("--producer <id>", "Who produced the item")
+  .option("--producer-class <class>", "agency, freelancer, internal_team, in_house_ai or other", "other")
+  .option("--brand", "You are the brand, checking a producer's work for your own review")
+  .option("--json", "Print verdict events as JSON (no colour), for CI")
+  .action(checkCommand);
 
 program
   .command("publish [file]")

@@ -27,7 +27,7 @@
     "ora": "^8.1.1"
   },
   "devDependencies": {
-    "@ramoira/schema": "github:ramoira/brand-schema-spec#b794de3a1b739a33dec5c203d4492d72ed39a24f",
+    "@ramoira/schema": "github:ramoira/brand-schema-spec#91fb928d295e6e1faa953380f6cec916227e0554",
     "@types/node": "^22.0.0",
     "tsup": "^8.3.0",
     "tsx": "^4.19.0",
