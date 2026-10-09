@@ -17,9 +17,10 @@ export async function validateCommand(file: string | undefined): Promise<void> {
   }
 
   const result = validateSchema(doc);
+  const isV3 = result.specVersion?.startsWith("3.") ?? false;
   const what =
-    result.specVersion === "3.0.0"
-      ? `3.0.0 ${result.kind} schema`
+    isV3
+      ? `${result.specVersion} ${result.kind} schema`
       : result.specVersion === "2.0.0"
         ? "2.0.0 schema"
         : "schema";
@@ -46,7 +47,7 @@ export async function validateCommand(file: string | undefined): Promise<void> {
       "\n  This checks that the file is a well-formed schema. It does not check any content against it.",
     ),
   );
-  if (result.specVersion === "3.0.0" && result.kind !== "record" && result.kind !== "adoption") {
+  if (isV3 && result.kind !== "record" && result.kind !== "adoption") {
     const ratified = Boolean((doc as { ramoira?: { ratification?: unknown } }).ramoira?.ratification);
     console.log(
       chalk.gray(

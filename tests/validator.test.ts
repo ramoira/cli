@@ -76,6 +76,21 @@ describe("validateSchema (3.0.0)", () => {
     expect(result).toMatchObject({ valid: true, specVersion: "3.0.0", kind: "full" });
   });
 
+  it("reports the document's own spec_version (3.1.0)", () => {
+    const doc = fixture("corvane.schema.json");
+    doc.ramoira.spec_version = "3.1.0";
+    for (const rating of doc.draft_provenance?.closeness_ratings ?? []) rating.answered_by = "p_owner";
+    expect(validateSchema(doc)).toMatchObject({ valid: true, specVersion: "3.1.0", kind: "full" });
+  });
+
+  it("refuses a 3.1.0 field in a document that declares 3.0.0", () => {
+    const doc = fixture("corvane.schema.json");
+    doc.draft_provenance.retests = [];
+    const result = validateSchema(doc);
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/added in spec 3\.1\.0/);
+  });
+
   it("rejects certified and confidence", () => {
     for (const field of ["certified", "confidence"]) {
       const doc = fixture("corvane.schema.json");
