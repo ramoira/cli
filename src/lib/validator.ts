@@ -17,9 +17,12 @@ export interface ValidationIssue {
 
 export interface ValidationResult {
   valid: boolean;
-  /** "3.0.0" for current documents; "2.0.0" for superseded ones. */
-  specVersion: "3.0.0" | "2.0.0" | null;
-  /** full | summary | archetype | record | adoption for 3.0.0 documents. */
+  /**
+   * The document's own spec_version for v3 schemas ("3.0.0", "3.1.0"); "3.x" for
+   * records and adoptions, which carry none; "2.0.0" for superseded schemas.
+   */
+  specVersion: string | null;
+  /** full | summary | archetype | record | adoption for v3 documents. */
   kind: string | null;
   issues: ValidationIssue[];
   /** Error messages only, one line each (kept for existing callers). */
@@ -49,8 +52,9 @@ export function validateSchema(doc: unknown): ValidationResult {
   }
 
   const result = validateDocument(doc);
+  const declared = (doc as { ramoira?: { spec_version?: unknown } } | null)?.ramoira?.spec_version;
   return finish({
-    specVersion: result.kind ? "3.0.0" : null,
+    specVersion: result.kind ? (typeof declared === "string" ? declared : "3.x") : null,
     kind: result.kind,
     issues: result.issues,
   });
@@ -65,5 +69,5 @@ function finish(r: Omit<ValidationResult, "valid" | "errors">): ValidationResult
   };
 }
 
-/** The 3.0.0 hash and summary helpers, re-exported for the CLI's commands. */
+/** The v3 hash and summary helpers, re-exported for the CLI's commands. */
 export { computeContentHash, extractSummary } from "@ramoira/schema";
