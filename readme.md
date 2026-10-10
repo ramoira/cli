@@ -12,6 +12,8 @@ npm install -g ramoira
 
 The model writes no sample copy and invents no brand facts. Rules it proposes stay unaffirmed until your brand affirms them, and the only example lines in your schema are the ones you judged.
 
+`ramoira init --anchored` drafts from reference brands instead, in your browser: you rate eight reference archetypes, pick the lines that sound most and least like you, write the facts only you know, and decide on each rule you start from. It is a free service hosted by Ramoira, with no account and no model key; no model writes anything. Your answers are kept by Ramoira for 30 days after your last one, to let you come back, and you can discard them at any time. The CLI saves the finished 3.1.0 candidate to your project.
+
 What `init` produces is a **candidate** schema. It becomes your brand's measure only when you review and ratify it. Publishing the summary does not ratify it.
 
 Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf, v0, Lovable) read it automatically. No re-prompting every session. Consistent voice across tools, models, and collaborators.
@@ -19,7 +21,7 @@ Once you have a schema, AI tools in your project (Cursor, Claude Code, Windsurf,
 ## Commands
 
 ```
-ramoira init        Draft a candidate 3.0.0 schema locally (no account required)
+ramoira init        Draft a candidate 3.0.0 schema locally (no account required); --anchored drafts from reference brands in your browser (free, no account)
 ramoira validate    Check a file is a well-formed schema (schema validity, not conformance)
 ramoira publish     Publish your 3.0.0 schema to ramoira.com (free account); the summary is public
 ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)

@@ -25,7 +25,7 @@ program
   .command("init")
   .description("Draft a candidate 3.0.0 brand schema from a short questionnaire, with your own model key")
   .option("-o, --output <path>", "Output file path", DEFAULT_SCHEMA_PATH)
-  .option("--anchored", "Draft from the archetype library (free hosted service; not available yet)")
+  .option("--anchored", "Draft from reference brands in your browser: free hosted Ramoira service, no account, no model key")
   .option("--no-probes", "Skip judging sample lines; judged rules become guidance questions")
   .action(initCommand);
 

@@ -10,6 +10,8 @@ interface Config {
   brandSlug?: string;
   apiBase?: string;
   anthropicApiKey?: string;
+  /** An unfinished `init --anchored` session, so a later run can continue it. */
+  draftToken?: string;
 }
 
 export function readConfig(): Config {
