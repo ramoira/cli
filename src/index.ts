@@ -3,6 +3,9 @@ import { createRequire } from "module";
 import { initCommand } from "./commands/init.js";
 import { validateCommand } from "./commands/validate.js";
 import { publishCommand } from "./commands/publish.js";
+import { hashCommand } from "./commands/hash.js";
+import { pushCommand } from "./commands/push.js";
+import { pullCommand } from "./commands/pull.js";
 import { statusCommand } from "./commands/status.js";
 import { loginCommand, logoutCommand, whoamiCommand } from "./lib/auth.js";
 import { bookCommand } from "./commands/book.js";
@@ -18,16 +21,21 @@ const program = new Command();
 
 program
   .name("ramoira")
-  .description("Draft, validate and publish an open brand schema")
+  .description("Draft, validate and share an open brand schema")
   .version(version);
 
 program
   .command("init")
-  .description("Draft a candidate 3.0.0 brand schema from a short questionnaire, with your own model key")
-  .option("-o, --output <path>", "Output file path", DEFAULT_SCHEMA_PATH)
-  .option("--anchored", "Draft from reference brands in your browser: free hosted Ramoira service, no account, no model key")
-  .option("--no-probes", "Skip judging sample lines; judged rules become guidance questions")
+  .description("Set the project up for your coding agent to draft the brand schema (installs ramoira/DRAFTING.md); no account")
+  .option("--anchored", "Draft from reference brands in your browser instead: free hosted Ramoira service, no account, no model key")
+  .option("-o, --output <path>", "With --anchored: where to save the schema", DEFAULT_SCHEMA_PATH)
   .action(initCommand);
+
+program
+  .command("hash [file]")
+  .description("Print the schema's content_hash; --write puts it into the file (run after every edit)")
+  .option("-w, --write", "Write the content_hash into ramoira.content_hash")
+  .action(hashCommand);
 
 program
   .command("validate [file]")
@@ -47,8 +55,21 @@ program
   .action(checkCommand);
 
 program
-  .command("publish [file]")
-  .description("Publish your 3.0.0 schema to ramoira.com (free account); the summary is public, the full schema stays private")
+  .command("push [file]")
+  .description("Upload the schema as a private version for the owner to review on ramoira.com (free account); nothing becomes public")
+  .option("--slug <slug>", "The brand's slug, when ramoira.brand_id is not set")
+  .action(pushCommand);
+
+program
+  .command("pull [file]")
+  .description("Bring down the version the owner reviewed, and their brief if they sent it back (ramoira/REVIEW.md)")
+  .option("--slug <slug>", "The brand's slug, when the project does not name it yet")
+  .option("--force", "Replace local changes that were never pushed")
+  .action(pullCommand);
+
+program
+  .command("publish", { hidden: true })
+  .description("Replaced by push: the owner publishes on ramoira.com")
   .action(publishCommand);
 
 program

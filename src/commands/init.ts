@@ -1,99 +1,72 @@
 import chalk from "chalk";
 import ora from "ora";
-import { confirm, input } from "@inquirer/prompts";
-import { createRequire } from "module";
+import { confirm } from "@inquirer/prompts";
 import { resolve } from "path";
-import { runIntake } from "../lib/intake.js";
-import { draftCandidate } from "../lib/draft.js";
-import { assembleCandidate, resolveJudgedRules, type PendingJudgedRule } from "../lib/assemble.js";
-import { applyJudgments, draftRuleProbes } from "../lib/probes.js";
-import { judgeProbes } from "../lib/judge-ui.js";
-import { resolveApiKey, saveApiKey } from "../lib/api-key.js";
 import { validateSchema } from "../lib/validator.js";
 import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib/files.js";
 import { generateAgentsMd } from "../lib/agents-md.js";
 import { getApiBase, readConfig, writeConfig } from "../lib/config.js";
 import { sessionIsLive, sessionUrl, startAnchoredSession, waitForCandidate } from "../lib/anchored.js";
+import { DRAFTING_PATH, DRAFTING_VERSION, installDrafting } from "../lib/drafting.js";
 
-// `ramoira init` (roadmap C1, C2; decisions D7, D8). Offline path: the
-// questionnaire, the user's own model, no Ramoira account. Writes a complete
-// five-layer 3.0.0 candidate. Archetype-anchored drafting (`--anchored`) is a
-// free hosted service, without an account or a model key (D7, D18): this CLI
-// opens the session in the browser and saves the 3.1.0 candidate it returns.
-// The templates never ship in this CLI.
+// `ramoira init` (roadmap C1, D20). By default it sets the project up for
+// the person's own coding agent: it installs the drafting protocol
+// (ramoira/DRAFTING.md, the copy pinned in this CLI) and points the project's
+// agent instruction files at it. The agent then drafts the schema; no
+// account, no Ramoira model. With --anchored, the person drafts from
+// reference brands in the browser instead (D7, D18), and this CLI saves the
+// candidate the hosted session returns. The templates never ship here.
 
 interface InitOptions {
   output: string;
   anchored?: boolean;
-  probes?: boolean;
 }
 
 type Obj = Record<string, any>;
 
-const MAX_PROBED_RULES = 5;
-const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
-
 export async function initCommand(options: InitOptions): Promise<void> {
-  const outputPath = options.output;
-  if (fileExists(outputPath)) {
-    const overwrite = await confirm({ message: `${outputPath} already exists. Overwrite?`, default: false });
-    if (!overwrite) {
-      console.log(chalk.gray("Aborted."));
-      process.exit(0);
-    }
-  }
-
   if (options.anchored) {
+    const outputPath = options.output;
+    if (fileExists(outputPath)) {
+      const overwrite = await confirm({ message: `${outputPath} already exists. Overwrite?`, default: false });
+      if (!overwrite) {
+        console.log(chalk.gray("Aborted."));
+        process.exit(0);
+      }
+    }
     await anchoredInit(outputPath);
     return;
   }
 
-  let apiKey = resolveApiKey();
-  if (!apiKey) {
-    console.log(chalk.yellow("\nANTHROPIC_API_KEY not set. init drafts with your own model key."));
-    apiKey = (await input({ message: "Enter your Anthropic API key:" })).trim();
-    if (!apiKey) {
-      console.error(chalk.red("API key required. Set ANTHROPIC_API_KEY and try again."));
-      process.exit(1);
-    }
-    saveApiKey(apiKey);
-    console.log(chalk.gray("  API key saved to ~/.ramoira/config.json"));
+  const result = installDrafting();
+  console.log("");
+  for (const step of result.steps) {
+    const label = step.path === DRAFTING_PATH ? `${step.path} (drafting protocol ${DRAFTING_VERSION})` : step.path;
+    const note =
+      step.path === DRAFTING_PATH
+        ? step.outcome === "unchanged"
+          ? "already current"
+          : result.replacedVersion
+            ? `replaced version ${result.replacedVersion}`
+            : step.outcome
+        : step.outcome === "unchanged"
+          ? "already points to it"
+          : step.outcome === "created"
+            ? "created, with a brand schema section"
+            : "brand schema section added";
+    console.log(`  ${step.outcome === "unchanged" ? chalk.gray("·") : chalk.green("✓")} ${label} ${chalk.gray(`— ${note}`)}`);
   }
-
-  const intake = await runIntake();
-
-  const spinner = ora("Drafting your candidate schema (this can take a minute or two)…").start();
-  let assembled;
-  try {
-    assembled = assembleCandidate(intake, await draftCandidate(intake, apiKey), version);
-    spinner.succeed("Candidate drafted.");
-  } catch (err) {
-    spinner.fail("Drafting failed.");
-    console.error(chalk.red((err as Error).message));
-    process.exit(1);
+  if (result.claudeMdMissing) {
+    console.log(chalk.gray("  · Using Claude Code? It reads CLAUDE.md: add a line there saying @AGENTS.md."));
   }
-
-  const interactive = options.probes !== false && process.stdin.isTTY === true;
-  const settled = interactive
-    ? await probeJudgedRules(assembled.schema, assembled.pending, intake.surfaces, intake.answeredBy, apiKey)
-    : resolveJudgedRules(assembled.schema, assembled.pending, {});
-  const schema = settled.schema;
-
-  const result = validateSchema(schema);
-  if (!result.valid) {
-    console.log(chalk.yellow("\nThe candidate has validation issues:"));
-    result.errors.slice(0, 10).forEach((e) => console.log(chalk.yellow(`  · ${e}`)));
-    const save = await confirm({ message: "Save anyway?", default: true });
-    if (!save) {
-      console.log(chalk.gray("Aborted."));
-      process.exit(0);
-    }
-  } else {
-    console.log(chalk.green("\n✓ Valid 3.0.0 schema."));
-  }
-
-  save(outputPath, schema);
-  printPreview(schema, settled.kept.length, settled.toGuidance.length);
+  console.log("");
+  console.log(chalk.bold("  Now ask your coding agent:"));
+  console.log("  " + chalk.cyan('"Read ramoira/DRAFTING.md and draft our brand schema."'));
+  console.log("");
+  console.log(chalk.gray("  It reads your project and anything you give it, asks what it can't find, and writes"));
+  console.log(chalk.gray("  ramoira/brand.schema.json: a candidate. You review every rule on ramoira.com before"));
+  console.log(chalk.gray("  anything is public. No coding agent? Draft in the browser: ramoira init --anchored"));
+  console.log("");
 }
 
 function save(outputPath: string, schema: Obj): void {
@@ -121,7 +94,7 @@ async function anchoredInit(outputPath: string): Promise<void> {
       token = (await startAnchoredSession(base)).token;
     } catch (err) {
       console.error(chalk.red((err as Error).message));
-      console.log(chalk.gray("  Run ramoira init without --anchored to draft from the questionnaire."));
+      console.log(chalk.gray("  Or draft with your coding agent: run ramoira init without --anchored."));
       process.exit(1);
     }
     writeConfig({ ...readConfig(), draftToken: token });
@@ -195,73 +168,5 @@ function printAnchoredPreview(schema: Obj): void {
   console.log(`  Your examples     ${own}`);
   console.log(`  Fields            ${count("authored")} in your words, ${count("affirmed")} affirmed, ${count("unfilled")} left for you`);
   console.log(`\n${rule}`);
-  console.log(chalk.gray("\n  Next: ramoira validate · ramoira book · ramoira publish\n"));
-}
-
-async function probeJudgedRules(
-  schema: Obj,
-  pending: PendingJudgedRule[],
-  surfaces: string[],
-  role: Parameters<typeof applyJudgments>[2],
-  apiKey: string,
-): Promise<ReturnType<typeof resolveJudgedRules>> {
-  if (pending.length === 0) return resolveJudgedRules(schema, pending, {});
-
-  const probed = pending.slice(0, MAX_PROBED_RULES);
-  console.log(chalk.bold(`\nJudge a few sample lines (${probed.length * 2})`));
-  console.log(
-    chalk.gray(
-      "  Some proposed rules need judgment to check. For each, your model drafts two lines.\n" +
-        "  They are probes, not content: only you see them. Your verdicts become the examples\n" +
-        "  those rules are checked against. A rule you can't back with a \"That's us\" and a\n" +
-        "  \"Not us\" becomes a guidance question instead.\n",
-    ),
-  );
-
-  const spinner = ora("Drafting probes…").start();
-  let probes;
-  try {
-    probes = await draftRuleProbes(schema, probed, surfaces, apiKey);
-    spinner.stop();
-  } catch (err) {
-    spinner.warn(`Could not draft probes (${(err as Error).message}). Judged rules become guidance questions.`);
-    return resolveJudgedRules(schema, pending, {});
-  }
-
-  const judgments = await judgeProbes(probes);
-  const { schema: withExamples, byJudgment } = applyJudgments(schema, judgments, role);
-  const examplesByRule: Record<string, string[]> = {};
-  judgments.forEach((j, i) => {
-    const id = byJudgment[i];
-    if (id) (examplesByRule[j.probe.rule_id] ??= []).push(id);
-  });
-  return resolveJudgedRules(withExamples, pending, examplesByRule);
-}
-
-function printPreview(schema: Obj, kept: number, toGuidance: number): void {
-  const name: string = schema.draft_provenance?.intake?.name ?? schema.ramoira.brand_id;
-  const myth: string | undefined = schema.narrative?.myth?.mythStatement;
-  const tension: string | undefined = schema.narrative?.myth?.culturalTension;
-  const rules: Obj[] = schema.rules ?? [];
-  const unaffirmed = rules.filter((r) => r.affirmed === false).length;
-  const judgedExamples = (schema.voice?.examples ?? []).filter((e: Obj) => ["brand_owner", "brand_team"].includes(e.judged_by)).length;
-  const unfilled = Object.entries(schema.draft_provenance?.fields ?? {})
-    .filter(([, status]) => status === "unfilled")
-    .map(([p]) => p.split("/").pop());
-
-  const rule = chalk.gray("  " + "╌".repeat(58));
-  console.log(`\n${rule}\n`);
-  console.log("  " + chalk.yellow("Candidate — not ratified"));
-  console.log(chalk.gray("  Drafted by your model from your answers. It becomes your brand's measure"));
-  console.log(chalk.gray("  only when the brand reviews and ratifies it.\n"));
-  console.log("  " + chalk.bold(name));
-  if (myth) console.log("  " + chalk.italic(myth));
-  if (tension) console.log("\n  " + chalk.gray("The conflict your brand takes a side on: ") + chalk.dim(tension));
-  console.log();
-  console.log(`  Rules             ${rules.length}${unaffirmed ? chalk.gray(` (${unaffirmed} proposed by the model, not yet affirmed)`) : ""}`);
-  console.log(`  Judged rules      ${kept} backed by your examples${toGuidance ? chalk.gray(`, ${toGuidance} kept as guidance questions`) : ""}`);
-  console.log(`  Your examples     ${judgedExamples}`);
-  if (unfilled.length) console.log(`  Left for you      ${chalk.gray(unfilled.join(", "))}`);
-  console.log(`\n${rule}`);
-  console.log(chalk.gray("\n  Next: edit ramoira/brand.schema.json, then ramoira validate · ramoira book\n"));
+  console.log(chalk.gray("\n  Next: ramoira validate · ramoira push (the owner then reviews it on ramoira.com)\n"));
 }
