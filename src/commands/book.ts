@@ -30,7 +30,7 @@ export async function bookCommand(file: string | undefined, options: BookOptions
   }
 
   if (isV2Schema(schema)) {
-    console.error(chalk.red("ramoira book needs a 3.0.0 schema. This file is 2.0.0."));
+    console.error(chalk.red("ramoira book needs a 3.x schema. This file is 2.0.0."));
     console.error(
       chalk.gray("  Migration guide: https://github.com/ramoira/brand-schema-spec/blob/main/migrations/2.0.0-to-3.0.0.md"),
     );
@@ -38,7 +38,7 @@ export async function bookCommand(file: string | undefined, options: BookOptions
   }
   const checked = validateSchema(schema);
   if (!checked.valid || checked.kind !== "full") {
-    console.error(chalk.red(`${filePath} is not a valid 3.0.0 full schema. Run: ramoira validate ${filePath}`));
+    console.error(chalk.red(`${filePath} is not a valid 3.x full schema. Run: ramoira validate ${filePath}`));
     process.exit(1);
   }
 

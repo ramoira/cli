@@ -36,8 +36,11 @@ ramoira check       Check content against your schema's rules (no account; judge
 ramoira push        Upload a private version for review on ramoira.com (free account); nothing becomes public
 ramoira pull        Bring down the version you reviewed, and your brief if you sent it back
 ramoira book        Render a brand book HTML from your schema (--probe to judge sample lines)
-ramoira status      Show what is true: published, ratified, checked
-ramoira login       Sign in for push and pull (or set RAMOIRA_TOKEN)
+ramoira status      Show what is true (published, ratified, checked) and whether your file is behind
+ramoira login       Sign in for push and pull, with GitHub or an emailed link (or set RAMOIRA_TOKEN)
+ramoira logout      Sign out: revoke this computer's token
+ramoira whoami      Show the account you are signed in as
+ramoira create-token  A named token for CI: it can push and pull, never make a version public
 ```
 
 ## Quick start
