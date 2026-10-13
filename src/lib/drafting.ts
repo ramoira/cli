@@ -6,6 +6,7 @@ import SPEC_MD from "@ramoira/schema/SPEC.md";
 import SPEC_SCHEMA from "@ramoira/schema/SPEC.schema.json";
 import EXAMPLE from "@ramoira/schema/examples/minimal/brand.schema.json";
 import { RAMOIRA_DIR, writeTextFile } from "./files.js";
+import { README_PATH, projectReadme, readmeIsOurs } from "./readme.js";
 
 // The drafting protocol a coding agent follows to draft a candidate schema
 // (roadmap D20). It ships in the spec package at the commit this CLI pins, so
@@ -89,6 +90,7 @@ This project's brand schema is \`ramoira/brand.schema.json\`: one file that says
 - To draft or revise it, read \`ramoira/DRAFTING.md\` and follow it.
 - Before writing copy or user-facing text, read the schema and follow its rules. Make only the claims it lists.
 - After drafting copy, run \`npx ramoira check --surface <surface> <file>\` and fix what it flags.
+- When the person asks how review, publishing or the next version work, point them to \`ramoira/README.md\`.
 ${END}`;
 
 /** Adds the pointer block to a file's text, or replaces the one already there. */
@@ -107,7 +109,7 @@ const INSTRUCTION_FILES = [
   { path: ".github/copilot-instructions.md", always: false },
 ];
 
-export type InstallStep = { path: string; outcome: "created" | "updated" | "unchanged" };
+export type InstallStep = { path: string; outcome: "created" | "updated" | "unchanged" | "kept" };
 
 export interface InstallResult {
   steps: InstallStep[];
@@ -124,6 +126,13 @@ function writeIfChanged(path: string, next: string, steps: InstallStep[]): void 
   steps.push({ path, outcome: before === null ? "created" : "updated" });
 }
 
+/** Writes ramoira/README.md, the person's page, unless a README.md of their own is there ("kept"). */
+export function installReadme(steps: InstallStep[] = []): InstallStep[] {
+  if (!readmeIsOurs()) steps.push({ path: README_PATH, outcome: "kept" });
+  else writeIfChanged(README_PATH, projectReadme({ cli: CLI_VERSION, spec: SPEC_VERSION, drafting: DRAFTING_VERSION }), steps);
+  return steps;
+}
+
 /** Installs the drafting protocol and points the project's agent instruction files at it. */
 export function installDrafting(): InstallResult {
   const steps: InstallStep[] = [];
@@ -131,6 +140,7 @@ export function installDrafting(): InstallResult {
   const previous = existing === null ? null : draftingVersion(existing);
   writeIfChanged(DRAFTING_PATH, DRAFTING_MD, steps);
   for (const [path, text] of SPEC_FILES()) writeIfChanged(path, text, steps);
+  installReadme(steps);
 
   for (const file of INSTRUCTION_FILES) {
     const abs = resolve(file.path);

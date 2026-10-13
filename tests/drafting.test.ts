@@ -4,6 +4,7 @@ import { createRequire } from "module";
 import { tmpdir } from "os";
 import { join } from "path";
 import { DRAFTING_MD, DRAFTING_PATH, DRAFTING_VERSION, POINTER_BLOCK, SPEC_VERSION, draftingVersion, driftNotice, installDrafting, withPointerBlock } from "../src/lib/drafting.js";
+import { README_MARKER } from "../src/lib/readme.js";
 
 const require = createRequire(import.meta.url);
 
@@ -37,6 +38,7 @@ describe("the drafting protocol (D20)", () => {
       ["ramoira/spec/SPEC.md", "created"],
       ["ramoira/spec/SPEC.schema.json", "created"],
       ["ramoira/spec/example.schema.json", "created"],
+      ["ramoira/README.md", "created"],
       ["AGENTS.md", "created"],
     ]);
     expect(result.claudeMdMissing).toBe(true);
@@ -70,6 +72,19 @@ describe("the drafting protocol (D20)", () => {
     expect(JSON.parse(readFileSync("ramoira/spec/SPEC.schema.json", "utf8"))).toEqual(JSON.parse(readFileSync(require.resolve("@ramoira/schema/SPEC.schema.json"), "utf8")));
     expect(readFileSync("ramoira/spec/README.md", "utf8")).toContain(`drafting protocol ${DRAFTING_VERSION}`);
     expect(SPEC_VERSION).toMatch(/^3\.\d+\.\d+$/);
+  });
+
+  it("writes the person's README, refreshes its own, and leaves one the person wrote alone", () => {
+    installDrafting();
+    const readme = readFileSync("ramoira/README.md", "utf8");
+    expect(readme).toContain(README_MARKER);
+    for (const step of ["ramoira push", "Make public", "ramoira pull", "Revise", "Always pull after a review"]) expect(readme).toContain(step);
+    expect(readme).toContain(`drafting protocol ${DRAFTING_VERSION}`);
+    writeFileSync("ramoira/README.md", `${README_MARKER}\nold page\n`);
+    expect(installDrafting().steps.find((s) => s.path === "ramoira/README.md")!.outcome).toBe("updated");
+    writeFileSync("ramoira/README.md", "# Our own notes\n");
+    expect(installDrafting().steps.find((s) => s.path === "ramoira/README.md")!.outcome).toBe("kept");
+    expect(readFileSync("ramoira/README.md", "utf8")).toBe("# Our own notes\n");
   });
 
   it("notices when the project's DRAFTING.md is not the one this CLI ships", () => {
