@@ -80,6 +80,10 @@ describe("ramoira push", () => {
     expect(body).toEqual({ schema: doc, base_hash: null });
     expect(readSync()).toEqual({ brand: "corvane", base: null, pushed: doc.ramoira.content_hash });
     expect(calls.some((c) => c.url.includes("/publish"))).toBe(false);
+    // The file now says it is in review; the fingerprint is unchanged.
+    const after = JSON.parse(readFileSync(join(dir, "ramoira/brand.schema.json"), "utf8"));
+    expect(after.ramoira.workflow_state).toBe("in_review");
+    expect(computeContentHash(after)).toBe(doc.ramoira.content_hash);
   });
 
   it("sends the reviewed base it was pulled from, and stops with a pull hint when that base is stale", async () => {

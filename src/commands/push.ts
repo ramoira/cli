@@ -47,6 +47,11 @@ export async function pushCommand(file: string | undefined, options: { slug?: st
   try {
     const res = await pushProposal(plan.slug, schema, sync.base);
     writeSync({ brand: plan.slug, base: sync.base, pushed: res.content_hash });
+    // The file's lifecycle label follows it (outside content_hash, so the fingerprint is unchanged): pull brings back published, or draft when sent back.
+    if (schema.ramoira.workflow_state !== "in_review") {
+      schema.ramoira.workflow_state = "in_review";
+      writeJsonFile(filePath, schema);
+    }
     spinner.succeed(res.unchanged ? "Already pushed: this exact version is waiting for review." : "Pushed. Nothing is public.");
     if (res.claimed) console.log(chalk.gray(`  The slug "${plan.slug}" is now yours. It is never given to anyone else.`));
     console.log(chalk.bold(`\n  The owner reviews it here, signed in: ${res.review_url}`));
