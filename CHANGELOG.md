@@ -1,8 +1,33 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 — 2026-10-13
 
-### Drafting with your own coding agent (roadmap D20)
+Brand schema spec 3.x (3.1.0) and drafting with your own coding agent. **Breaking:** works with ramoira.com's 3.x service only; 0.3.x and earlier talk to the retired v2 API, which now answers 410.
+
+### What you get
+
+- **`init`** sets your project up for your coding agent (Claude Code, Codex, GitHub Copilot, Cursor, Windsurf, JetBrains agents): it installs `ramoira/DRAFTING.md`, a local copy of the spec (`ramoira/spec/`) and `ramoira/README.md`, and adds a brand schema section to `AGENTS.md` (and `CLAUDE.md` or Copilot's instructions where they exist). Your agent drafts the schema; no account, no model key, no Ramoira model. `init --anchored` drafts from reference brands in your browser instead.
+- **`hash`** prints the schema's fingerprint (`content_hash`); `--write` puts it in the file.
+- **`validate`** checks full schemas, summaries, archetype templates and records against the spec's reference validator (schema validity, never conformance), and says what to do about a stale `content_hash`.
+- **`check`** checks content against your schema's rules with the spec's open checker: free, no account; judged rules use your own Anthropic key, quote the item and cite the rule, or are void. Nothing suggests a rewrite. `--json` for CI.
+- **`push`** uploads a private version for the owner's review on ramoira.com; nothing becomes public. Refused when based on an older reviewed version, or when it claims an affirmation the owner never made.
+- **`pull`** brings down the version the owner reviewed, and their requests in `ramoira/REVIEW.md` when they sent it back.
+- **`status`** shows the facts about a brand (published, ratified, checked; never a score) and where this project's file stands: the public version, waiting for review, changed, or behind a newer version.
+- **`book`** renders a brand book from the schema without a model; `--probe` lets you judge sample lines (your own key).
+- **`login`** signs in through the browser (GitHub or an emailed link) and retires this computer's earlier token; **`logout`** revokes it; **`create-token`** makes a token for CI (`RAMOIRA_TOKEN`), which can push and pull, never make a version public.
+- `ramoira/sync.json` records the brand and the reviewed base, like a branch's upstream; the file's `workflow_state` follows the lifecycle (`draft`, `in_review`, `published`).
+
+### Retired
+
+- `publish`: only the owner makes a version public, signed in, in the review. The command says so and points to `push`.
+- The `init` questionnaire that called a model with your own key, and the v2 generator.
+- `certified` and `confidence`: there is no score anywhere.
+
+### How it got here
+
+The entries below record the steps of this release in order; some were replaced before it shipped (the questionnaire `init`, `publish` in 3.0.0).
+
+#### Drafting with your own coding agent (roadmap D20)
 
 - `init` installs `ramoira/DRAFTING.md` (the drafting protocol your agent follows), a local copy of the spec in `ramoira/spec/`, and `ramoira/README.md`, a page for the person: what the folder holds, draft → push → review → make public or send back → pull, changing a public schema (a new version, or **Revise** on the dashboard), what is public and what is private. It adds a brand schema section to `AGENTS.md` (and `CLAUDE.md`, Copilot's instructions where they exist). Run it again to refresh them; a `README.md` you wrote yourself is left alone. The questionnaire is retired; `init` calls no model.
 - New `hash` (`--write` sets `content_hash`), `push` (a private version for the owner's review; refused when based on an older reviewed version) and `pull` (the reviewed version, and the owner's requests in `ramoira/REVIEW.md`). `ramoira/sync.json` records the brand and the base. `publish` is retired: only the owner makes a version public, signed in.
@@ -10,7 +35,7 @@
 - `status` also says where this project's file stands: the public version, waiting for review, changed since the last push, or behind a newer version the owner reviewed or made public (for example after **Revise**); signed in, it compares with the reviewed version too. The `AGENTS.md` section asks agents to run it before writing copy.
 - `login` retires this computer's earlier token; `logout` revokes the token on the server.
 
-### 3.0.0 groundwork (roadmap P2)
+#### 3.0.0 groundwork (roadmap P2)
 
 - `publish` sends 3.0.0 full schemas to Ramoira's new service: the slug is `ramoira.brand_id`; publishing to an unclaimed slug claims it; the same version again changes nothing. 2.0.0 is refused with the migration guide. Server-side validation errors are listed.
 - `login` waits for approval in the browser (GitHub or an emailed sign-in link), not only GitHub.
@@ -28,7 +53,7 @@
 - `publish` refuses 3.0.0 schemas until the new service opens; 2.0.0 publishing is unchanged.
 - Removed the v2 generator, including a worked example written about a real brand, and the unused `enrich` command code.
 
-### Changes
+#### Earlier copy changes (P0)
 
 - `init` preview is labelled "Candidate — not ratified"; personality scores are labelled as a diagnostic, not a quality or certification score
 - `init` no longer suggests `ramoira enrich`, which is not available
