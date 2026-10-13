@@ -13,7 +13,7 @@ Arguments:
 
 `validate` checks **schema validity**: is this file a well-formed schema under the spec? It does not check any content against the schema. That is conformance, a different operation.
 
-It reads the file, works out what it is, and checks it against the [Ramoira spec 3.0.0](https://github.com/ramoira/brand-schema-spec):
+It reads the file, works out what it is, and checks it against the [Ramoira spec 3.x](https://github.com/ramoira/brand-schema-spec):
 
 - full schemas, public summaries and archetype templates;
 - verdict records and adoption records.
@@ -27,7 +27,7 @@ A **2.0.0** schema is still checked against the old spec, with a pointer to the 
 ## Output
 
 ```
-✓ ramoira/brand.schema.json is a valid 3.0.0 full schema.
+✓ ramoira/brand.schema.json is a valid 3.1.0 full schema.
   · /draft_provenance/fields 1 field(s) unfilled: /identity/distinctiveAssets/sonic/sonicLogoURL
 
   This checks that the file is a well-formed schema. It does not check any content against it.
