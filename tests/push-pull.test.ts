@@ -167,3 +167,12 @@ describe("ramoira pull", () => {
     expect(read()).toEqual(corvane());
   });
 });
+
+describe("a refused token says where it came from", () => {
+  it("names RAMOIRA_TOKEN or the login token, and the server", async () => {
+    const { tokenHint } = await import("../src/lib/api.js");
+    expect(tokenHint("env", "https://x.test")).toMatch(/https:\/\/x\.test did not accept the token in RAMOIRA_TOKEN.*Remove-Item Env:RAMOIRA_TOKEN/);
+    expect(tokenHint("login", "https://x.test")).toMatch(/token ramoira login saved.*only on the server that issued it/);
+    expect(tokenHint(null, "https://x.test")).toMatch(/Run ramoira login/);
+  });
+});

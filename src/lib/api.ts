@@ -1,4 +1,4 @@
-import { getApiBase, getToken } from "./config.js";
+import { getApiBase, getToken, tokenSource } from "./config.js";
 
 // /status reports facts, never a score (roadmap E2). Today the server returns
 // only workflowState and canonicalUrl; the other fields are read when present.
@@ -59,7 +59,19 @@ export class ApiError extends Error {
 async function failure(res: Response, what: string): Promise<ApiError> {
   const body = (await res.json().catch(() => ({}))) as { error?: string; issues?: Array<{ path: string; message: string }> };
   const issues = (body.issues ?? []).map((i) => `\n  · ${i.path} ${i.message}`).join("");
-  return new ApiError(res.status, `${body.error ?? `${what} failed (${res.status})`}${issues}`, body);
+  const hint = res.status === 401 ? `\n  ${tokenHint()}` : "";
+  return new ApiError(res.status, `${body.error ?? `${what} failed (${res.status})`}${issues}${hint}`, body);
+}
+
+/** Why a token was refused, naming where it came from and which server refused it. */
+export function tokenHint(source = tokenSource(), base = getApiBase()): string {
+  if (source === "env") {
+    return `${base} did not accept the token in RAMOIRA_TOKEN (it is unknown there, or revoked). To use your ramoira login instead, clear it (PowerShell: Remove-Item Env:RAMOIRA_TOKEN; bash: unset RAMOIRA_TOKEN).`;
+  }
+  if (source === "login") {
+    return `${base} did not accept the token ramoira login saved. A token works only on the server that issued it, and only until it is revoked: run ramoira login again${process.env.RAMOIRA_API_URL ? ` (RAMOIRA_API_URL is ${base})` : ""}.`;
+  }
+  return "Run ramoira login (free), or set RAMOIRA_TOKEN.";
 }
 
 function authHeaders(): Record<string, string> {
