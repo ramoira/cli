@@ -5,6 +5,16 @@ import { readConfig, writeConfig, getToken, getApiBase } from "./config.js";
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/** Revokes a token on ramoira.com (the token revokes itself). Best effort: offline, it stays live until revoked on the dashboard. */
+async function revokeOnServer(base: string, token: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${base}/api/tokens/current`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    return res.status === 204 || res.status === 401 || res.status === 404;
+  } catch {
+    return false;
+  }
+}
+
 export async function loginCommand(options: { manual?: boolean } = {}): Promise<void> {
   if (options.manual) {
     await manualLogin();
@@ -76,6 +86,9 @@ export async function loginCommand(options: { manual?: boolean } = {}): Promise<
       if (res.status === 200) {
         const body = await res.json() as { token: string; brand_slug?: string };
         const config = readConfig();
+        // The token this computer held before is retired, so logins don't pile up.
+        const previous = config.token;
+        if (previous && previous !== body.token) await revokeOnServer(base, previous);
         config.token = body.token;
         if (body.brand_slug) config.brandSlug = body.brand_slug;
         writeConfig(config);
@@ -114,7 +127,7 @@ export async function loginCommand(options: { manual?: boolean } = {}): Promise<
 }
 
 async function manualLogin(): Promise<void> {
-  console.log(chalk.gray("Get a token at https://ramoira.com/tokens\n"));
+  console.log(chalk.gray(`Create a token on your dashboard: ${getApiBase()}/dashboard\n`));
 
   const token = await input({ message: "Paste your API token:" });
   if (!token.trim()) {
@@ -147,15 +160,17 @@ async function manualLogin(): Promise<void> {
   }
 }
 
-export function logoutCommand(): void {
+export async function logoutCommand(): Promise<void> {
   const config = readConfig();
   if (!config.token) {
     console.log(chalk.gray("Not logged in."));
     return;
   }
+  const revoked = await revokeOnServer(getApiBase(), config.token);
   delete config.token;
   writeConfig(config);
-  console.log(chalk.green("✓ Logged out. Token removed from ~/.ramoira/config.json"));
+  console.log(chalk.green("✓ Logged out. The token is removed from this computer" + (revoked ? " and revoked." : ".")));
+  if (!revoked) console.log(chalk.yellow("  Could not reach ramoira.com: revoke it on your dashboard."));
 }
 
 export async function whoamiCommand(): Promise<void> {
