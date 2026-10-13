@@ -33,6 +33,12 @@ export function getToken(): string | null {
   return process.env.RAMOIRA_TOKEN ?? readConfig().token ?? null;
 }
 
+/** Where the token in use comes from: RAMOIRA_TOKEN wins over the one ramoira login saved. */
+export function tokenSource(): "env" | "login" | null {
+  if (process.env.RAMOIRA_TOKEN) return "env";
+  return readConfig().token ? "login" : null;
+}
+
 export function getApiBase(): string {
   return process.env.RAMOIRA_API_URL ?? readConfig().apiBase ?? "https://ramoira.com";
 }
