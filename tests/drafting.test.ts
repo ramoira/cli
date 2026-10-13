@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync, existsSync
 import { createRequire } from "module";
 import { tmpdir } from "os";
 import { join } from "path";
-import { DRAFTING_MD, DRAFTING_PATH, DRAFTING_VERSION, POINTER_BLOCK, draftingVersion, installDrafting, withPointerBlock } from "../src/lib/drafting.js";
+import { DRAFTING_MD, DRAFTING_PATH, DRAFTING_VERSION, POINTER_BLOCK, SPEC_VERSION, draftingVersion, driftNotice, installDrafting, withPointerBlock } from "../src/lib/drafting.js";
 
 const require = createRequire(import.meta.url);
 
@@ -33,6 +33,10 @@ describe("the drafting protocol (D20)", () => {
     expect(readFileSync("AGENTS.md", "utf8")).toBe(`${POINTER_BLOCK}\n`);
     expect(result.steps.map((s) => [s.path, s.outcome])).toEqual([
       [DRAFTING_PATH, "created"],
+      ["ramoira/spec/README.md", "created"],
+      ["ramoira/spec/SPEC.md", "created"],
+      ["ramoira/spec/SPEC.schema.json", "created"],
+      ["ramoira/spec/example.schema.json", "created"],
       ["AGENTS.md", "created"],
     ]);
     expect(result.claudeMdMissing).toBe(true);
@@ -58,6 +62,22 @@ describe("the drafting protocol (D20)", () => {
     expect(readFileSync("AGENTS.md", "utf8")).toBe(`Intro.\n\n${POINTER_BLOCK}\n\nOutro.\n`);
     expect(result.replacedVersion).toBe("0.9.0");
     expect(readFileSync(DRAFTING_PATH, "utf8")).toBe(DRAFTING_MD);
+  });
+
+  it("installs a local copy of the spec, so an agent without web access has the format", () => {
+    installDrafting();
+    expect(readFileSync("ramoira/spec/SPEC.md", "utf8")).toBe(readFileSync(require.resolve("@ramoira/schema/SPEC.md"), "utf8"));
+    expect(JSON.parse(readFileSync("ramoira/spec/SPEC.schema.json", "utf8"))).toEqual(JSON.parse(readFileSync(require.resolve("@ramoira/schema/SPEC.schema.json"), "utf8")));
+    expect(readFileSync("ramoira/spec/README.md", "utf8")).toContain(`drafting protocol ${DRAFTING_VERSION}`);
+    expect(SPEC_VERSION).toMatch(/^3\.\d+\.\d+$/);
+  });
+
+  it("notices when the project's DRAFTING.md is not the one this CLI ships", () => {
+    expect(driftNotice()).toBeNull();
+    installDrafting();
+    expect(driftNotice()).toBeNull();
+    writeFileSync(DRAFTING_PATH, "---\nid: drafting-protocol\nversion: 1.0.0\n---\nold\n");
+    expect(driftNotice()).toMatch(/version 1\.0\.0; this CLI ships .*Run ramoira init/);
   });
 
   it("withPointerBlock appends once", () => {

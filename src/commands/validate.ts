@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { driftNotice } from "../lib/drafting.js";
 import { validateSchema } from "../lib/validator.js";
 import { readJsonFile, DEFAULT_SCHEMA_PATH } from "../lib/files.js";
 
@@ -7,6 +8,8 @@ const MIGRATION_GUIDE =
 
 export async function validateCommand(file: string | undefined): Promise<void> {
   const filePath = file ?? DEFAULT_SCHEMA_PATH;
+  const drift = driftNotice();
+  if (drift) console.error(chalk.yellow(drift));
 
   let doc: unknown;
   try {

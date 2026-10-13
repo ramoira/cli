@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { driftNotice } from "../lib/drafting.js";
 import ora from "ora";
 import { ApiError, pushProposal } from "../lib/api.js";
 import { getToken } from "../lib/config.js";
@@ -13,6 +14,8 @@ import { readSync, writeSync } from "../lib/sync.js";
 
 export async function pushCommand(file: string | undefined, options: { slug?: string }): Promise<void> {
   const filePath = file ?? DEFAULT_SCHEMA_PATH;
+  const drift = driftNotice();
+  if (drift) console.error(chalk.yellow(drift));
   let schema: Record<string, any>;
   try {
     schema = readJsonFile(filePath) as Record<string, any>;

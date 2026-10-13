@@ -7,7 +7,7 @@ import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib
 import { generateAgentsMd } from "../lib/agents-md.js";
 import { getApiBase, readConfig, writeConfig } from "../lib/config.js";
 import { sessionIsLive, sessionUrl, startAnchoredSession, waitForCandidate } from "../lib/anchored.js";
-import { DRAFTING_PATH, DRAFTING_VERSION, installDrafting } from "../lib/drafting.js";
+import { DRAFTING_PATH, DRAFTING_VERSION, SPEC_DIR, SPEC_VERSION, installDrafting } from "../lib/drafting.js";
 
 // `ramoira init` (roadmap C1, D20). By default it sets the project up for
 // the person's own coding agent: it installs the drafting protocol
@@ -40,7 +40,12 @@ export async function initCommand(options: InitOptions): Promise<void> {
 
   const result = installDrafting();
   console.log("");
-  for (const step of result.steps) {
+  const spec = result.steps.filter((st) => st.path.startsWith(`${SPEC_DIR}/`));
+  if (spec.length) {
+    const changed = spec.some((st) => st.outcome !== "unchanged");
+    console.log(`  ${changed ? chalk.green("✓") : chalk.gray("·")} ${SPEC_DIR}/ (spec ${SPEC_VERSION}, local copy) ${chalk.gray(`— ${changed ? "written" : "already current"}`)}`);
+  }
+  for (const step of result.steps.filter((st) => !st.path.startsWith(`${SPEC_DIR}/`))) {
     const label = step.path === DRAFTING_PATH ? `${step.path} (drafting protocol ${DRAFTING_VERSION})` : step.path;
     const note =
       step.path === DRAFTING_PATH
