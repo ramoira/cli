@@ -1,50 +1,58 @@
 # ramoira init
 
-Draft a candidate 3.0.0 brand schema from a short questionnaire.
+Set your project up for your own coding agent to draft the brand schema. Free; no account, no model key.
 
 ```
 ramoira init [options]
 
 Options:
-  -o, --output <path>   Output file path (default: ramoira/brand.schema.json)
-  --anchored            Draft from the archetype library (free hosted service; not available yet)
-  --no-probes           Skip judging sample lines; judged rules become guidance questions
+  --anchored            Draft from reference brands in your browser instead (free hosted service, no account)
+  -o, --output <path>   With --anchored: where to save the schema (default: ramoira/brand.schema.json)
 ```
 
 ## What it does
 
-1. **Questionnaire.** Who is answering (brand owner, brand team, agency or freelancer), then what the brand makes, what it believes, how it sounds and must never sound, what it must never do, words never to use, claims it can make, competitors never to name, where its content appears, and how it talks about money.
-2. **Draft.** Your own model (your `ANTHROPIC_API_KEY`) proposes the rest: who the brand is, its myth and pillars, its voice on each surface, rails, situations, and candidate rules. It writes no sample copy and invents no brand facts.
-3. **Judge sample lines.** Some proposed rules need judgment to check ("never present the product as a gadget"). For each, your model drafts two lines; you mark them **That's us**, **Close** or **Not us**, with a reason. A rule you back with a "That's us" and a "Not us" keeps those lines as its examples. Any other becomes a guidance question. The lines are probes: only you see them, and only the ones you judge are kept.
-4. **Write.** The CLI assembles a complete 3.0.0 schema, validates it, and writes it with `ramoira/agents.md`.
+It installs, in the current project:
 
-No Ramoira account. Nothing is sent to Ramoira; the model call goes from your machine to Anthropic with your key.
+| Path | What |
+|---|---|
+| `ramoira/DRAFTING.md` | The drafting protocol your agent follows: what to gather, what to ask, how to write and validate the file, and what it must never do |
+| `ramoira/spec/` | A local copy of the spec (`SPEC.md`, `SPEC.schema.json`, a minimal example, and a README naming the versions), so an agent without web access has the format |
+| `ramoira/README.md` | A page for you: what the folder holds, draft → push → review → make public or send back → pull, and the next version |
+| `AGENTS.md` | A brand schema section between `<!-- ramoira:start -->` and `<!-- ramoira:end -->`, also added to `CLAUDE.md` and `.github/copilot-instructions.md` where they exist |
+
+Then ask your agent (Claude Code, Codex, GitHub Copilot in VS Code, Cursor, Windsurf, JetBrains agents):
+
+> Read ramoira/DRAFTING.md and draft our brand schema.
+
+It reads your project and anything you give it, asks only what it can't find, and writes `ramoira/brand.schema.json` with all five layers, then runs `ramoira hash --write` and `ramoira validate`.
 
 ## What you get
 
-A **candidate**, not your brand's measure. `workflow_state: draft`, `ratification: null`.
-
-All five layers are filled, including pillars, myth evolution, context variants and rails.
+A **candidate**: your draft of what the brand means, until the brand ratifies it. `workflow_state: draft`, `ratification: null`.
 
 | What | Recorded as |
 |---|---|
-| What you typed: words never to use, competitors, claims, myth, tones | `provenance: authored` |
-| Rules the model proposed | `provenance: inherited, affirmed: false`. A schema cannot be ratified until the brand affirms, edits or deletes each one. |
-| Lines you judged | examples `judged_by` your role, `source: owner_reaction`; your reactions are kept in `draft_provenance.reactions` |
-| Facts the model must not invent: origin story, owned phrases, primary colour, specifications (and claims, if you gave none) | left empty, marked `unfilled` |
+| What you told the agent in your own words | `authored` |
+| What the agent proposed or took from your material | fields `inherited`; rules `provenance: inherited, affirmed: false` |
+| Facts nobody knew | left out, marked `unfilled`; never invented |
 
-Only examples judged by the brand owner or brand team can back a check once the schema is ratified. If an agency or freelancer answers, their judgments are recorded under their role.
+Only you can affirm a rule, keep a field or judge an example, signed in on ramoira.com. A push that claims one you never made is refused.
 
-## Archetype-anchored drafting
+## Running it again
 
-`--anchored` will draft from Ramoira's archetype library: you rate how close your brand is to a few well-known reference brands, and a matching template is adapted to your answers. It runs as a free, no-login hosted service, so the library is never shipped in this CLI. It is not available yet.
+Run `init` again after updating the CLI: it refreshes `DRAFTING.md`, `ramoira/spec/`, `ramoira/README.md` and the section in your instruction files, and never touches your schema. A `ramoira/README.md` you wrote yourself (without Ramoira's marker line) is left alone. `validate`, `hash` and `push` say when the project's `DRAFTING.md` is not the one this CLI ships.
+
+## Drafting in the browser (`--anchored`)
+
+`--anchored` drafts from Ramoira's reference brands instead: you rate how close your brand is to a few well-known brands, pick the lines that sound most and least like you, write the facts only you know, and decide on each rule you start from. It runs as a free, no-login service on ramoira.com; no model writes anything. The CLI opens it in your browser and saves the candidate (with `ramoira/agents.md`, a plain-language brief) when you finish.
 
 ## Next steps
 
 ```sh
-ramoira validate           # check the file is a well-formed schema
-ramoira book               # render a brand book
-ramoira book --probe       # judge more sample lines
+ramoira validate                 # the file is a well-formed schema
+ramoira login                    # free
+ramoira push --slug your-brand   # a private version for your review on ramoira.com
 ```
 
-Publishing 3.0.0 schemas opens with Ramoira's new service.
+See [push and pull](push.md).

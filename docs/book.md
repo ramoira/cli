@@ -1,6 +1,6 @@
 # ramoira book
 
-Render a brand book (one HTML file) from a 3.0.0 brand schema.
+Render a brand book (one HTML file) from a 3.x brand schema.
 
 ```txt
 ramoira book [file] [options]
@@ -41,7 +41,7 @@ A ratified schema is never edited: adding examples would change the version the 
 
 ## Requirements
 
-- A 3.0.0 schema. A 2.0.0 schema is refused, with a link to the [migration guide](https://github.com/ramoira/brand-schema-spec/blob/main/migrations/2.0.0-to-3.0.0.md).
+- A 3.x schema. A 2.0.0 schema is refused, with a link to the [migration guide](https://github.com/ramoira/brand-schema-spec/blob/main/migrations/2.0.0-to-3.0.0.md).
 - For `--probe` only: `ANTHROPIC_API_KEY`, and an interactive terminal.
 
 ## What's in the brand book
