@@ -74,33 +74,33 @@ program
 
 program
   .command("status [slug]")
-  .description("Show what is true for a brand: published, ratified, checked")
+  .description("Show what is true for a brand (published, ratified, checked) and whether this project's file is behind")
   .action(statusCommand);
 
 program
   .command("login")
-  .description("Authenticate via GitHub (or use --manual to paste a token)")
-  .option("--manual", "Skip browser flow and paste a token directly")
+  .description("Sign in through your browser, with GitHub or an emailed link (free); replaces this computer's earlier token. --manual pastes a token")
+  .option("--manual", "Skip the browser and paste a token from your dashboard")
   .action(loginCommand);
 
 program
   .command("logout")
-  .description("Remove saved API token")
+  .description("Sign out: revoke this computer's token and remove it")
   .action(logoutCommand);
 
 program
   .command("whoami")
-  .description("Show the currently authenticated account")
+  .description("Show the account you are signed in as")
   .action(whoamiCommand);
 
 program
   .command("create-token [label]")
-  .description("Create a named API token for CI/CD use")
+  .description("Create a named API token for CI (RAMOIRA_TOKEN): it can push and pull, never make a version public")
   .action(createTokenCommand);
 
 program
   .command("book [file]")
-  .description("Render a brand book (HTML) from a 3.0.0 schema; --probe to judge sample lines first")
+  .description("Render a brand book (HTML) from a 3.x schema; --probe to judge sample lines first")
   .option("-o, --out <path>", "Output file path (default: <brandId>-brand-book.html)")
   .option("--probe", "Judge model-drafted sample lines; the ones you mark become examples in your schema")
   .action(bookCommand);
