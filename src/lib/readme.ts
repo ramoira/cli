@@ -48,7 +48,7 @@ This folder holds your brand schema: one file that says what your brand means (w
    - Then **Make public**, or **Send back to your agent** with what to change.
 4. **Pull.** \`npx ramoira pull\` brings the reviewed version down, with your decisions. If you sent it back, your requests are in \`REVIEW.md\`: ask your agent *"Make the changes in ramoira/REVIEW.md."* It validates and pushes again, and you review only what changed.
 
-**Always pull after a review.** A push built on an older version is refused as out of date: run \`npx ramoira pull\` and make the change again on top of it. \`npx ramoira status\` says where your file stands: the public version, waiting for review, changed, or behind a newer version (for example after you used **Revise**).
+**Always pull after a review.** A push built on an older version is refused as out of date: run \`npx ramoira pull\` and make the change again on top of it. \`npx ramoira status\` says where your file stands: the public version, waiting for review, changed, or behind a newer version (for example after you used **Revise**). The file's own label, \`ramoira.workflow_state\`, follows along: \`draft\` while your agent works on it, \`in_review\` once pushed, then \`published\` or (sent back) \`draft\` after you pull. Whether a version is public is always what ramoira.com says (\`npx ramoira status\`), not the label.
 
 ## Changing it later
 
