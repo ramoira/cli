@@ -3,8 +3,10 @@
 Draft, validate and share an open brand schema: one file that tells every AI tool in your project what your brand means.
 
 ```
-npm install -g ramoira
+npx ramoira init        # no install needed; or: npm install -g ramoira
 ```
+
+Requires Node.js 20.10 or later. Version 0.4.0 and later use brand schema spec 3.x; 0.3.x and earlier talk to the retired v2 service.
 
 ## What it does
 
@@ -152,7 +154,7 @@ node dist/index.js validate bad.json
 
 ```bash
 node dist/index.js whoami    # not logged in
-node dist/index.js login     # paste any token to test storage
+node dist/index.js login --manual   # paste any token to test storage
 node dist/index.js whoami    # shows token is set
 node dist/index.js logout
 ```

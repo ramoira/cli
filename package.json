@@ -3,6 +3,13 @@
   "version": "0.4.0",
   "description": "Draft, validate and share an open brand schema",
   "type": "module",
+  "homepage": "https://ramoira.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramoira/cli.git"
+  },
+  "bugs": "https://github.com/ramoira/cli/issues",
+  "keywords": ["brand", "brand-schema", "ai", "coding-agent", "cli"],
   "bin": {
     "ramoira": "dist/index.js"
   },
