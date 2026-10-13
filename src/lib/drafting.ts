@@ -88,7 +88,7 @@ export const POINTER_BLOCK = `${START}
 This project's brand schema is \`ramoira/brand.schema.json\`: one file that says what the brand means (what it makes and believes, how it sounds, which claims it may make, and the rules its content must keep), so every AI tool and writer here works from the same source and its rules can be checked. It is a candidate until the brand ratifies it. The format is Ramoira's open brand schema; a local copy of the spec is in \`ramoira/spec/\`.
 
 - To draft or revise it, read \`ramoira/DRAFTING.md\` and follow it.
-- Before writing copy or user-facing text, read the schema and follow its rules. Make only the claims it lists.
+- Before writing copy or user-facing text, run \`npx ramoira status\`: if it says the file is behind, run \`npx ramoira pull\` first. Then read the schema and follow its rules. Make only the claims it lists.
 - After drafting copy, run \`npx ramoira check --surface <surface> <file>\` and fix what it flags.
 - When the person asks how review, publishing or the next version work, point them to \`ramoira/README.md\`.
 ${END}`;

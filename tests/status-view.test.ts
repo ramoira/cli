@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { statusLines } from "../src/lib/status-view.js";
+import { fileStanding, statusLines } from "../src/lib/status-view.js";
 
 const value = (lines: ReturnType<typeof statusLines>, label: string) =>
   lines.find((l) => l.label === label)?.value;
@@ -32,5 +32,26 @@ describe("statusLines", () => {
   it("never reports a score", () => {
     const text = JSON.stringify(statusLines("x", { workflowState: "draft", canonicalUrl: null }));
     expect(text).not.toMatch(/certified|confidence|score/i);
+  });
+});
+
+describe("fileStanding: where this project's file stands", () => {
+  const at = (over: Partial<Parameters<typeof fileStanding>[0]>) =>
+    fileStanding({ local: "h1", publicHash: "h1", publicVersion: "0.1.0", reviewed: null, sync: { base: "h1", pushed: null }, ...over }).value;
+
+  it("says when the file is the public version, pushed, or changed", () => {
+    expect(at({})).toBe("the public version (0.1.0)");
+    expect(at({ local: "h2", sync: { base: "h1", pushed: "h2" } })).toMatch(/waiting for the owner's review/);
+    expect(at({ local: "h3", sync: { base: "h1", pushed: "h2" } })).toMatch(/changed since the last push/);
+    expect(at({ local: null })).toMatch(/no ramoira/);
+  });
+
+  it("says pull when the owner reviewed or made public a newer version, e.g. after Revise", () => {
+    const revised = { publicHash: "h2", publicVersion: "0.1.1", reviewed: { hash: "h2", state: "public" as const } };
+    expect(at(revised)).toBe("behind: the owner made a newer version public. Run ramoira pull");
+    expect(at({ reviewed: { hash: "h2", state: "reviewed" } })).toMatch(/sent it back. Run ramoira pull/);
+    // Without the owner's credential, only the public version is known.
+    expect(at({ publicHash: "h2", publicVersion: "0.1.1" })).toMatch(/not the public version \(0\.1\.1\)\. Sign in/);
+    expect(at({ local: "h2", publicHash: "h1", reviewed: { hash: "h2", state: "reviewed" }, sync: { base: "h2", pushed: null } })).toMatch(/sent back: see ramoira\/REVIEW.md/);
   });
 });

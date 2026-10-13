@@ -48,11 +48,11 @@ This folder holds your brand schema: one file that says what your brand means (w
    - Then **Make public**, or **Send back to your agent** with what to change.
 4. **Pull.** \`npx ramoira pull\` brings the reviewed version down, with your decisions. If you sent it back, your requests are in \`REVIEW.md\`: ask your agent *"Make the changes in ramoira/REVIEW.md."* It validates and pushes again, and you review only what changed.
 
-**Always pull after a review.** A push built on an older version is refused as out of date: run \`npx ramoira pull\` and make the change again on top of it.
+**Always pull after a review.** A push built on an older version is refused as out of date: run \`npx ramoira pull\` and make the change again on top of it. \`npx ramoira status\` says where your file stands: the public version, waiting for review, changed, or behind a newer version (for example after you used **Revise**).
 
 ## Changing it later
 
-A version you made public never changes, like a commit. You make a new version; the public one stays as it is until you make the new one public.
+A version you made public never changes, like a commit. You make a new version; the public one stays as it is until you make the new one public. When a changed version is made public with the same label as the public one, its label goes up by one (\`0.1.0\` → \`0.1.1\`); you can type another in the review. The label is for people: the fingerprint (\`content_hash\`) is what identifies a version.
 
 - **With your agent:** pull, ask for the change, push, review.
 - **Yourself, in the browser:** **Revise** on the dashboard opens your last reviewed version. Edit or delete rules, rewrite fields, then make it public, or write requests and send it back to your agent. Afterwards, run \`npx ramoira pull\` here.
