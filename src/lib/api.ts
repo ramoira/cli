@@ -15,6 +15,8 @@ export interface StatusResult {
   faithfulness?: null;
   /** A diagnostic, reported separately; never a quality score. */
   density?: { value: string; checked_at: string } | null;
+  /** The public version, when there is one. */
+  published?: { at: string; schema_version: string; content_hash: string } | null;
 }
 
 /** What Ramoira returns for a push: a private, proposed version (roadmap D20). */
