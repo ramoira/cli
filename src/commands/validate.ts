@@ -40,6 +40,12 @@ export async function validateCommand(file: string | undefined): Promise<void> {
     console.log(issue.level === "error" ? chalk.red(line) : chalk.yellow(line));
   }
 
+  // The usual cause: the file was edited after its fingerprint was written.
+  if (result.issues.some((i) => i.level === "error" && i.path === "/ramoira/content_hash" && i.invariant === 8)) {
+    console.log(chalk.yellow(`\n  The file changed after its content_hash was written. Run: ramoira hash --write ${filePath === DEFAULT_SCHEMA_PATH ? "" : filePath}`.trimEnd()));
+    console.log(chalk.gray("  Then validate again. Run hash --write after every edit."));
+  }
+
   if (result.specVersion === "2.0.0") {
     console.log(chalk.yellow("\n  2.0.0 is superseded by 3.0.0. Migration guide:"));
     console.log(chalk.gray(`  ${MIGRATION_GUIDE}`));
