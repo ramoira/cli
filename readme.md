@@ -8,7 +8,7 @@ npm install -g ramoira
 
 ## What it does
 
-`ramoira init` sets your project up for **your own coding agent** (Claude Code, Codex, GitHub Copilot in VS Code, Cursor, Windsurf, JetBrains agents) to draft your brand schema. It installs the drafting protocol, `ramoira/DRAFTING.md`, and points your project's agent instructions (`AGENTS.md`, plus `CLAUDE.md` and `.github/copilot-instructions.md` where you have them) at it. Then ask your agent:
+`ramoira init` sets your project up for **your own coding agent** (Claude Code, Codex, GitHub Copilot in VS Code, Cursor, Windsurf, JetBrains agents) to draft your brand schema. It installs the drafting protocol, `ramoira/DRAFTING.md`, a local copy of the spec (`ramoira/spec/`, so an agent without web access has the format), and points your project's agent instructions (`AGENTS.md`, plus `CLAUDE.md` and `.github/copilot-instructions.md` where you have them) at it. Then ask your agent:
 
 > Read ramoira/DRAFTING.md and draft our brand schema.
 
@@ -60,6 +60,8 @@ npx ramoira push
 # … review on ramoira.com; if you send it back:
 npx ramoira pull
 ```
+
+Run `ramoira init` again after updating the CLI: it refreshes `DRAFTING.md` and `ramoira/spec/`, and `validate`, `hash` and `push` say when the project's copy is not the one the CLI ships.
 
 `ramoira/sync.json` records which brand the project pushes to and which reviewed version the file is based on, like a branch's upstream. Commit it with the schema. `push` refuses a file based on an older reviewed version (run `pull` first), and `pull` refuses to overwrite changes that were never pushed (unless `--force`).
 

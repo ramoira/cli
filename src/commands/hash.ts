@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { driftNotice } from "../lib/drafting.js";
 import { DEFAULT_SCHEMA_PATH, readJsonFile, writeJsonFile } from "../lib/files.js";
 import { computeContentHash } from "../lib/validator.js";
 
@@ -8,6 +9,8 @@ import { computeContentHash } from "../lib/validator.js";
 
 export async function hashCommand(file: string | undefined, options: { write?: boolean }): Promise<void> {
   const filePath = file ?? DEFAULT_SCHEMA_PATH;
+  const drift = driftNotice();
+  if (drift) console.error(chalk.yellow(drift));
   let doc: Record<string, any>;
   try {
     doc = readJsonFile(filePath) as Record<string, any>;
