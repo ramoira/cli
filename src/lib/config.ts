@@ -2,8 +2,9 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 
-const CONFIG_DIR = join(homedir(), ".ramoira");
-const CONFIG_FILE = join(CONFIG_DIR, "config.json");
+// RAMOIRA_CONFIG_DIR moves it (tests, or a CI job that should not read ~).
+const configDir = () => process.env.RAMOIRA_CONFIG_DIR ?? join(homedir(), ".ramoira");
+const configFile = () => join(configDir(), "config.json");
 
 interface Config {
   token?: string;
@@ -15,17 +16,17 @@ interface Config {
 }
 
 export function readConfig(): Config {
-  if (!existsSync(CONFIG_FILE)) return {};
+  if (!existsSync(configFile())) return {};
   try {
-    return JSON.parse(readFileSync(CONFIG_FILE, "utf8")) as Config;
+    return JSON.parse(readFileSync(configFile(), "utf8")) as Config;
   } catch {
     return {};
   }
 }
 
 export function writeConfig(config: Config): void {
-  mkdirSync(CONFIG_DIR, { recursive: true });
-  writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2) + "\n", "utf8");
+  mkdirSync(configDir(), { recursive: true });
+  writeFileSync(configFile(), JSON.stringify(config, null, 2) + "\n", "utf8");
 }
 
 export function getToken(): string | null {

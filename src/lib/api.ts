@@ -1,17 +1,5 @@
 import { getApiBase, getToken } from "./config.js";
 
-export interface PublishResult {
-  versionId: string;
-  workflowState: string;
-  canonicalUrl: string;
-  contentHash?: string;
-  schemaVersion?: string;
-  /** This exact content_hash was already the published version. */
-  unchanged?: boolean;
-  /** This publish claimed the slug for the account. */
-  claimed?: boolean;
-}
-
 // /status reports facts, never a score (roadmap E2). Today the server returns
 // only workflowState and canonicalUrl; the other fields are read when present.
 export interface StatusResult {
@@ -29,30 +17,72 @@ export interface StatusResult {
   density?: { value: string; checked_at: string } | null;
 }
 
-export async function publishSchema(
-  slug: string,
-  schema: Record<string, unknown>,
-): Promise<PublishResult> {
-  const token = getToken();
-  if (!token) throw new Error("Not authenticated. Run: ramoira login");
+/** What Ramoira returns for a push: a private, proposed version (roadmap D20). */
+export interface PushResult {
+  proposal_id: string;
+  content_hash: string;
+  /** Where the owner reviews it, signed in. */
+  review_url: string;
+  /** This exact content_hash was already proposed or reviewed. */
+  unchanged: boolean;
+  /** This push claimed the slug for the account. */
+  claimed: boolean;
+}
 
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/brands/${slug}/publish`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ schema }),
-  });
+/** The owner's own requests and decisions, from "Send back" in the review. Never Ramoira's suggestions. */
+export interface ReviewBrief {
+  requests: Array<{ path?: string | null; text: string }>;
+  decisions: Array<{ kind: string; rule_id?: string | null; path?: string | null; note?: string | null }>;
+}
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({})) as { error?: string; issues?: Array<{ path: string; message: string }> };
-    const issues = (body.issues ?? []).map((i) => `\n  · ${i.path} ${i.message}`).join("");
-    throw new Error(`${body.error ?? `Publish failed (${res.status})`}${issues}`);
+export interface Reviewed {
+  content_hash: string;
+  schema: Record<string, unknown>;
+  /** "public" once the owner made it public; "reviewed" while it is still private. */
+  state: "reviewed" | "public";
+  reviewed_at: string;
+  brief: ReviewBrief | null;
+}
+
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+    readonly body: Record<string, any>,
+  ) {
+    super(message);
   }
+}
 
-  return res.json() as Promise<PublishResult>;
+async function failure(res: Response, what: string): Promise<ApiError> {
+  const body = (await res.json().catch(() => ({}))) as { error?: string; issues?: Array<{ path: string; message: string }> };
+  const issues = (body.issues ?? []).map((i) => `\n  · ${i.path} ${i.message}`).join("");
+  return new ApiError(res.status, `${body.error ?? `${what} failed (${res.status})`}${issues}`, body);
+}
+
+function authHeaders(): Record<string, string> {
+  const token = getToken();
+  if (!token) throw new Error("Not signed in. Run: ramoira login (free), or set RAMOIRA_TOKEN.");
+  return { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+}
+
+/** POST /api/brands/<slug>/proposals: uploads a private, proposed version. Never makes anything public. */
+export async function pushProposal(slug: string, schema: Record<string, unknown>, baseHash: string | null): Promise<PushResult> {
+  const res = await fetch(`${getApiBase()}/api/brands/${slug}/proposals`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ schema, base_hash: baseHash }),
+  });
+  if (!res.ok) throw await failure(res, "Push");
+  return res.json() as Promise<PushResult>;
+}
+
+/** GET /api/brands/<slug>/reviewed: the last version the owner reviewed, with their brief. Null if none yet. */
+export async function fetchReviewed(slug: string): Promise<Reviewed | null> {
+  const res = await fetch(`${getApiBase()}/api/brands/${slug}/reviewed`, { headers: authHeaders() });
+  if (res.status === 404) return null;
+  if (!res.ok) throw await failure(res, "Pull");
+  return res.json() as Promise<Reviewed>;
 }
 
 export async function fetchStatus(slug: string): Promise<StatusResult> {
