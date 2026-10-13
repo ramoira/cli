@@ -8,7 +8,7 @@ npm install -g ramoira
 
 ## What it does
 
-`ramoira init` sets your project up for **your own coding agent** (Claude Code, Codex, GitHub Copilot in VS Code, Cursor, Windsurf, JetBrains agents) to draft your brand schema. It installs the drafting protocol, `ramoira/DRAFTING.md`, a local copy of the spec (`ramoira/spec/`, so an agent without web access has the format), and points your project's agent instructions (`AGENTS.md`, plus `CLAUDE.md` and `.github/copilot-instructions.md` where you have them) at it. Then ask your agent:
+`ramoira init` sets your project up for **your own coding agent** (Claude Code, Codex, GitHub Copilot in VS Code, Cursor, Windsurf, JetBrains agents) to draft your brand schema. It installs the drafting protocol, `ramoira/DRAFTING.md`, a local copy of the spec (`ramoira/spec/`, so an agent without web access has the format), a page for you (`ramoira/README.md`: draft, review, make public, and the next version), and points your project's agent instructions (`AGENTS.md`, plus `CLAUDE.md` and `.github/copilot-instructions.md` where you have them) at it. Then ask your agent:
 
 > Read ramoira/DRAFTING.md and draft our brand schema.
 
@@ -57,11 +57,13 @@ npx ramoira check --surface product_detail_page draft.txt
 # Upload for review (free account: sign in through the browser)
 npx ramoira login
 npx ramoira push
-# … review on ramoira.com; if you send it back:
+# … review on ramoira.com: make it public, or send it back with requests; then, either way:
 npx ramoira pull
 ```
 
-Run `ramoira init` again after updating the CLI: it refreshes `DRAFTING.md` and `ramoira/spec/`, and `validate`, `hash` and `push` say when the project's copy is not the one the CLI ships.
+To change a public schema, make a new version: pull, have your agent change it and push, then review. Or press **Revise** on the dashboard to change rules and fields yourself, with no push, and `pull` afterwards.
+
+Run `ramoira init` again after updating the CLI: it refreshes `DRAFTING.md`, `ramoira/spec/` and `ramoira/README.md` (a `README.md` you wrote yourself is left alone), and `validate`, `hash` and `push` say when the project's copy is not the one the CLI ships.
 
 `ramoira/sync.json` records which brand the project pushes to and which reviewed version the file is based on, like a branch's upstream. Commit it with the schema. `push` refuses a file based on an older reviewed version (run `pull` first), and `pull` refuses to overwrite changes that were never pushed (unless `--force`).
 

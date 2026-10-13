@@ -7,7 +7,8 @@ import { writeJsonFile, writeTextFile, fileExists, AGENTS_MD_PATH } from "../lib
 import { generateAgentsMd } from "../lib/agents-md.js";
 import { getApiBase, readConfig, writeConfig } from "../lib/config.js";
 import { sessionIsLive, sessionUrl, startAnchoredSession, waitForCandidate } from "../lib/anchored.js";
-import { DRAFTING_PATH, DRAFTING_VERSION, SPEC_DIR, SPEC_VERSION, installDrafting } from "../lib/drafting.js";
+import { DRAFTING_PATH, DRAFTING_VERSION, SPEC_DIR, SPEC_VERSION, installDrafting, installReadme } from "../lib/drafting.js";
+import { README_PATH } from "../lib/readme.js";
 
 // `ramoira init` (roadmap C1, D20). By default it sets the project up for
 // the person's own coding agent: it installs the drafting protocol
@@ -46,9 +47,20 @@ export async function initCommand(options: InitOptions): Promise<void> {
     console.log(`  ${changed ? chalk.green("✓") : chalk.gray("·")} ${SPEC_DIR}/ (spec ${SPEC_VERSION}, local copy) ${chalk.gray(`— ${changed ? "written" : "already current"}`)}`);
   }
   for (const step of result.steps.filter((st) => !st.path.startsWith(`${SPEC_DIR}/`))) {
-    const label = step.path === DRAFTING_PATH ? `${step.path} (drafting protocol ${DRAFTING_VERSION})` : step.path;
-    const note =
+    const label =
       step.path === DRAFTING_PATH
+        ? `${step.path} (drafting protocol ${DRAFTING_VERSION})`
+        : step.path === README_PATH
+          ? `${step.path} (for you: draft, review, make public)`
+          : step.path;
+    const note =
+      step.outcome === "kept"
+        ? "yours, left as it is"
+        : step.path === README_PATH
+          ? step.outcome === "unchanged"
+            ? "already current"
+            : step.outcome
+          : step.path === DRAFTING_PATH
         ? step.outcome === "unchanged"
           ? "already current"
           : result.replacedVersion
@@ -59,7 +71,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
           : step.outcome === "created"
             ? "created, with a brand schema section"
             : "brand schema section added";
-    console.log(`  ${step.outcome === "unchanged" ? chalk.gray("·") : chalk.green("✓")} ${label} ${chalk.gray(`— ${note}`)}`);
+    console.log(`  ${step.outcome === "unchanged" || step.outcome === "kept" ? chalk.gray("·") : chalk.green("✓")} ${label} ${chalk.gray(`— ${note}`)}`);
   }
   if (result.claudeMdMissing) {
     console.log(chalk.gray("  · Using Claude Code? It reads CLAUDE.md: add a line there saying @AGENTS.md."));
@@ -71,6 +83,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
   console.log(chalk.gray("  It reads your project and anything you give it, asks what it can't find, and writes"));
   console.log(chalk.gray("  ramoira/brand.schema.json: a candidate. You review every rule on ramoira.com before"));
   console.log(chalk.gray("  anything is public. No coding agent? Draft in the browser: ramoira init --anchored"));
+  console.log(chalk.gray(`  The whole flow, from draft to public and on to the next version: ${README_PATH}`));
   console.log("");
 }
 
@@ -82,6 +95,9 @@ function save(outputPath: string, schema: Obj): void {
     console.log(chalk.gray(`✓ agents.md written to ${resolve(AGENTS_MD_PATH)}`));
   } catch {
     // Non-fatal: agents.md is a convenience.
+  }
+  if (installReadme().some((st) => st.outcome === "created" || st.outcome === "updated")) {
+    console.log(chalk.gray(`✓ ${README_PATH}: what happens next, step by step`));
   }
 }
 

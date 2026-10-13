@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Drafting with your own coding agent (roadmap D20)
+
+- `init` installs `ramoira/DRAFTING.md` (the drafting protocol your agent follows), a local copy of the spec in `ramoira/spec/`, and `ramoira/README.md`, a page for the person: what the folder holds, draft → push → review → make public or send back → pull, changing a public schema (a new version, or **Revise** on the dashboard), what is public and what is private. It adds a brand schema section to `AGENTS.md` (and `CLAUDE.md`, Copilot's instructions where they exist). Run it again to refresh them; a `README.md` you wrote yourself is left alone. The questionnaire is retired; `init` calls no model.
+- New `hash` (`--write` sets `content_hash`), `push` (a private version for the owner's review; refused when based on an older reviewed version) and `pull` (the reviewed version, and the owner's requests in `ramoira/REVIEW.md`). `ramoira/sync.json` records the brand and the base. `publish` is retired: only the owner makes a version public, signed in.
+- `validate`, `hash` and `push` say when the project's `DRAFTING.md` is not the one this CLI ships.
+
 ### 3.0.0 groundwork (roadmap P2)
 
 - `publish` sends 3.0.0 full schemas to Ramoira's new service: the slug is `ramoira.brand_id`; publishing to an unclaimed slug claims it; the same version again changes nothing. 2.0.0 is refused with the migration guide. Server-side validation errors are listed.
