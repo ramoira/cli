@@ -18,7 +18,7 @@ export interface ValidationIssue {
 export interface ValidationResult {
   valid: boolean;
   /**
-   * The document's own spec_version for v3 schemas ("3.0.0", "3.1.0"); "3.x" for
+   * The document's own spec_version for v3 schemas ("3.0.0", "3.1.0", "3.2.0"); "3.x" for
    * records and adoptions, which carry none; "2.0.0" for superseded schemas.
    */
   specVersion: string | null;
