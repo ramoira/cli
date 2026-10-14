@@ -91,6 +91,17 @@ describe("validateSchema (3.0.0)", () => {
     expect(result.errors.join(" ")).toMatch(/added in spec 3\.1\.0/);
   });
 
+  it("reads a 3.2.0 document, and refuses its fields under an earlier version", () => {
+    const doc = fixture("corvane.schema.json");
+    doc.ramoira.spec_version = "3.2.0";
+    for (const rating of doc.draft_provenance?.closeness_ratings ?? []) rating.answered_by = "p_owner";
+    doc.voice.terms = [{ term_id: "t_tool", term: "tool", definition: "Something that gets better the more you use it." }];
+    expect(validateSchema(doc)).toMatchObject({ specVersion: "3.2.0", kind: "full" });
+    expect(validateSchema(doc).errors.join(" ")).not.toMatch(/added in spec/);
+    doc.ramoira.spec_version = "3.1.0";
+    expect(validateSchema(doc).errors.join(" ")).toMatch(/added in spec 3\.2\.0/);
+  });
+
   it("rejects certified and confidence", () => {
     for (const field of ["certified", "confidence"]) {
       const doc = fixture("corvane.schema.json");
