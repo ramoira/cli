@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 — 2026-10-14
 
 - **Spec 3.2.0.** `validate` reads 3.2.0 documents: what a rule protects, governed terms, pillar ids, affirmations; it refuses a 3.2.0 field in a document that declares an earlier version. 3.0.0 and 3.1.0 documents stay valid.
 - **`init` installs `DRAFTING.md` 1.2.0.** Your agent writes spec 3.2.0 and drafts meaning first: facts and principles, the brand's own words, then rules saying what they protect, then voice and scope. A rule that protects nothing is listed for you to keep or delete.
